@@ -1,6 +1,9 @@
 #ifndef THREADS_THREAD_H
 #define THREADS_THREAD_H
 
+/*****************************************************/
+#include "synch.h"
+/*****************************************************/
 #include <debug.h>
 #include <list.h>
 #include <stdint.h>
@@ -89,6 +92,10 @@ struct thread
     uint8_t *stack;                     /* Saved stack pointer. */
     int priority;                       /* Priority. */
     struct list_elem allelem;           /* List element for all threads list. */
+
+    /*************************************************************************/
+    int wakeup_time;			/* Time that thread is supposed to be woken from sleeping */
+    struct semaphore sleeper;		/* Semaphore for sleeping and waking up a thread */
 
     /* Shared between thread.c and synch.c. */
     struct list_elem elem;              /* List element. */

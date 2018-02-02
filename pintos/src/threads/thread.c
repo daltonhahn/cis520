@@ -336,6 +336,12 @@ void
 thread_set_priority (int new_priority) 
 {
   thread_current ()->priority = new_priority;
+  /* Actually use priorities to schedule.  If current thread executing is lower
+   * prio than new threads, yield CPU with thread_yield and schedule new thread.
+   *
+   * Implement priority donation using condition statements regarding checks to
+   * Status blocked and allelems list
+   */
 }
 
 /* Returns the current thread's priority. */
@@ -343,6 +349,9 @@ int
 thread_get_priority (void) 
 {
   return thread_current ()->priority;
+  /* Return priority number, in priority donation
+   * return the highest donated priority.  **Should we store this out separately and modify the thread struct?
+   */
 }
 
 /* Sets the current thread's nice value to NICE. */
