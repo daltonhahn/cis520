@@ -108,7 +108,12 @@ my_timer_sleep (int64_t ticks)
   struct semaphore *sema;
   sema_init(&sema, 0);
   curThread->sleeper = sema;
-  printf("WORKING, %d", &curThread->sleeper->value);
+  printf("%d, WORKING\n", &curThread->sleeper->value);
+  sema_down(&curThread->sleeper);
+  printf("%d\n", &curThread->sleeper->value);
+
+  /* DO WE NEED SEPARATE QUEUES FOR OUR SEMAPHORE WAITERS????*/
+  /* OR CAN WE JUST USE THE SEMAPHORE WAITERS LIST MANAGED BY SEMA*/
 
 
   ASSERT (intr_get_level () == INTR_ON);
@@ -194,6 +199,12 @@ timer_interrupt (struct intr_frame *args UNUSED)
 {
   ticks++;
   thread_tick ();
+
+  struct thread *curThread = thread_current();
+  if(curThread->wakeup_time > ticks)
+  {
+    sema_up(&curThread->sleeper);
+  }
 }
 
 /* Returns true if LOOPS iterations waits for more than one timer
