@@ -102,6 +102,7 @@ test_sleep (int thread_cnt, int iterations)
  /*************************************************************************/ 
   /* Wait long enough for all the threads to finish. */
   my_timer_sleep (100 + thread_cnt * iterations * 10 + 100);
+  /***********************************************************************/
 
   /* Acquire the output lock in case some rogue thread is still
      running. */

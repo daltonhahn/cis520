@@ -104,12 +104,12 @@ my_timer_sleep (int64_t ticks)
   int64_t start = timer_ticks ();
   int64_t wakeup = start + ticks;
   curThread->wakeup_time = wakeup;
-  printf("%d", curThread->wakeup_time);
-  struct semaphore *sleep;
-  sema_init(&sleep, 65);
-  printf("%d", &sleep->value);
-  curThread->sleeper = &sleep;
-  //printf("%d", curThread->sleeper->value);
+  printf("%d\n", curThread->wakeup_time);
+  struct semaphore *sema;
+  sema_init(&sema, 0);
+  curThread->sleeper = sema;
+  printf("WORKING, %d", &curThread->sleeper->value);
+
 
   ASSERT (intr_get_level () == INTR_ON);
   while (timer_elapsed (start) < ticks)
