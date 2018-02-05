@@ -95,7 +95,8 @@ struct thread
 
     /*************************************************************************/
     int wakeup_time;			/* Time that thread is supposed to be woken from sleeping */
-    struct semaphore *sleeper;		/* Semaphore for sleeping and waking up a thread */
+    struct semaphore sleeper;		/* Semaphore for sleeping and waking up a thread */
+    struct list_elem blocked_elem;
 
     /* Shared between thread.c and synch.c. */
     struct list_elem elem;              /* List element. */

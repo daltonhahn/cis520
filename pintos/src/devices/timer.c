@@ -17,6 +17,13 @@
 #error TIMER_FREQ <= 1000 recommended
 #endif
 
+
+static int64_t count = 0;
+
+
+
+
+
 /* Number of timer ticks since OS booted. */
 static int64_t ticks;
 
@@ -107,37 +114,25 @@ my_timer_sleep (int64_t ticks)
 {
 
   ASSERT (intr_get_level () == INTR_ON);
+  list_init(&blocked_list);
 
   //Getting current thread and assigning wakeup time.
   struct thread *curThread = thread_current();
   int64_t start = timer_ticks ();
-  int64_t wakeup = start + ticks;
-  curThread->wakeup_time = wakeup;
+  curThread->wakeup_time = start + ticks;
+
+  printf("\n WAITING: %d TICKS\n", curThread->wakeup_time);
+
+  sema_init(&curThread->sleeper, 10);
+  printf("MADE SEMAPHORE\n");
 
 
+  list_push_front(&blocked_list, &curThread->blocked_elem);
+  printf("MADE IT PAST LIST PUSH");
 
-  printf("%d\n", curThread->wakeup_time);
 
-
-  //Declaring new semaphore initialized to 0 and setting it
-  //to thread's semaphore.
-  struct semaphore *sema;
-  sema_init(&sema, 1);
-  curThread->sleeper = sema;
-  printf("%d, WORKING\n", &curThread->sleeper->value);
   sema_down(&curThread->sleeper);
-  printf("%d\n", &curThread->sleeper->value);
 
-  //Getting blocked list and adding current thread to the list
-  list_init(&blocked_list);
-  list_push_back(&blocked_list, &curThread->sleeper);
-  int64_t b_list_size = list_size (&blocked_list);
-  printf("%d\n", b_list_size);
-
-  
-
-  while (timer_elapsed (start) < ticks)
-    thread_yield();
 }
 /*****************************************************************/
 
@@ -218,25 +213,20 @@ timer_interrupt (struct intr_frame *args UNUSED)
 {
   ticks++;
   thread_tick ();
-
-  struct list_elem *cur = list_begin(&blocked_list);
-
-  while(cur != NULL)
-  {
-    cur = list_next(&cur);
-    printf("Going through list");
-  }
-
-  /*while(curPos != list_end(&blocked_list))
-  {
+  printf("TICKING\n");
   
-  }
+  if(!list_empty(&blocked_list))
+  {
+	  printf("LIST ISN'T EMPTY\n");
+	  struct thread *head;
 
-  if curPos != list_end(&blocked_list)
-  //check all threads in blocked queue and semaphore's
-  //of all threads
-  // call sema_up maybe need to also call switch_thread
-  */
+	  head = list_entry(list_front(&blocked_list), struct thread, blocked_elem);
+
+	  if(head->wakeup_time > ticks)
+	  {
+	    printf("TIME TO WAKEUP");
+	  }
+  }
 }
 
 /* Returns true if LOOPS iterations waits for more than one timer
