@@ -30,6 +30,11 @@ static void busy_wait (int64_t loops);
 static void real_time_sleep (int64_t num, int32_t denom);
 static void real_time_delay (int64_t num, int32_t denom);
 
+
+/**********************************************************/
+static struct list blocked_list;
+/**********************************************************/
+
 /* Sets up the timer to interrupt TIMER_FREQ times per second,
    and registers the corresponding interrupt. */
 void
@@ -100,23 +105,37 @@ timer_sleep (int64_t ticks)
 void
 my_timer_sleep (int64_t ticks)
 {
+
+  ASSERT (intr_get_level () == INTR_ON);
+
+  //Getting current thread and assigning wakeup time.
   struct thread *curThread = thread_current();
   int64_t start = timer_ticks ();
   int64_t wakeup = start + ticks;
   curThread->wakeup_time = wakeup;
+
+
+
   printf("%d\n", curThread->wakeup_time);
+
+
+  //Declaring new semaphore initialized to 0 and setting it
+  //to thread's semaphore.
   struct semaphore *sema;
-  sema_init(&sema, 0);
+  sema_init(&sema, 1);
   curThread->sleeper = sema;
   printf("%d, WORKING\n", &curThread->sleeper->value);
   sema_down(&curThread->sleeper);
   printf("%d\n", &curThread->sleeper->value);
 
-  /* DO WE NEED SEPARATE QUEUES FOR OUR SEMAPHORE WAITERS????*/
-  /* OR CAN WE JUST USE THE SEMAPHORE WAITERS LIST MANAGED BY SEMA*/
+  //Getting blocked list and adding current thread to the list
+  list_init(&blocked_list);
+  list_push_back(&blocked_list, &curThread->sleeper);
+  int64_t b_list_size = list_size (&blocked_list);
+  printf("%d\n", b_list_size);
 
+  
 
-  ASSERT (intr_get_level () == INTR_ON);
   while (timer_elapsed (start) < ticks)
     thread_yield();
 }
@@ -200,11 +219,24 @@ timer_interrupt (struct intr_frame *args UNUSED)
   ticks++;
   thread_tick ();
 
-  struct thread *curThread = thread_current();
-  if(curThread->wakeup_time > ticks)
+  struct list_elem *cur = list_begin(&blocked_list);
+
+  while(cur != NULL)
   {
-    sema_up(&curThread->sleeper);
+    cur = list_next(&cur);
+    printf("Going through list");
   }
+
+  /*while(curPos != list_end(&blocked_list))
+  {
+  
+  }
+
+  if curPos != list_end(&blocked_list)
+  //check all threads in blocked queue and semaphore's
+  //of all threads
+  // call sema_up maybe need to also call switch_thread
+  */
 }
 
 /* Returns true if LOOPS iterations waits for more than one timer
