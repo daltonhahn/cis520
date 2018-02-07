@@ -37,6 +37,8 @@ static void busy_wait (int64_t loops);
 static void real_time_sleep (int64_t num, int32_t denom);
 static void real_time_delay (int64_t num, int32_t denom);
 
+bool orderList(const struct list_elem * left, const struct list_elem * right, void * aux UNUSED);
+
 
 /**********************************************************/
 static struct list blocked_list;
@@ -49,6 +51,9 @@ timer_init (void)
 {
   pit_configure_channel (0, 2, TIMER_FREQ);
   intr_register_ext (0x20, timer_interrupt, "8254 Timer");
+  /*********************************************************/
+  list_init(&blocked_list);
+  /*********************************************************/
 }
 
 /* Calibrates loops_per_tick, used to implement brief delays. */
@@ -113,8 +118,9 @@ void
 my_timer_sleep (int64_t ticks)
 {
 
+  if(ticks <= 0) return;
+
   ASSERT (intr_get_level () == INTR_ON);
-  list_init(&blocked_list);
 
   //Getting current thread and assigning wakeup time.
   struct thread *curThread = thread_current();
@@ -123,11 +129,11 @@ my_timer_sleep (int64_t ticks)
 
   printf("\n WAITING: %d TICKS\n", curThread->wakeup_time);
 
-  sema_init(&curThread->sleeper, 10);
+  sema_init(&curThread->sleeper, 0);
   printf("MADE SEMAPHORE\n");
 
 
-  list_push_front(&blocked_list, &curThread->blocked_elem);
+  list_insert_ordered (&blocked_list, &curThread->blocked_elem, &orderList, NULL);
   printf("MADE IT PAST LIST PUSH");
 
 
@@ -213,19 +219,13 @@ timer_interrupt (struct intr_frame *args UNUSED)
 {
   ticks++;
   thread_tick ();
-  printf("TICKING\n");
-  
-  if(!list_empty(&blocked_list))
-  {
-	  printf("LIST ISN'T EMPTY\n");
-	  struct thread *head;
 
-	  head = list_entry(list_front(&blocked_list), struct thread, blocked_elem);
-
-	  if(head->wakeup_time > ticks)
-	  {
-	    printf("TIME TO WAKEUP");
-	  }
+  struct thread * firstThread;
+  while (!list_empty(&blocked_list)) {
+	  firstThread = list_entry(list_front(&blocked_list), struct thread, blocked_elem);
+	  if (firstThread->wakeup_time > ticks) break;
+	  list_pop_front(&blocked_list);
+	  sema_up(&firstThread->sleeper);
   }
 }
 
@@ -298,4 +298,13 @@ real_time_delay (int64_t num, int32_t denom)
      the possibility of overflow. */
   ASSERT (denom % 1000 == 0);
   busy_wait (loops_per_tick * num / 1000 * TIMER_FREQ / (denom / 1000)); 
+}
+
+
+
+
+
+bool orderList(const struct list_elem * left, const struct list_elem * right, void * aux UNUSED)
+{
+  return list_entry (left, struct thread, blocked_elem)->wakeup_time <= list_entry (right, struct thread, blocked_elem)->wakeup_time;
 }
