@@ -35,7 +35,7 @@ static bool too_many_loops (unsigned loops);
 static void busy_wait (int64_t loops);
 static void real_time_sleep (int64_t num, int32_t denom);
 static void real_time_delay (int64_t num, int32_t denom);
-bool compareWakeupTicks(const struct list_elem * left, const struct list_elem * right, void * aux UNUSED);
+bool wakeup_ticks_less (const struct list_elem *a_, const struct list_elem *b_, void *aux UNUSED);
 
 /* Sets up the timer to interrupt TIMER_FREQ times per second,
    and registers the corresponding interrupt. */
@@ -119,7 +119,7 @@ timer_sleep (int64_t ticks)
   lock_acquire(&sleep_lock);
 
   // Insert current thread into the sleep_list ordered by compareWakeupTicks
-  list_insert_ordered (&sleep_list, &currentThread->sleep_elem, &compareWakeupTicks, NULL);
+  list_insert_ordered (&sleep_list, &currentThread->sleep_elem, &wakeup_ticks_less, NULL);
 
   lock_release(&sleep_lock);
 
@@ -294,8 +294,13 @@ real_time_delay (int64_t num, int32_t denom)
 }
 
 /* Function to compare a threads wake up time to use when inserting into sleep_list*/
-bool compareWakeupTicks(const struct list_elem * left, const struct list_elem * right, void * aux UNUSED)
+bool
+wakeup_ticks_less (const struct list_elem *a_, const struct list_elem *b_,
+            void *aux UNUSED) 
 {
-  return list_entry (left, struct thread, sleep_elem)->wakeup_ticks <= list_entry (right, struct thread, sleep_elem)->wakeup_ticks;
+  const struct thread *a = list_entry (a_, struct thread, sleep_elem);
+  const struct thread *b = list_entry (b_, struct thread, sleep_elem);
+  
+  return a->wakeup_ticks < b->wakeup_ticks;
 }
 
