@@ -108,6 +108,7 @@ struct thread
     /* semaphore that controls when a thread sleeps */
     struct semaphore sleep_sema;
 
+    /* list element for sleep_list in timer.c */
     struct list_elem sleep_elem;
   };
 
