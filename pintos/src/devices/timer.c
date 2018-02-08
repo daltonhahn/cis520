@@ -27,6 +27,9 @@ static unsigned loops_per_tick;
 /* List to keep track of threads that are blocked */
 static struct list sleep_list;
 
+/* Lock for the sleep_list */
+static struct lock sleep_lock;
+
 static intr_handler_func timer_interrupt;
 static bool too_many_loops (unsigned loops);
 static void busy_wait (int64_t loops);
@@ -42,6 +45,7 @@ timer_init (void)
   pit_configure_channel (0, 2, TIMER_FREQ);
   intr_register_ext (0x20, timer_interrupt, "8254 Timer");
   list_init(&sleep_list);
+  lock_init(&sleep_lock);
 }
 
 /* Calibrates loops_per_tick, used to implement brief delays. */
@@ -112,8 +116,12 @@ timer_sleep (int64_t ticks)
 
   ASSERT (intr_get_level () == INTR_ON);
 
+  lock_acquire(&sleep_lock);
+
   // Insert current thread into the sleep_list ordered by compareWakeupTicks
   list_insert_ordered (&sleep_list, &currentThread->sleep_elem, &compareWakeupTicks, NULL);
+
+  lock_release(&sleep_lock);
 
   // Sleep current thread
   sema_down(&currentThread->sleep_sema);
@@ -198,7 +206,7 @@ timer_interrupt (struct intr_frame *args UNUSED)
 
   // Pointer to first thread in sleep_list
   struct thread * firstThread;
-  //Add LOCK here to protect sleep_list
+
   while (!list_empty(&sleep_list)) {
     // Get pointer to the first thread
     firstThread = list_entry(list_front(&sleep_list), struct thread, sleep_elem);
@@ -212,7 +220,6 @@ timer_interrupt (struct intr_frame *args UNUSED)
     // Wake first thread
     sema_up(&firstThread->sleep_sema);
   }
-  //Add release LOCK here
 }
 
 /* Returns true if LOOPS iterations waits for more than one timer
