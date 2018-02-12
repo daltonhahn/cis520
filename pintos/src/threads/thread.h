@@ -108,7 +108,6 @@ struct thread
     /* semaphore that controls when a thread sleeps */
     struct semaphore sleep_sema;
 
-    /* list element for sleep_list in timer.c */
     struct list_elem sleep_elem;
   };
 
@@ -147,5 +146,7 @@ int thread_get_nice (void);
 void thread_set_nice (int);
 int thread_get_recent_cpu (void);
 int thread_get_load_avg (void);
+
+void thread_try_preempt(void);
 
 #endif /* threads/thread.h */
