@@ -112,12 +112,25 @@ sema_up (struct semaphore *sema)
 
   ASSERT (sema != NULL);
 
+
+
+  struct thread *t;
+  // struct thread *cur;
+  /* checks if current thread should yield */
+
   old_level = intr_disable ();
   if (!list_empty (&sema->waiters)) 
-    thread_unblock (list_entry (list_pop_front (&sema->waiters),
-                                struct thread, elem));
+  {
+    t = list_entry (list_pop_front (&sema->waiters), struct thread, elem);
+    thread_unblock (t);
+    //cur = thread_current();
+  }
   sema->value++;
-  intr_set_level (old_level);
+
+  thread_try_preempt();
+
+  intr_set_level(old_level);
+
 }
 
 static void sema_test_helper (void *sema_);
