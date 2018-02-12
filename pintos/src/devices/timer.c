@@ -20,10 +20,6 @@
 
 static int64_t count = 0;
 
-
-
-
-
 /* Number of timer ticks since OS booted. */
 static int64_t ticks;
 
@@ -37,10 +33,10 @@ static void busy_wait (int64_t loops);
 static void real_time_sleep (int64_t num, int32_t denom);
 static void real_time_delay (int64_t num, int32_t denom);
 
-bool orderList(const struct list_elem * left, const struct list_elem * right, void * aux UNUSED);
-
 
 /**********************************************************/
+bool orderList(const struct list_elem * left, const struct list_elem * right, void * aux UNUSED);
+
 static struct list blocked_list;
 /**********************************************************/
 
@@ -103,42 +99,17 @@ timer_elapsed (int64_t then)
 
 /* Sleeps for approximately TICKS timer ticks.  Interrupts must
    be turned on. */
-void
-timer_sleep (int64_t ticks) 
-{
-  int64_t start = timer_ticks ();
-
-  ASSERT (intr_get_level () == INTR_ON);
-  while (timer_elapsed (start) < ticks) 
-    thread_yield ();
-}
-
 /******************************************************************/
 void
-my_timer_sleep (int64_t ticks)
+timer_sleep (int64_t ticks)
 {
-
-  if(ticks <= 0) return;
-
   ASSERT (intr_get_level () == INTR_ON);
-
-  //Getting current thread and assigning wakeup time.
-  struct thread *curThread = thread_current();
-  int64_t start = timer_ticks ();
-  curThread->wakeup_time = start + ticks;
-
-  printf("\n WAITING: %d TICKS\n", curThread->wakeup_time);
-
-  sema_init(&curThread->sleeper, 0);
-  printf("MADE SEMAPHORE\n");
-
-
-  list_insert_ordered (&blocked_list, &curThread->blocked_elem, &orderList, NULL);
-  printf("MADE IT PAST LIST PUSH");
-
-
-  sema_down(&curThread->sleeper);
-
+  struct thread *curThread = thread_current();	/* Get current thread object */
+  int64_t start = timer_ticks ();		/* Set base tick timer to start */
+  curThread->wakeup_time = start + ticks;	/* Set up thread's wakeup time with start value and parameter*/
+  sema_init(&curThread->sleeper, 0);		/* Initialize thread's semaphore */
+  list_insert_ordered (&blocked_list, &curThread->blocked_elem, &orderList, NULL); /* Add thread to blocked list */
+  sema_down(&curThread->sleeper);		/* Put thread to sleep */
 }
 /*****************************************************************/
 
@@ -212,20 +183,27 @@ timer_print_stats (void)
 {
   printf ("Timer: %"PRId64" ticks\n", timer_ticks ());
 }
-
+
 /* Timer interrupt handler. */
 static void
 timer_interrupt (struct intr_frame *args UNUSED)
 {
+  // Increment ticks as normal
   ticks++;
   thread_tick ();
 
-  struct thread * firstThread;
+  //Check sleeping list
+  struct thread * firstThread;		/* Declare thread pointer */
+
+  //Check if waiting list is empty, if not, check wakeup time of first item
   while (!list_empty(&blocked_list)) {
-	  firstThread = list_entry(list_front(&blocked_list), struct thread, blocked_elem);
-	  if (firstThread->wakeup_time > ticks) break;
-	  list_pop_front(&blocked_list);
-	  sema_up(&firstThread->sleeper);
+    //Pull first list_elem to check wakeup time
+    firstThread = list_entry(list_front(&blocked_list), struct thread, blocked_elem);
+
+    if (firstThread->wakeup_time > ticks) break; /* If not ready to wakeup, do nothing */
+
+    list_pop_front(&blocked_list);	/* Remove first item from list */
+    sema_up(&firstThread->sleeper);	/* Wake up thread */
   }
 }
 
@@ -300,11 +278,18 @@ real_time_delay (int64_t num, int32_t denom)
   busy_wait (loops_per_tick * num / 1000 * TIMER_FREQ / (denom / 1000)); 
 }
 
-
-
-
-
-bool orderList(const struct list_elem * left, const struct list_elem * right, void * aux UNUSED)
+/*************************************************************************/
+bool orderList(const struct list_elem *left, const struct list_elem *right, void *aux UNUSED)
 {
-  return list_entry (left, struct thread, blocked_elem)->wakeup_time <= list_entry (right, struct thread, blocked_elem)->wakeup_time;
+  int64_t left_wakeup = list_entry(left, struct thread, blocked_elem)->wakeup_time;
+  int64_t right_wakeup = list_entry(right, struct thread, blocked_elem)->wakeup_time;
+  if(left_wakeup <= right_wakeup)
+  {
+    return 1;
+  }
+  else
+  {
+    return 0;
+  }
 }
+/************************************************************************/
