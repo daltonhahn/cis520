@@ -38,6 +38,7 @@ static void real_time_delay (int64_t num, int32_t denom);
 bool orderList(const struct list_elem * left, const struct list_elem * right, void * aux UNUSED);
 
 static struct list blocked_list;
+static struct lock blocked_lock;
 /**********************************************************/
 
 /* Sets up the timer to interrupt TIMER_FREQ times per second,
@@ -49,6 +50,7 @@ timer_init (void)
   intr_register_ext (0x20, timer_interrupt, "8254 Timer");
   /*********************************************************/
   list_init(&blocked_list);
+  lock_init(&blocked_lock);
   /*********************************************************/
 }
 
@@ -108,7 +110,9 @@ timer_sleep (int64_t ticks)
   int64_t start = timer_ticks ();		/* Set base tick timer to start */
   curThread->wakeup_time = start + ticks;	/* Set up thread's wakeup time with start value and parameter*/
   sema_init(&curThread->sleeper, 0);		/* Initialize thread's semaphore */
+  lock_acquire(&blocked_lock);
   list_insert_ordered (&blocked_list, &curThread->blocked_elem, &orderList, NULL); /* Add thread to blocked list */
+  lock_release(&blocked_lock);
   sema_down(&curThread->sleeper);		/* Put thread to sleep */
 }
 /*****************************************************************/
@@ -194,7 +198,7 @@ timer_interrupt (struct intr_frame *args UNUSED)
 
   //Check sleeping list
   struct thread * firstThread;		/* Declare thread pointer */
-
+  
   //Check if waiting list is empty, if not, check wakeup time of first item
   while (!list_empty(&blocked_list)) {
     //Pull first list_elem to check wakeup time
