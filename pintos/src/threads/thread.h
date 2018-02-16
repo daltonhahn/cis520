@@ -108,7 +108,11 @@ struct thread
     /* semaphore that controls when a thread sleeps */
     struct semaphore sleep_sema;
 
+    /* list_elem for sleep_list in timer.c*/
     struct list_elem sleep_elem;
+
+    /* priorirty inherited by another thread*/
+    int inherited_priority;
   };
 
 /* If false (default), use round-robin scheduler.
