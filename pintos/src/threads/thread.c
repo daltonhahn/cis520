@@ -203,6 +203,9 @@ thread_create (const char *name, int priority,
   /* Add to run queue. */
   thread_unblock (t);
 
+  //tries to preempt current thread if priority of new thread is higher
+  thread_try_preempt();
+
   return tid;
 }
 
@@ -600,7 +603,6 @@ void
 thread_try_preempt(void)
 {
   struct thread *cur = thread_current();
-  //struct thread *next = ;
 
   if (!list_empty(&ready_list) && (cur->priority < list_entry(list_front(&ready_list), struct thread, elem)->priority))
   {
