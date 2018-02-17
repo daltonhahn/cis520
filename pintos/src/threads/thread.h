@@ -112,7 +112,13 @@ struct thread
     struct list_elem sleep_elem;
 
     /* priorirty inherited by another thread*/
-    int inherited_priority;
+
+    struct list donated_priorities;
+    struct list priority_recipients;
+    struct list_elem pri_elem;
+    struct list_elem recp_elem;
+
+
   };
 
 /* If false (default), use round-robin scheduler.
@@ -152,5 +158,8 @@ int thread_get_recent_cpu (void);
 int thread_get_load_avg (void);
 
 void thread_try_preempt(void);
+
+
+bool priority_great(const struct list_elem *a, const struct list_elem *b, void *aux UNUSED);
 
 #endif /* threads/thread.h */

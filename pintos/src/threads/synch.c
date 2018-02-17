@@ -204,6 +204,52 @@ lock_acquire (struct lock *lock)
   ASSERT (!intr_context ());
   ASSERT (!lock_held_by_current_thread (lock));
 
+
+
+/* Store the max priority (innate or inherited) of the thread that
+     holds the lock */
+  int max_pri = lock->holder->priority;
+
+  /* If the lock is already owned... */
+  if(lock->semaphore.value == 0)
+  {
+    /*  Check to see if a donated priority is higher than the innate priority */
+    if(!list_empty(&lock->holder->donated_priorities))
+    {
+      max_pri = list_entry(list_front(&lock->holder->donated_priorities), struct thread, pri_elem)->priority;
+    }
+
+    /* If the thread with the lock has a lower priority than the current thread,
+       then donate our priority to it */
+    if(thread_get_priority() > max_pri)
+    {
+      /* Add the lock holding thread priority the the current threads
+         priority_recipients. */
+      list_insert_ordered(&thread_current()->priority_recipients, &lock->holder->recp_elem, priority_great, NULL);
+
+      /* Add the current threads priority to the lock holders donated_priorities list.
+         Also donates its priority up to one more level (if necessary). */
+      if(!list_empty(&thread_current()->priority_recipients))
+      {
+        for (struct list_elem *e = list_begin(&thread_current()->priority_recipients); e != list_end(&thread_current()->priority_recipients); e = list_next(e))
+        {
+          struct thread *cur_thread = list_entry (e, struct thread, recp_elem);
+          if(!list_empty(&cur_thread->priority_recipients)) {
+            for (struct list_elem *ee = list_begin(&cur_thread->priority_recipients); ee != list_end(&cur_thread->priority_recipients); ee = list_next(ee))
+            {
+              struct thread *child_thread = list_entry (ee, struct thread, recp_elem);
+              list_insert_ordered(&child_thread->donated_priorities, &thread_current()->pri_elem, priority_great, NULL);
+            }
+          }
+          list_insert_ordered(&cur_thread->donated_priorities, &thread_current()->pri_elem, priority_great, NULL);
+        }
+      }
+      /* Runs to scheudle the threads with the newly donated prioirty
+         taken into account */
+      thread_set_priority(thread_current()->priority);
+    }
+  }
+
   sema_down (&lock->semaphore);
   lock->holder = thread_current ();
 }
@@ -238,6 +284,30 @@ lock_release (struct lock *lock)
 {
   ASSERT (lock != NULL);
   ASSERT (lock_held_by_current_thread (lock));
+
+  /* Only account for donated priority if there are threads waiting on this lock. */
+  if (!list_empty(&lock->semaphore.waiters))
+  {
+    /* Iterate through all of the waiting threads to see if they exist
+       within the current threads donate list. If so, we need to remove
+       their donation from the current threads donate list. */
+    for (struct list_elem *e = list_begin(&lock->semaphore.waiters); e != list_end(&lock->semaphore.waiters); e = list_next(e))
+    {
+      struct thread *parent_thread = list_entry (e, struct thread, elem);
+      if(!list_empty(&thread_current()->donated_priorities))
+      {
+        for (struct list_elem *ee = list_begin(&thread_current()->donated_priorities); ee != list_end(&thread_current()->donated_priorities); ee = list_next(ee))
+        {
+          if (&parent_thread->pri_elem == ee)
+          {
+            list_remove(ee);
+            break;
+          }
+        }
+      }
+    }
+  }
+
 
   lock->holder = NULL;
   sema_up (&lock->semaphore);

@@ -350,10 +350,22 @@ thread_set_priority (int new_priority)
 int
 thread_get_priority (void) 
 {
+  if(!list_empty(&thread_current()->donated_priorities))
+  {
+    int inherited_pri = list_entry(list_front(&thread_current()->donated_priorities), struct thread, pri_elem)->priority;
+    if(thread_current()->priority < inherited_pri)
+    {
+      return inherited_pri;
+    }
+  }
+  return thread_current()->priority;
+
+  /*
   // Returns largest priority
   struct thread* cur = thread_current();
   if(cur->priority >= cur->inherited_priority) return cur->priority;
   return cur->inherited_priority;
+  */
 }
 
 /* Sets the current thread's nice value to NICE. */
@@ -474,9 +486,12 @@ init_thread (struct thread *t, const char *name, int priority)
   t->stack = (uint8_t *) t + PGSIZE;
   t->priority = priority;
   // initializes inhereted_priority to 0
-  t->inherited_priority = 0;
 
   t->magic = THREAD_MAGIC;
+
+  list_init(&t->donated_priorities);
+  list_init(&t->priority_recipients);
+
 
   old_level = intr_disable ();
   list_push_back (&all_list, &t->allelem);
