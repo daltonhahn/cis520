@@ -89,7 +89,16 @@ struct thread
     char name[16];                      /* Name (for debugging purposes). */
     uint8_t *stack;                     /* Saved stack pointer. */
     int priority;                       /* Priority. */
+    struct list donated_priorities;     /* List of priorities that have been donated to this thread. */
+
+    struct list priority_recipients;    /* List of threads that this thread has donated to. */
+    struct list_elem pri_elem;          /* List element for keeping track of donated priorities (in thread form - for donated_priorities). */
+    struct list_elem recp_elem;         /* A list element for keeping track of this thread in a priority_recipients list. */
+
     struct list_elem allelem;           /* List element for all threads list. */
+    struct semaphore sema;              /* Stores a semaphore local to the thread. */
+    int64_t sleep_duration;             /* Stores how long the thread sleeps (if applicable) */
+    struct list_elem timer_sleep_elem;  /* List element for the keeping track of sleeping threads in timer */
 
     /* Shared between thread.c and synch.c. */
     struct list_elem elem;              /* List element. */
@@ -101,24 +110,6 @@ struct thread
 
     /* Owned by thread.c. */
     unsigned magic;                     /* Detects stack overflow. */
-    
-    /* tick number to wake up at*/
-    int64_t wakeup_ticks;
-
-    /* semaphore that controls when a thread sleeps */
-    struct semaphore sleep_sema;
-
-    /* list_elem for sleep_list in timer.c*/
-    struct list_elem sleep_elem;
-
-    /* priorirty inherited by another thread*/
-
-    struct list donated_priorities;
-    struct list priority_recipients;
-    struct list_elem pri_elem;
-    struct list_elem recp_elem;
-
-
   };
 
 /* If false (default), use round-robin scheduler.
@@ -157,11 +148,18 @@ void thread_set_nice (int);
 int thread_get_recent_cpu (void);
 int thread_get_load_avg (void);
 
-void thread_try_preempt(void);
+/* List compare function for inserting threads based on sleep time. */
+bool thread_sleep_compare (const struct list_elem *left, const struct list_elem *right, void *aux UNUSED);
 
-
+/* List compare function for inserting threads into the ready_list based on prioirty. */
 bool thread_priority_compare (const struct list_elem *left, const struct list_elem *right, void *aux UNUSED);
+
+/* List compare function for inserting threads into a threads' donation_list or
+   priority_list based on prioirty. */
 bool thread_priority_compare_donated (const struct list_elem *left, const struct list_elem *right, void *aux UNUSED);
+
+/* Check to see if the thread passed in has a higher priority
+then than the currently running thread. */
 void thread_priority_check (struct thread *t);
 
 #endif /* threads/thread.h */
