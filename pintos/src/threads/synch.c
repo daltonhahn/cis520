@@ -68,7 +68,7 @@ sema_down (struct semaphore *sema)
   old_level = intr_disable ();
   while (sema->value == 0) 
     {
-      list_push_back (&sema->waiters, &thread_current ()->elem);
+      list_insert_ordered(&sema->waiters, &thread_current()->elem, thread_priority_compare, NULL);
       thread_block ();
     }
   sema->value--;
@@ -117,6 +117,7 @@ sema_up (struct semaphore *sema)
   old_level = intr_disable ();
   if (!list_empty (&sema->waiters)) 
   {
+    list_sort(&sema->waiters, thread_priority_compare, NULL);
     t = list_entry (list_pop_front (&sema->waiters), struct thread, elem);
     thread_unblock (t);
   }
@@ -225,7 +226,7 @@ lock_acquire (struct lock *lock)
     {
       /* Add the lock holding thread priority the the current threads
          priority_recipients. */
-      list_insert_ordered(&thread_current()->priority_recipients, &lock->holder->recp_elem, priority_great, NULL);
+      list_insert_ordered(&thread_current()->priority_recipients, &lock->holder->recp_elem, thread_priority_compare_donated, NULL);
 
       /* Add the current threads priority to the lock holders donated_priorities list.
          Also donates its priority up to one more level (if necessary). */
@@ -238,10 +239,10 @@ lock_acquire (struct lock *lock)
             for (struct list_elem *ee = list_begin(&cur_thread->priority_recipients); ee != list_end(&cur_thread->priority_recipients); ee = list_next(ee))
             {
               struct thread *child_thread = list_entry (ee, struct thread, recp_elem);
-              list_insert_ordered(&child_thread->donated_priorities, &thread_current()->pri_elem, priority_great, NULL);
+              list_insert_ordered(&child_thread->donated_priorities, &thread_current()->pri_elem, thread_priority_compare_donated, NULL);
             }
           }
-          list_insert_ordered(&cur_thread->donated_priorities, &thread_current()->pri_elem, priority_great, NULL);
+          list_insert_ordered(&cur_thread->donated_priorities, &thread_current()->pri_elem, thread_priority_compare_donated, NULL);
         }
       }
       /* Runs to scheudle the threads with the newly donated prioirty

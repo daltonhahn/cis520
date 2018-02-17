@@ -160,6 +160,8 @@ int thread_get_load_avg (void);
 void thread_try_preempt(void);
 
 
-bool priority_great(const struct list_elem *a, const struct list_elem *b, void *aux UNUSED);
+bool thread_priority_compare (const struct list_elem *left, const struct list_elem *right, void *aux UNUSED);
+bool thread_priority_compare_donated (const struct list_elem *left, const struct list_elem *right, void *aux UNUSED);
+void thread_priority_check (struct thread *t);
 
 #endif /* threads/thread.h */
