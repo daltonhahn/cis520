@@ -110,9 +110,9 @@ timer_sleep (int64_t ticks)
   int64_t start = timer_ticks ();		/* Set base tick timer to start */
   curThread->wakeup_time = start + ticks;	/* Set up thread's wakeup time with start value and parameter*/
   sema_init(&curThread->sleeper, 0);		/* Initialize thread's semaphore */
-  lock_acquire(&blocked_lock);
+  lock_acquire(&blocked_lock);			/* Restrict access to blocked list */
   list_insert_ordered (&blocked_list, &curThread->blocked_elem, &orderList, NULL); /* Add thread to blocked list */
-  lock_release(&blocked_lock);
+  lock_release(&blocked_lock);			/* Restrict access to blocked list */
   sema_down(&curThread->sleeper);		/* Put thread to sleep */
 }
 /*****************************************************************/
