@@ -89,6 +89,7 @@ struct thread
     char name[16];                      /* Name (for debugging purposes). */
     uint8_t *stack;                     /* Saved stack pointer. */
     int priority;                       /* Priority. */
+
     struct list donated_priorities;     /* List of priorities that have been donated to this thread. */
 
     struct list priority_recipients;    /* List of threads that this thread has donated to. */
@@ -149,7 +150,7 @@ int thread_get_recent_cpu (void);
 int thread_get_load_avg (void);
 
 /* List compare function for inserting threads based on sleep time. */
-bool thread_sleep_compare (const struct list_elem *left, const struct list_elem *right, void *aux UNUSED);
+//bool thread_sleep_compare (const struct list_elem *left, const struct list_elem *right, void *aux UNUSED);
 
 /* List compare function for inserting threads into the ready_list based on prioirty. */
 bool thread_priority_compare (const struct list_elem *left, const struct list_elem *right, void *aux UNUSED);
