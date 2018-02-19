@@ -227,9 +227,9 @@ lock_acquire (struct lock *lock)
   {
     // check if a thread's donated priority is higher than normal priority,
     // if so, reset highest priority to donated priority value
-    if(!list_empty(&lock->holder->donated_priorities))	
+    if(!list_empty(&lock->holder->priorities_received))	
     {						
-      max_pri = list_entry(list_front(&lock->holder->donated_priorities), struct thread, pri_elem)->priority;
+      max_pri = list_entry(list_front(&lock->holder->priorities_received), struct thread, don_elem)->priority;
     }
 
     // if the current thread has a higher priority than the lock holder, begin donation process
@@ -239,23 +239,23 @@ lock_acquire (struct lock *lock)
 
       // Currently running thread is going to donate it's priority to lock holder,
       // it's recipient list must be updated to include the lock holder's old priority in order to be able to revert
-      list_insert_ordered(&thread_current()->priority_recipients, &lock->holder->recp_elem, thread_priority_compare_donated, NULL);
+      list_insert_ordered(&thread_current()->priorities_given, &lock->holder->give_elem, thread_priority_compare_donated, NULL);
 
       // Lock holder is going to update it's priority with the currently running thread's priority
       // Lock holder needs to update it's donated list with the currently running thread's priority
-      if(!list_empty(&thread_current()->priority_recipients))
+      if(!list_empty(&thread_current()->priorities_given))
       {
-        for (struct list_elem *e = list_begin(&thread_current()->priority_recipients); e != list_end(&thread_current()->priority_recipients); e = list_next(e))
+        for (struct list_elem *e = list_begin(&thread_current()->priorities_given); e != list_end(&thread_current()->priorities_given); e = list_next(e))
         {
-          struct thread *cur_thread = list_entry (e, struct thread, recp_elem);
-          if(!list_empty(&cur_thread->priority_recipients)) {
-            for (struct list_elem *ee = list_begin(&cur_thread->priority_recipients); ee != list_end(&cur_thread->priority_recipients); ee = list_next(ee))
+          struct thread *cur_thread = list_entry (e, struct thread, give_elem);
+          if(!list_empty(&cur_thread->priorities_given)) {
+            for (struct list_elem *ee = list_begin(&cur_thread->priorities_given); ee != list_end(&cur_thread->priorities_given); ee = list_next(ee))
             {
-              struct thread *child_thread = list_entry (ee, struct thread, recp_elem);
-              list_insert_ordered(&child_thread->donated_priorities, &thread_current()->pri_elem, thread_priority_compare_donated, NULL);
+              struct thread *child_thread = list_entry (ee, struct thread, give_elem);
+              list_insert_ordered(&child_thread->priorities_received, &thread_current()->don_elem, thread_priority_compare_donated, NULL);
             }
           }
-          list_insert_ordered(&cur_thread->donated_priorities, &thread_current()->pri_elem, thread_priority_compare_donated, NULL);
+          list_insert_ordered(&cur_thread->priorities_received, &thread_current()->don_elem, thread_priority_compare_donated, NULL);
         }
       }
 
@@ -314,11 +314,11 @@ lock_release (struct lock *lock)
     for (struct list_elem *e = list_begin(&lock->semaphore.waiters); e != list_end(&lock->semaphore.waiters); e = list_next(e))
     {
       struct thread *parent_thread = list_entry (e, struct thread, elem);
-      if(!list_empty(&thread_current()->donated_priorities))
+      if(!list_empty(&thread_current()->priorities_received))
       {
-        for (struct list_elem *ee = list_begin(&thread_current()->donated_priorities); ee != list_end(&thread_current()->donated_priorities); ee = list_next(ee))
+        for (struct list_elem *ee = list_begin(&thread_current()->priorities_received); ee != list_end(&thread_current()->priorities_received); ee = list_next(ee))
         {
-          if (&parent_thread->pri_elem == ee)
+          if (&parent_thread->don_elem== ee)
           {
             list_remove(ee);
             break;

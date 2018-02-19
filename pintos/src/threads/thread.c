@@ -411,9 +411,9 @@ int
 thread_get_priority (void)
 {
   // find donated priority values to the thread
-  if(!list_empty(&thread_current()->donated_priorities))
+  if(!list_empty(&thread_current()->priorities_received))
   {
-    int inherited_pri = list_entry(list_front(&thread_current()->donated_priorities), struct thread, pri_elem)->priority;
+    int inherited_pri = list_entry(list_front(&thread_current()->priorities_received), struct thread, don_elem)->priority;
     if(thread_current()->priority < inherited_pri)
     {
       return inherited_pri;
@@ -545,9 +545,9 @@ init_thread (struct thread *t, const char *name, int priority)
   t->priority = priority;
   t->magic = THREAD_MAGIC;
 
-  list_init(&t->donated_priorities);
+  list_init(&t->priorities_received);
 
-  list_init(&t->priority_recipients);
+  list_init(&t->priorities_given);
 
   list_push_back (&all_list, &t->allelem);
 }
@@ -680,13 +680,13 @@ thread_priority_compare (const struct list_elem *left, const struct list_elem *r
 
   bool was_donated = false;
 
-  if(!list_empty(&left_thread->donated_priorities))
+  if(!list_empty(&left_thread->priorities_received))
   {
-    left_pri_max = list_entry(list_front(&left_thread->donated_priorities), struct thread, pri_elem)->priority;
+    left_pri_max = list_entry(list_front(&left_thread->priorities_received), struct thread, don_elem)->priority;
   }
-  if(!list_empty(&right_thread->donated_priorities))
+  if(!list_empty(&right_thread->priorities_received))
   {
-    right_pri_max = list_entry(list_front(&right_thread->donated_priorities), struct thread, pri_elem)->priority;
+    right_pri_max = list_entry(list_front(&right_thread->priorities_received), struct thread, don_elem)->priority;
     was_donated = true;
   }
 
@@ -704,21 +704,21 @@ thread_priority_compare (const struct list_elem *left, const struct list_elem *r
 bool
 thread_priority_compare_donated (const struct list_elem *left, const struct list_elem *right, void *aux UNUSED)
 {
-  struct thread *left_thread = list_entry(left, struct thread, pri_elem);
-  struct thread *right_thread = list_entry(right, struct thread, pri_elem);
+  struct thread *left_thread = list_entry(left, struct thread, don_elem);
+  struct thread *right_thread = list_entry(right, struct thread, don_elem);
 
   int left_pri_max = left_thread->priority;
   int right_pri_max = right_thread->priority;
 
-  if(!list_empty(&left_thread->donated_priorities))
+  if(!list_empty(&left_thread->priorities_received))
   {
-    int inherited_pri_left = list_entry(list_front(&left_thread->donated_priorities), struct thread, pri_elem)->priority;
+    int inherited_pri_left = list_entry(list_front(&left_thread->priorities_received), struct thread, don_elem)->priority;
     if(left_pri_max < inherited_pri_left)
       left_pri_max = inherited_pri_left;
   }
-  if(!list_empty(&right_thread->donated_priorities))
+  if(!list_empty(&right_thread->priorities_received))
   {
-    int inherited_pri_right = list_entry(list_front(&right_thread->donated_priorities), struct thread, pri_elem)->priority;
+    int inherited_pri_right = list_entry(list_front(&right_thread->priorities_received), struct thread, don_elem)->priority;
     if(right_pri_max < inherited_pri_right)
       right_pri_max = inherited_pri_right;
   }
@@ -734,9 +734,9 @@ void
 thread_priority_check (struct thread *t)
 {
   int max_pri = t->priority;
-  if (!list_empty(&t->donated_priorities))
+  if (!list_empty(&t->priorities_received))
   {
-    int inherited_pri = list_entry(list_front(&t->donated_priorities), struct thread, pri_elem)->priority;
+    int inherited_pri = list_entry(list_front(&t->priorities_received), struct thread, don_elem)->priority;
     if (max_pri < inherited_pri)
       max_pri = inherited_pri;
   }

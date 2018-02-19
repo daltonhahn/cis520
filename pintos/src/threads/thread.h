@@ -108,10 +108,10 @@ struct thread
 
     /******************************************************/
     /* PART TWO */
-    struct list donated_priorities;     /* List of priorities that have been donated to this thread. */
-    struct list priority_recipients;    /* List of threads that this thread has donated to. */
-    struct list_elem pri_elem;          /* List element for keeping track of donated priorities (in thread form - for donated_priorities). */
-    struct list_elem recp_elem;         /* A list element for keeping track of this thread in a priority_recipients list. */
+    struct list priorities_received;     /* List of priorities that have been donated to this thread. */
+    struct list priorities_given;	 /* List of threads that this thread has donated to. */
+    struct list_elem don_elem;          /* List element for keeping track of donated priorities (in thread form - for donated_priorities). */
+    struct list_elem give_elem;         /* A list element for keeping track of this thread in a priority_recipients list. */
     /* PART TWO */
     /******************************************************/
 
