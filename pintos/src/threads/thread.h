@@ -149,9 +149,6 @@ void thread_set_nice (int);
 int thread_get_recent_cpu (void);
 int thread_get_load_avg (void);
 
-/* List compare function for inserting threads based on sleep time. */
-//bool thread_sleep_compare (const struct list_elem *left, const struct list_elem *right, void *aux UNUSED);
-
 /* List compare function for inserting threads into the ready_list based on prioirty. */
 bool thread_priority_compare (const struct list_elem *left, const struct list_elem *right, void *aux UNUSED);
 

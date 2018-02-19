@@ -184,11 +184,6 @@ thread_create (const char *name, int priority,
   init_thread (t, name, priority);
   tid = t->tid = allocate_tid ();
 
-  /* Prepare thread for first run by initializing its stack.
-     Do this atomically so intermediate values for the 'stack'
-     member cannot be observed. */
-  old_level = intr_disable ();
-
   /* Stack frame for kernel_thread(). */
   kf = alloc_frame (t, sizeof *kf);
   kf->eip = NULL;
@@ -203,8 +198,6 @@ thread_create (const char *name, int priority,
   sf = alloc_frame (t, sizeof *sf);
   sf->eip = switch_entry;
   sf->ebp = 0;
-
-  intr_set_level (old_level);
 
   /* Add to run queue. */
   thread_unblock (t);
@@ -233,7 +226,7 @@ thread_block (void)
   schedule ();
 }
 
-/* Transitions a ed thread T to the ready-to-run state.
+/* Transitions a blocked thread T to the ready-to-run state.
    This is an error if T is not blocked.  (Use thread_yield() to
    make the running thread ready.)
 
