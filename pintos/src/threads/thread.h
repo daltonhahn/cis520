@@ -90,11 +90,13 @@ struct thread
     uint8_t *stack;                     /* Saved stack pointer. */
     int priority;                       /* Priority. */
 
+    /* Beginning of copied code from https://github.com/mhixon/CIS520project1 */
     struct list donated_priorities;     /* List of priorities that have been donated to this thread. */
 
     struct list priority_recipients;    /* List of threads that this thread has donated to. */
     struct list_elem pri_elem;          /* List element for keeping track of donated priorities (in thread form - for donated_priorities). */
     struct list_elem recp_elem;         /* A list element for keeping track of this thread in a priority_recipients list. */
+    /* End of copied code from https://github.com/mhixon/CIS520project1 */
 
     struct list_elem allelem;           /* List element for all threads list. */
     struct semaphore sleep_sema;              /* Stores a semaphore local to the thread. */
@@ -149,6 +151,8 @@ void thread_set_nice (int);
 int thread_get_recent_cpu (void);
 int thread_get_load_avg (void);
 
+/* Beginning of copied code from https://github.com/mhixon/CIS520project1 */
+
 /* List compare function for inserting threads into the ready_list based on prioirty. */
 bool thread_priority_compare (const struct list_elem *left, const struct list_elem *right, void *aux UNUSED);
 
@@ -159,5 +163,7 @@ bool thread_priority_compare_donated (const struct list_elem *left, const struct
 /* Check to see if the thread passed in has a higher priority
 then than the currently running thread. */
 void thread_priority_check (struct thread *t);
+
+/* End of copied code from https://github.com/mhixon/CIS520project1 */
 
 #endif /* threads/thread.h */
