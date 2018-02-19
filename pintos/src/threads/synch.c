@@ -259,8 +259,7 @@ lock_acquire (struct lock *lock)
         }
       }
 
-      /* Runs to scheudle the threads with the newly donated prioirty
-         taken into account */
+      // reschedules threads according to newly donated/newly set priorities
       thread_set_priority(thread_current()->priority);
     }
   }

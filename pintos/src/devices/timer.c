@@ -197,7 +197,7 @@ timer_interrupt (struct intr_frame *args UNUSED)
   thread_tick ();
 
   //Check sleeping list
-  struct thread * firstThread;		/* Declare thread pointer */
+  struct thread *firstThread;		/* Declare thread pointer */
   
   //Check if waiting list is empty, if not, check wakeup time of first item
   while (!list_empty(&blocked_list)) {
