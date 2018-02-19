@@ -4,7 +4,11 @@
 #include <debug.h>
 #include <list.h>
 #include <stdint.h>
-#include "threads/synch.h"
+
+/************************************************************/
+#include "threads/synch.h"	/* Threads need access to semaphore objects */
+/************************************************************/
+
 
 /* States in a thread's life cycle. */
 enum thread_status
@@ -89,19 +93,29 @@ struct thread
     char name[16];                      /* Name (for debugging purposes). */
     uint8_t *stack;                     /* Saved stack pointer. */
     int priority;                       /* Priority. */
-    struct list donated_priorities;     /* List of priorities that have been donated to this thread. */
-
-    struct list priority_recipients;    /* List of threads that this thread has donated to. */
-    struct list_elem pri_elem;          /* List element for keeping track of donated priorities (in thread form - for donated_priorities). */
-    struct list_elem recp_elem;         /* A list element for keeping track of this thread in a priority_recipients list. */
-
     struct list_elem allelem;           /* List element for all threads list. */
-    struct semaphore sleeper;              /* Stores a semaphore local to the thread. */
-    int64_t wakeup_time;             /* Stores how long the thread sleeps (if applicable) */
-    struct list_elem blocked_elem;  /* List element for the keeping track of sleeping threads in timer */
 
     /* Shared between thread.c and synch.c. */
     struct list_elem elem;              /* List element. */
+
+    /******************************************************/
+    /* PART ONE */
+    int64_t wakeup_time;
+    struct semaphore sleeper;
+    struct list_elem blocked_elem;
+    /* PART ONE */
+    /******************************************************/
+
+    /******************************************************/
+    /* PART TWO */
+    struct list donated_priorities;     /* List of priorities that have been donated to this thread. */
+    struct list priority_recipients;    /* List of threads that this thread has donated to. */
+    struct list_elem pri_elem;          /* List element for keeping track of donated priorities (in thread form - for donated_priorities). */
+    struct list_elem recp_elem;         /* A list element for keeping track of this thread in a priority_recipients list. */
+    /* PART TWO */
+    /******************************************************/
+
+
 
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
@@ -148,18 +162,13 @@ void thread_set_nice (int);
 int thread_get_recent_cpu (void);
 int thread_get_load_avg (void);
 
-/* List compare function for inserting threads based on sleep time. */
-bool thread_sleep_compare (const struct list_elem *left, const struct list_elem *right, void *aux UNUSED);
-
-/* List compare function for inserting threads into the ready_list based on prioirty. */
+/*******************************************************************/
+/* PART TWO */
 bool thread_priority_compare (const struct list_elem *left, const struct list_elem *right, void *aux UNUSED);
-
-/* List compare function for inserting threads into a threads' donation_list or
-   priority_list based on prioirty. */
 bool thread_priority_compare_donated (const struct list_elem *left, const struct list_elem *right, void *aux UNUSED);
-
-/* Check to see if the thread passed in has a higher priority
-then than the currently running thread. */
 void thread_priority_check (struct thread *t);
+/* PART TWO */
+/*******************************************************************/
+
 
 #endif /* threads/thread.h */

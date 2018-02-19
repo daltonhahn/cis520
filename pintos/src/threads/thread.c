@@ -162,6 +162,11 @@ thread_print_stats (void)
    The code provided sets the new thread's `priority' member to
    PRIORITY, but no actual priority scheduling is implemented.
    Priority scheduling is the goal of Problem 1-3. */
+
+/****************************************************************/
+// Turned off interrupts during thread creation so we don't check a "dirty"
+// priority value.  Also, once a thread is created, we chceck for preemption
+// of the currently running thread.
 tid_t
 thread_create (const char *name, int priority,
                thread_func *function, void *aux)
@@ -180,14 +185,13 @@ thread_create (const char *name, int priority,
   if (t == NULL)
     return TID_ERROR;
 
+  // turn off interrupts to avoid "dirty" priority reads
+  old_level = intr_disable ();
+
   /* Initialize thread. */
   init_thread (t, name, priority);
   tid = t->tid = allocate_tid ();
 
-  /* Prepare thread for first run by initializing its stack.
-     Do this atomically so intermediate values for the 'stack'
-     member cannot be observed. */
-  old_level = intr_disable ();
 
   /* Stack frame for kernel_thread(). */
   kf = alloc_frame (t, sizeof *kf);
@@ -209,13 +213,13 @@ thread_create (const char *name, int priority,
   /* Add to run queue. */
   thread_unblock (t);
 
-  /* Check to see if the new thread has a higher priority
-     than the currently running thread. If so, yield the
-     current thread, and run the new one. */
+  // check if we need to preempt currently running thread with
+  // a newly created one with higher priority.
   thread_priority_check(t);
 
   return tid;
 }
+/****************************************************************/
 
 /* Puts the current thread to sleep.  It will not be scheduled
    again until awoken by thread_unblock().
@@ -241,6 +245,10 @@ thread_block (void)
    be important: if the caller had disabled interrupts itself,
    it may expect that it can atomically unblock a thread and
    update other data. */
+/****************************************************************/
+// Rather than adding threads to the back of the ready list, 
+// insert them by priority order.  This allows many of the basic
+// priority scheduling tests to pass.
 void
 thread_unblock (struct thread *t)
 {
@@ -251,13 +259,14 @@ thread_unblock (struct thread *t)
   old_level = intr_disable ();
   ASSERT (t->status == THREAD_BLOCKED);
 
-  /* Add the thread to the ready list in order of priority,
-     and change status to THREAD_READY. */
+  // order by priority rather than FIFO
   list_insert_ordered(&ready_list, &t->elem, thread_priority_compare, NULL);
+
   t->status = THREAD_READY;
 
   intr_set_level (old_level);
 }
+/****************************************************************/
 
 /* Returns the name of the running thread. */
 const char *
@@ -315,6 +324,9 @@ thread_exit (void)
 
 /* Yields the CPU.  The current thread is not put to sleep and
    may be scheduled again immediately at the scheduler's whim. */
+/****************************************************************/
+// Once again, adding threads to ready list based on priority order,
+// rather than just adding them to the back of the ready list (FIFO)
 void
 thread_yield (void)
 {
@@ -326,14 +338,14 @@ thread_yield (void)
   old_level = intr_disable ();
   if (cur != idle_thread)
   {
-    /* Insert the yielded thread back into the ready list
-       according to its priority. */
+    // added to ready list based on priority, not FIFO
     list_insert_ordered(&ready_list, &cur->elem, thread_priority_compare, NULL);
   }
   cur->status = THREAD_READY;
   schedule ();
   intr_set_level (old_level);
 }
+/****************************************************************/
 
 /* Invoke function 'func' on all threads, passing along 'aux'.
    This function must be called with interrupts off. */
@@ -353,23 +365,26 @@ thread_foreach (thread_action_func *func, void *aux)
 }
 
 /* Sets the current thread's priority to NEW_PRIORITY. */
+/****************************************************************/
+// Added implementation for checking if a running thread needs to be
+// preempted by a thread that has changed it's priority.  Interrupts
+// are disabled during list checking so that threads do not collide
+// when trying to preempt
 void
 thread_set_priority (int new_priority)
 {
-  /* True if a thread exists on the list that should
-     have its priority compared with the current thread. */
+  // flag for if we need to check thread list for possible reschedule
   bool check_priority = false;
 
-  /* The next thread in the list (highest priority). */
   struct thread *next_thread;
 
   thread_current ()->priority = new_priority;
 
-/* After the priority of the running thread has been changed,
-   check if the thread needs to yield to a higher prioity thread
-   (at the front of the ready_list). */
   enum intr_level old_level = intr_disable ();
 
+  // if a thread has changed its priority check to see if there are more threads in 
+  // the ready list, if so, we need to check if it should
+  // give up its position to the thread at the front of the ready list
   if (list_size(&ready_list) > 0)
   {
     next_thread = list_entry(list_front(&ready_list), struct thread, elem);
@@ -378,20 +393,24 @@ thread_set_priority (int new_priority)
 
   intr_set_level (old_level);
 
-  /* Now that interrupts are turned on, determine if the current thread
-     should yield to the next_thread. */
+  // if there is more than one thread in the ready list and the current
+  // thread changed its priority, check for preemption
   if (check_priority)
   {
     thread_priority_check(next_thread);
   }
 }
+/****************************************************************/
+
 
 /* Returns the current thread's priority. */
+/****************************************************************/
+// Checks the value of priorities that have been donated to the thread as well as the thread's 
+// originally assigned priority.  Returns the higher of the two values
 int
 thread_get_priority (void)
 {
-  /* Return the HIGHER value of the highest thread on the waiting list,
-     and the threads original priority. */
+  // find donated priority values to the thread
   if(!list_empty(&thread_current()->donated_priorities))
   {
     int inherited_pri = list_entry(list_front(&thread_current()->donated_priorities), struct thread, pri_elem)->priority;
@@ -403,6 +422,7 @@ thread_get_priority (void)
   return thread_current ()->priority;
 
 }
+/****************************************************************/
 
 /* Sets the current thread's nice value to NICE. */
 void
@@ -507,6 +527,10 @@ is_thread (struct thread *t)
 
 /* Does basic initialization of T as a blocked thread named
    NAME. */
+/******************************************************************/
+// Added lists for priorities donated to a thread and the priorities that
+// a thread has donated.  These lists must be initialized when a thread
+// is initialized. ALSO, moved interrupt disable to thread_create
 static void
 init_thread (struct thread *t, const char *name, int priority)
 {
@@ -521,14 +545,13 @@ init_thread (struct thread *t, const char *name, int priority)
   t->priority = priority;
   t->magic = THREAD_MAGIC;
 
-  /* Initialize the donated_priorities list. */
   list_init(&t->donated_priorities);
 
-  /* Initialize the priority_recipients list. */
   list_init(&t->priority_recipients);
 
   list_push_back (&all_list, &t->allelem);
 }
+/******************************************************************/
 
 /* Allocates a SIZE-byte frame at the top of thread T's stack and
    returns a pointer to the frame's base. */
@@ -643,14 +666,15 @@ allocate_tid (void)
 }
 
 
-/* A compare function for two threads (that sorts by priority).
-   To be passed into list_insert_ordered */
+/******************************************************************/
 bool
 thread_priority_compare (const struct list_elem *left, const struct list_elem *right, void *aux UNUSED)
 {
+  // pull threads that need to be compared
   struct thread *left_thread = list_entry(left, struct thread, elem);
   struct thread *right_thread = list_entry(right, struct thread, elem);
 
+  // pull priorities from the threads
   int left_pri_max = left_thread->priority;
   int right_pri_max = right_thread->priority;
 
@@ -672,9 +696,11 @@ thread_priority_compare (const struct list_elem *left, const struct list_elem *r
   }
   return (left_pri_max > right_pri_max);
 }
+/******************************************************************/
 
 /* A compare function for two threads (that sorts by priority).
    To be passed into list_insert_ordered */
+/******************************************************************/
 bool
 thread_priority_compare_donated (const struct list_elem *left, const struct list_elem *right, void *aux UNUSED)
 {
@@ -698,10 +724,12 @@ thread_priority_compare_donated (const struct list_elem *left, const struct list
   }
   return (left_pri_max > right_pri_max);
 }
+/******************************************************************/
 
 /* Check to see if the thread passed in has a higher priority
    then than the currently running thread. If so, the running thread
    yields and surrenders control to the higher priority process. */
+/******************************************************************/
 void
 thread_priority_check (struct thread *t)
 {
@@ -717,6 +745,10 @@ thread_priority_check (struct thread *t)
     thread_yield();
   }
 }
+/******************************************************************/
+
+
+
 
 /* Offset of `stack' member within `struct thread'.
    Used by switch.S, which can't figure it out on its own. */
