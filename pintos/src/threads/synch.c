@@ -68,6 +68,7 @@ sema_down (struct semaphore *sema)
   old_level = intr_disable ();
   while (sema->value == 0)
     {
+      /* list_insert_ordered is  copied code from https://github.com/mhixon/CIS520project1 */
       /* Insert into the list in order based on our compare function. */
       list_insert_ordered(&sema->waiters, &thread_current()->elem, thread_priority_compare, NULL);
 
@@ -102,6 +103,9 @@ sema_try_down (struct semaphore *sema)
 
   return success;
 }
+
+
+/* "sema_up" is copied code from https://github.com/mhixon/CIS520project1 */
 
 /* Up or "V" operation on a semaphore.  Increments SEMA's value
    and wakes up one thread of those waiting for SEMA, if any.
@@ -205,6 +209,8 @@ lock_init (struct lock *lock)
   sema_init (&lock->semaphore, 1);
 }
 
+/* "lock_acquire" is copied code from https://github.com/mhixon/CIS520project1 */
+
 /* Acquires LOCK, sleeping until it becomes available if
    necessary.  The lock must not already be held by the current
    thread.
@@ -286,6 +292,9 @@ lock_try_acquire (struct lock *lock)
     lock->holder = thread_current ();
   return success;
 }
+
+
+/* "lock_release" is copied code from https://github.com/mhixon/CIS520project1 */
 
 /* Releases LOCK, which must be owned by the current thread.
 
@@ -407,7 +416,6 @@ cond_signal (struct condition *cond, struct lock *lock UNUSED)
   ASSERT (lock_held_by_current_thread (lock));
 
   if (!list_empty (&cond->waiters))
-  /* We sort the condition variables waiter list based on semaphores priority. */
     sema_up (&list_entry (list_pop_front (&cond->waiters),
                           struct semaphore_elem, elem)->semaphore);
 }

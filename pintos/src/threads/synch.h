@@ -36,6 +36,7 @@ struct condition
     struct list waiters;        /* List of waiting threads. */
   };
 
+/* "conditional_priority_compare" is copied code from https://github.com/mhixon/CIS520project1 */
 /* Compares the priority of threads that are waiting on a condition variable. */
 bool conditional_priority_compare(const struct list_elem *left, const struct list_elem *right, void *aux);
 
