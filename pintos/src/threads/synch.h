@@ -43,7 +43,7 @@ void cond_broadcast (struct condition *, struct lock *);
 
 /************************************************************/
 /* PART TWO */
-bool conditional_priority_compare(const struct list_elem *left, const struct list_elem *right, void *aux);
+bool cond_compare(const struct list_elem *left, const struct list_elem *right, void *aux);
 /* PART TWO */
 /************************************************************/
 

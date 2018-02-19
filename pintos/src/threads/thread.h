@@ -164,9 +164,9 @@ int thread_get_load_avg (void);
 
 /*******************************************************************/
 /* PART TWO */
-bool thread_priority_compare (const struct list_elem *left, const struct list_elem *right, void *aux UNUSED);
-bool thread_priority_compare_donated (const struct list_elem *left, const struct list_elem *right, void *aux UNUSED);
-void thread_priority_check (struct thread *t);
+bool prio_order(const struct list_elem *left, const struct list_elem *right, void *aux UNUSED);
+bool prio_order_donate(const struct list_elem *left, const struct list_elem *right, void *aux UNUSED);
+void prio_check(struct thread *t);
 /* PART TWO */
 /*******************************************************************/
 

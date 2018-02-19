@@ -70,7 +70,7 @@ sema_down (struct semaphore *sema)
   old_level = intr_disable ();
   while (sema->value == 0)
     {
-      list_insert_ordered(&sema->waiters, &thread_current()->elem, thread_priority_compare, NULL); // Inserting in order of priority rather than just at the back.
+      list_insert_ordered(&sema->waiters, &thread_current()->elem, prio_order, NULL); // Inserting in order of priority rather than just at the back.
       thread_block ();
     }
   sema->value--;
@@ -125,7 +125,7 @@ sema_up (struct semaphore *sema)
   old_level = intr_disable (); 		// don't allow interrupts during thread search and unblocking 
   if (!list_empty (&sema->waiters))
   {
-    list_sort(&sema->waiters, thread_priority_compare, NULL); 	// sort list for updated priorities 
+    list_sort(&sema->waiters, prio_order, NULL); 	// sort list for updated priorities 
 
     next_thread = list_entry (list_pop_front (&sema->waiters), struct thread, elem); // pull next thread
     thread_unblock (next_thread);				// unblock new thread
@@ -239,7 +239,7 @@ lock_acquire (struct lock *lock)
 
       // Currently running thread is going to donate it's priority to lock holder,
       // it's recipient list must be updated to include the lock holder's old priority in order to be able to revert
-      list_insert_ordered(&thread_current()->priorities_given, &lock->holder->give_elem, thread_priority_compare_donated, NULL);
+      list_insert_ordered(&thread_current()->priorities_given, &lock->holder->give_elem, prio_order_donate, NULL);
 
       // Lock holder is going to update it's priority with the currently running thread's priority
       // Lock holder needs to update it's donated list with the currently running thread's priority
@@ -252,10 +252,10 @@ lock_acquire (struct lock *lock)
             for (struct list_elem *ee = list_begin(&cur_thread->priorities_given); ee != list_end(&cur_thread->priorities_given); ee = list_next(ee))
             {
               struct thread *child_thread = list_entry (ee, struct thread, give_elem);
-              list_insert_ordered(&child_thread->priorities_received, &thread_current()->don_elem, thread_priority_compare_donated, NULL);
+              list_insert_ordered(&child_thread->priorities_received, &thread_current()->don_elem, prio_order_donate, NULL);
             }
           }
-          list_insert_ordered(&cur_thread->priorities_received, &thread_current()->don_elem, thread_priority_compare_donated, NULL);
+          list_insert_ordered(&cur_thread->priorities_received, &thread_current()->don_elem, prio_order_donate, NULL);
         }
       }
 
@@ -421,7 +421,7 @@ cond_signal (struct condition *cond, struct lock *lock UNUSED)
   {
     // sort the list of threads waiting on a condition
     // once sorted, threads will operate in a priority order with regard to condition variables
-    list_sort(&cond->waiters, conditional_priority_compare, NULL);
+    list_sort(&cond->waiters, cond_compare, NULL);
     sema_up (&list_entry (list_pop_front (&cond->waiters),
                           struct semaphore_elem, elem)->semaphore);
   }
@@ -444,17 +444,16 @@ cond_broadcast (struct condition *cond, struct lock *lock)
     cond_signal (cond, lock);
 }
 
-/* Compares the priority of threads that are waiting on a condition variable. */
 /*****************************************************************/
 // Order lists of threads waiting on condition variables by their assigned priority
 bool
-conditional_priority_compare(const struct list_elem *left, const struct list_elem *right, void *aux UNUSED)
+cond_compare(const struct list_elem *left, const struct list_elem *right, void *aux UNUSED)
 {
   // pull out semaphore object from two list_elems of a condition variable's waiter list
   struct semaphore_elem *left_sema = list_entry(left, struct semaphore_elem, elem);
   struct semaphore_elem *right_sema = list_entry(right, struct semaphore_elem, elem);
 
   // pass these two semaphores to priority compare to order list
-  return (thread_priority_compare(list_front(&left_sema->semaphore.waiters),list_front(&right_sema->semaphore.waiters), NULL));
+  return (prio_order(list_front(&left_sema->semaphore.waiters),list_front(&right_sema->semaphore.waiters), NULL));
 }
 /*****************************************************************/

@@ -260,7 +260,7 @@ thread_unblock (struct thread *t)
   ASSERT (t->status == THREAD_BLOCKED);
 
   // order by priority rather than FIFO
-  list_insert_ordered(&ready_list, &t->elem, thread_priority_compare, NULL);
+  list_insert_ordered(&ready_list, &t->elem, prio_order, NULL);
 
   t->status = THREAD_READY;
 
@@ -339,7 +339,7 @@ thread_yield (void)
   if (cur != idle_thread)
   {
     // added to ready list based on priority, not FIFO
-    list_insert_ordered(&ready_list, &cur->elem, thread_priority_compare, NULL);
+    list_insert_ordered(&ready_list, &cur->elem, prio_order, NULL);
   }
   cur->status = THREAD_READY;
   schedule ();
@@ -668,7 +668,7 @@ allocate_tid (void)
 
 /******************************************************************/
 bool
-thread_priority_compare (const struct list_elem *left, const struct list_elem *right, void *aux UNUSED)
+prio_order(const struct list_elem *left, const struct list_elem *right, void *aux UNUSED)
 {
   // pull threads that need to be compared
   struct thread *left_thread = list_entry(left, struct thread, elem);
@@ -702,7 +702,7 @@ thread_priority_compare (const struct list_elem *left, const struct list_elem *r
    To be passed into list_insert_ordered */
 /******************************************************************/
 bool
-thread_priority_compare_donated (const struct list_elem *left, const struct list_elem *right, void *aux UNUSED)
+prio_order_donate(const struct list_elem *left, const struct list_elem *right, void *aux UNUSED)
 {
   struct thread *left_thread = list_entry(left, struct thread, don_elem);
   struct thread *right_thread = list_entry(right, struct thread, don_elem);
