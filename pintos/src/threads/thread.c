@@ -202,10 +202,13 @@ thread_create (const char *name, int priority,
   /* Add to run queue. */
   thread_unblock (t);
 
+  /* Beginning of copied code from https://github.com/mhixon/CIS520project1 */
+
   /* Check to see if the new thread has a higher priority
      than the currently running thread. If so, yield the
      current thread, and run the new one. */
   thread_priority_check(t);
+  /* End of copied code from https://github.com/mhixon/CIS520project1 */
 
   return tid;
 }
@@ -243,6 +246,9 @@ thread_unblock (struct thread *t)
 
   old_level = intr_disable ();
   ASSERT (t->status == THREAD_BLOCKED);
+
+
+  /* "thread_priority_compare" function copied from https://github.com/mhixon/CIS520project1 */
 
   /* Add the thread to the ready list in order of priority,
      and change status to THREAD_READY. */
@@ -319,6 +325,7 @@ thread_yield (void)
   old_level = intr_disable ();
   if (cur != idle_thread)
   {
+    /* "thread_priority_compare" function copied from https://github.com/mhixon/CIS520project1 */
     /* Insert the yielded thread back into the ready list
        according to its priority. */
     list_insert_ordered(&ready_list, &cur->elem, thread_priority_compare, NULL);
@@ -345,6 +352,7 @@ thread_foreach (thread_action_func *func, void *aux)
     }
 }
 
+/* This function copied from https://github.com/mhixon/CIS520project1 */
 /* Sets the current thread's priority to NEW_PRIORITY. */
 void
 thread_set_priority (int new_priority)
@@ -379,6 +387,7 @@ thread_set_priority (int new_priority)
   }
 }
 
+/* This function copied from https://github.com/mhixon/CIS520project1 */
 /* Returns the current thread's priority. */
 int
 thread_get_priority (void)
@@ -514,11 +523,14 @@ init_thread (struct thread *t, const char *name, int priority)
   t->priority = priority;
   t->magic = THREAD_MAGIC;
 
+  /* Beginning of copied code from https://github.com/mhixon/CIS520project1 */
   /* Initialize the donated_priorities list. */
   list_init(&t->donated_priorities);
 
   /* Initialize the priority_recipients list. */
   list_init(&t->priority_recipients);
+  /* End of copied code from https://github.com/mhixon/CIS520project1 */
+
 
   list_push_back (&all_list, &t->allelem);
 }
@@ -635,6 +647,8 @@ allocate_tid (void)
   return tid;
 }
 
+/* Beginning of copied code from https://github.com/mhixon/CIS520project1 */
+
 /* A compare function for two threads (that sorts by priority).
    To be passed into list_insert_ordered */
 bool
@@ -709,6 +723,7 @@ thread_priority_check (struct thread *t)
     thread_yield();
   }
 }
+/* End of copied code from https://github.com/mhixon/CIS520project1 */
 
 /* Offset of `stack' member within `struct thread'.
    Used by switch.S, which can't figure it out on its own. */
