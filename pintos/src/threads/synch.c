@@ -213,7 +213,6 @@ lock_init (struct lock *lock)
 /*****************************************************************/
 // Added priority donation here.  Checks the highest priority of a thread holding a lock,
 // if lower than the current thread (waiter), donate forward (hold this value in a list).
-// ********** NEED MORE COMMENTS *********
 void
 lock_acquire (struct lock *lock)
 {
@@ -408,7 +407,6 @@ cond_wait (struct condition *cond, struct lock *lock)
    make sense to try to signal a condition variable within an
    interrupt handler. */
 /*****************************************************************/
-// ********** NEED MORE COMMENTS **************
 void
 cond_signal (struct condition *cond, struct lock *lock UNUSED)
 {
