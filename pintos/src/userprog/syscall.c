@@ -6,11 +6,16 @@
 #include "devices/shutdown.h"
 #include "threads/vaddr.h"
 #include "userprog/pagedir.h"
+#include "threads/synch.h"
 
 
 static void syscall_handler (struct intr_frame *);
 bool userVirtualAddressIsValid(void *vaddr);
 void halt(void);
+
+
+// Necessary data structures
+struct lock fs_lock; // lock for the filesystem
 
 
 // Call to check if user program virtual address is valid
@@ -27,22 +32,24 @@ void
 syscall_init (void) 
 {
   intr_register_int (0x30, 3, INTR_ON, syscall_handler, "syscall");
+  lock_init(&fs_lock);
 }
 
 static void
 syscall_handler (struct intr_frame *f UNUSED) 
 {
-  uint32_t sys_call = f->esp;
-  if(userVirtualAddressIsValid(sys_call))
+  uint32_t esp = f->esp;
+  if(userVirtualAddressIsValid(esp) && userVirtualAddressIsValid(esp+1) &&
+  userVirtualAddressIsValid(esp+2) && userVirtualAddressIsValid(esp+3))
   {
 
-    switch(sys_call)
+    switch(esp)
     {
       case SYS_HALT:
         halt();
         break;
       case SYS_EXIT:
-        printf("%s: exit(%d)\n", "Name?", f->error_code);
+        exit(esp + 1);
         break;
       case SYS_EXEC:
       printf("Recieved SYS_EXEC\n");
@@ -67,6 +74,7 @@ syscall_handler (struct intr_frame *f UNUSED)
         break;
       case SYS_WRITE:
       printf("Recieved SYS_WRITE\n");
+
         break;
       case SYS_SEEK:
       printf("Recieved SYS_SEEK\n");
@@ -88,4 +96,28 @@ void
 halt(void)
 {
   shutdown_power_off();
+}
+
+// Called in SYS_EXIT
+void
+exit(int status)
+{
+  struct thread *cur = thread_current ();
+  printf ("%s: exit(%d)\n", cur->name, status);
+  thread_exit();
+}
+
+// Called in SYS_WRITE
+int
+write(int fd, const void *buffer, unsigned size)
+{
+  if (!userVirtualAddressIsValid (buffer)) 
+    exit (-1);
+
+  lock_acquire(&fs_lock);
+    if (fd == STDIN_FILENO)
+    {
+      
+    }
+  lock_release(&fs_lock);
 }
