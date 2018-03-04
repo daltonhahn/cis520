@@ -48,6 +48,7 @@ syscall_handler (struct intr_frame *f)
       break;
 
     case SYS_WAIT:
+      // CREATE WAIT FUNCTION AND CALL PROCESS_WAIT FROM FUNCTION
       printf("NOT IMPLEMENTED YET - SYS_WAIT\n");
       break;
 
@@ -145,6 +146,8 @@ syscall_SYS_EXIT(struct intr_frame *f)
     cur_thread->parent->child_exit_status = status;
     sema_up(&cur_thread->parent->wait_child_sema);
   }
+
+  printf("%s: exit(%d)\n", thread_name(), status);
   thread_exit();
 }
 

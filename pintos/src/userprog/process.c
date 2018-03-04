@@ -18,6 +18,8 @@
 #include "threads/thread.h"
 #include "threads/vaddr.h"
 
+#define INITIAL_USER_PAGE 0x08048000 |- PGSIZE
+
 static thread_func start_process NO_RETURN;
 static bool load (const char *cmdline, void (**eip) (void), void **esp);
 
@@ -48,11 +50,20 @@ process_execute (const char *file_name)
 /* A thread function that loads a user process and starts it
    running. */
 static void
-start_process (void *file_name_)
+start_process (void *cmd_string) // CHANGED FILE_NAME TO BE COMMAND STRING FOR ARGUMENT PASSING
 {
-  char *file_name = file_name_;
+  char *file_name[15];
+  char *first_token;
   struct intr_frame if_;
   bool success;
+  char *next_ptr;	//Next token of command string
+
+  //Parse command string retrieve exec_name
+  first_token = strtok_r(cmd_string, " \t", &next_ptr);
+
+  ASSERT(strlen(filename_ptr) < sizeof(file_name));
+
+  strlcpy(file_name, cmd_string, strcspn(cmd_string, " \t"));
 
   /* Initialize interrupt frame and load executable. */
   memset (&if_, 0, sizeof if_);
@@ -61,10 +72,56 @@ start_process (void *file_name_)
   if_.eflags = FLAG_IF | FLAG_MBS;
   success = load (file_name, &if_.eip, &if_.esp);
 
+  argv[argc] = next_token;
+
+  while(1)
+  {
+    next_token = strtok_r(NULL, " \t", &next_ptr);
+    if(next_token == NULL)
+      break;
+    argv[++argc] = next_token;
+  }
+
+  push_arg(&if_.esp, argv);
+  push_arg(&if_.esp, argc);
+  push_arg(&if_.esp, 0xff00ff00);
+
   /* If load failed, quit. */
-  palloc_free_page (file_name);
+  palloc_free_page (cmd_string);
   if (!success) 
     thread_exit ();
+
+  uint8_t *kpage = palloc_get_page (PAL_USER | PAL_ZERO);
+
+  /****************************/
+  /*if (kpage != NULL) 
+    {
+      success = install_page (((uint8_t *) PHYS_BASE) - PGSIZE, kpage, true);
+      if (success)
+        *esp = PHYS_BASE; // Changed to allow arguments.
+      else
+        palloc_free_page (kpage);
+    }
+  */
+
+  if (kpage != NULL) 
+  {
+      //success = install_page ((uint8_t *)INITIAL_USER_PAGE, kpage, true);
+      if (!install_page((uint8_t *)INITIAL_USER_PAGE, kpage, true))
+      { 
+        palloc_free_page(file_name);
+	palloc_free_page(kpage);
+	thread_exit();
+      }
+  }
+
+  int argc;
+  char **argv;
+
+  if_.esp = if_.esp - 128*4;
+  strlcpy((char *)INITIAL_USER_PAGE, cmd_string, strlen(cmd_string));
+
+  /****************************/
 
   /* Start the user process by simulating a return from an
      interrupt, implemented by intr_exit (in
@@ -88,6 +145,8 @@ start_process (void *file_name_)
 int
 process_wait (tid_t child_tid UNUSED) 
 {
+  // NEED TO IMPLEMENT CORRECT VERSION ACCORDING TO COMMENT ABOVE
+  // CALL THIS FUNCITON FROM SYSCALL_WAIT WHEN READY TO IMPLEMENT
   struct thread * cur_thread = thread_current();
 
   cur_thread->waiting_for_child = true;
@@ -430,6 +489,16 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
   return true;
 }
 
+
+/*****************************/
+void push_arg(void **esp, uint32_t arg)
+{
+  *esp = *esp-4;
+  *(uint32_t *)esp = arg;
+}
+/****************************/
+
+
 /* Create a minimal stack by mapping a zeroed page at the top of
    user virtual memory. */
 static bool
@@ -443,7 +512,7 @@ setup_stack (void **esp)
     {
       success = install_page (((uint8_t *) PHYS_BASE) - PGSIZE, kpage, true);
       if (success)
-        *esp = PHYS_BASE - 12; // Changed to allow arguments.
+        *esp = PHYS_BASE; // Changed to allow arguments.
       else
         palloc_free_page (kpage);
     }
