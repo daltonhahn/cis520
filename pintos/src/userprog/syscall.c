@@ -137,16 +137,6 @@ syscall_SYS_WRITE(struct intr_frame *f)
 void 
 syscall_SYS_EXIT(struct intr_frame *f)
 {
-  int fd;
-  const void *buffer;
-  unsigned size;
-
-  fd = *(int *)(f->esp+4);
-  buffer = (void *)*(uint32_t *)(f->esp+8);
-  size = *(unsigned *)(f->esp+12);
-
-  printf("File Descriptor: <%d> Pointer: <%x> Size: <%d>\n", fd, (unsigned)buffer, size);
-
   struct thread *cur_thread = thread_current();
   int status = *(int *)(f->esp+4);
 
@@ -155,8 +145,6 @@ syscall_SYS_EXIT(struct intr_frame *f)
     cur_thread->parent->child_exit_status = status;
     sema_up(&cur_thread->parent->wait_child_sema);
   }
-
-  printf("Called SYS_EXIT\n");
   thread_exit();
 }
 
