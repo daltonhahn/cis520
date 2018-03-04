@@ -89,12 +89,10 @@ int
 process_wait (tid_t child_tid UNUSED) 
 {
   uint64_t count = 0;
-  printf("starting wait\n");
   while(true)
   {
     // count++;
   }
-  printf("done waiting\n");
   return 0;
 }
 

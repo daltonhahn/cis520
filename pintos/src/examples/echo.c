@@ -6,7 +6,7 @@ main (int argc, char **argv)
 {
   int i;
 
-  printf("Hello World\n");
+  printf("Hello World");
   for(;;);
 
 
