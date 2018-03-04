@@ -17,12 +17,28 @@ syscall_SYS_WRITE(struct intr_frame *f)
   buffer = (void *)*(uint32_t *)(f->esp+8);
   size = *(unsigned *)(f->esp+12);
 
-  printf("File Descriptor: <%d> Pointer: <%x> Size: <%d>\n", fd, (unsigned)buffer, size);
+  //printf("File Descriptor: <%d> Pointer: <%x> Size: <%d>\n", fd, (unsigned)buffer, size);
 
   switch(fd)
   {
     case STDOUT_FILENO:
-      printf("%s", buffer);
+      //Option 1
+      while(size--){
+	      printf("%c", *(char *)buffer++);
+      }
+      //Option 2 
+      /*
+      if((* (char *)buffer == 0x0a) && (size == 1) )
+      {
+        printf("%c", '\n');
+      }
+      else
+      {
+        printf("%s", buffer);
+      }
+      */
+      
+      
       break;
 
     default:
@@ -56,7 +72,6 @@ syscall_handler (struct intr_frame *f)
       syscall_SYS_WRITE(f);
       break;
     
-
     default:
       printf("Default syscall");
       break;
