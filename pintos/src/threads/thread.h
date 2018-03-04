@@ -5,6 +5,10 @@
 #include <list.h>
 #include <stdint.h>
 
+/*********/
+#include "threads/synch.h"
+/*********/
+
 /* States in a thread's life cycle. */
 enum thread_status
   {
@@ -92,6 +96,17 @@ struct thread
 
     /* Shared between thread.c and synch.c. */
     struct list_elem elem;              /* List element. */
+
+
+    /****************/
+    struct thread *parent;		/* Parent process of a running thread */
+    struct semaphore wait_child_sema;	/* Semaphore for parent to wake up child from waiting */
+    bool waiting_for_child;		/* Parent process is waiting for its child to die */
+    int child_exit_status;		/* Informs the parent of exit status of child */
+    /****************/
+
+
+
 
 #ifdef USERPROG
     /* Owned by userprog/process.c. */

@@ -88,12 +88,13 @@ start_process (void *file_name_)
 int
 process_wait (tid_t child_tid UNUSED) 
 {
-  uint64_t count = 0;
-  while(true)
-  {
-    // count++;
-  }
-  return 0;
+  struct thread * cur_thread = thread_current();
+
+  cur_thread->waiting_for_child = true;
+  sema_init(&cur_thread->wait_child_sema, 0);
+  sema_down(&cur_thread->wait_child_sema);
+  cur_thread->waiting_for_child = false;
+  return -1;
 }
 
 /* Free the current process's resources. */

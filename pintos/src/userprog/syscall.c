@@ -36,7 +36,7 @@ syscall_handler (struct intr_frame *f)
   switch(syscall_num)
   {
     case SYS_HALT:
-      syscall_SYS_HALT(f);
+     syscall_SYS_HALT(f);
      break;
      
     case SYS_EXIT:
@@ -52,7 +52,7 @@ syscall_handler (struct intr_frame *f)
       break;
 
     case SYS_CREATE:
-      print("NOT IMPLEMENTED YET - SYS_CREATE\n");
+      printf("NOT IMPLEMENTED YET - SYS_CREATE\n");
       break;
 
     case SYS_REMOVE:
@@ -137,11 +137,30 @@ syscall_SYS_WRITE(struct intr_frame *f)
 void 
 syscall_SYS_EXIT(struct intr_frame *f)
 {
+  int fd;
+  const void *buffer;
+  unsigned size;
+
+  fd = *(int *)(f->esp+4);
+  buffer = (void *)*(uint32_t *)(f->esp+8);
+  size = *(unsigned *)(f->esp+12);
+
+  printf("File Descriptor: <%d> Pointer: <%x> Size: <%d>\n", fd, (unsigned)buffer, size);
+
+  struct thread *cur_thread = thread_current();
+  int status = *(int *)(f->esp+4);
+
+  if(cur_thread->parent->waiting_for_child == true)
+  {
+    cur_thread->parent->child_exit_status = status;
+    sema_up(&cur_thread->parent->wait_child_sema);
+  }
+
   printf("Called SYS_EXIT\n");
   thread_exit();
 }
 
-void 
+void
 syscall_SYS_HALT(struct intr_frame *f)
 {
   printf("Called SYS_HALT\n");
