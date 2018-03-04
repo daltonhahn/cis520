@@ -9,6 +9,89 @@
 /***********/
 
 static void syscall_handler (struct intr_frame *);
+void syscall_SYS_HALT(struct intr_frame *);
+void syscall_SYS_EXIT(struct intr_frame *);
+void syscall_SYS_WRITE(struct intr_frame *);
+
+
+void
+syscall_init (void) 
+{
+  intr_register_int (0x30, 3, INTR_ON, syscall_handler, "syscall");
+}
+
+static void
+syscall_handler (struct intr_frame *f) 
+{
+  // printf ("system call!\n");
+  // thread_exit ();
+  /*
+  uint32_t * esp = (uint32_t *)(f->esp);
+  char * buffer = (char *)*(esp+2);
+
+  printf("%s\n", buffer);
+  */
+
+  uint32_t syscall_num = *(uint32_t *)(f->esp);
+  switch(syscall_num)
+  {
+    case SYS_HALT:
+      syscall_SYS_HALT(f);
+     break;
+     
+    case SYS_EXIT:
+      syscall_SYS_EXIT(f);
+      break;
+
+    case SYS_EXEC:
+      printf("NOT IMPLEMENTED YET - SYS_EXEC\n");
+      break;
+
+    case SYS_WAIT:
+      printf("NOT IMPLEMENTED YET - SYS_WAIT\n");
+      break;
+
+    case SYS_CREATE:
+      print("NOT IMPLEMENTED YET - SYS_CREATE\n");
+      break;
+
+    case SYS_REMOVE:
+      printf("NOT IMPLEMENTED YET - SYS_REMOVE\n");
+      break;
+
+    case SYS_OPEN:
+      printf("NOT IMPLEMENTED YET - SYS_OPEN\n");
+      break;
+
+    case SYS_FILESIZE:
+      printf("NOT IMPLEMENTED YET - SYS_FILESIZE\n");
+      break;
+
+    case SYS_READ:
+      printf("NOT IMPLEMENTED YET - SYS_READ\n");
+      break;
+
+    case SYS_WRITE:
+      syscall_SYS_WRITE(f);
+      break;
+
+    case SYS_SEEK:
+      printf("NOT IMPLEMENTED YET - SYS_SEEK\n");
+      break;
+
+    case SYS_TELL:
+      printf("NOT IMPLEMENTED YET - SYS_TELL\n");
+      break;
+
+    case SYS_CLOSE:
+      printf("NOT IMPLEMENTED YET - SYS_CLOSE\n");
+      break;
+
+    default:
+      printf("Default SYSCALL Catcher");
+      break;
+  }
+}
 
 void
 syscall_SYS_WRITE(struct intr_frame *f)
@@ -67,46 +150,4 @@ syscall_SYS_HALT(struct intr_frame *f)
 
 
 
-void
-syscall_init (void) 
-{
-  intr_register_int (0x30, 3, INTR_ON, syscall_handler, "syscall");
-}
 
-static void
-syscall_handler (struct intr_frame *f) 
-{
-  // printf ("system call!\n");
-  // thread_exit ();
-  /*
-  uint32_t * esp = (uint32_t *)(f->esp);
-  char * buffer = (char *)*(esp+2);
-
-  printf("%s\n", buffer);
-  */
-
-  uint32_t syscall_num = *(uint32_t *)(f->esp);
-  switch(syscall_num)
-  {
-    case SYS_WRITE:
-      syscall_SYS_WRITE(f);
-      break;
-    
-    case SYS_EXIT:
-      syscall_SYS_EXIT(f);
-      break;
-
-    case SYS_HALT:
-      syscall_SYS_HALT(f);
-      break;
-
-    default:
-      printf("Default syscall");
-      break;
-  }
- 
-  
-    
-
-  
-}
