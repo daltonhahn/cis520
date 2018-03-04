@@ -19,5 +19,5 @@ echo Entering directory /userprog/build ...
 cd build
 pintos-mkdisk filesys.dsk --filesys-size=2;
 pintos -f -q;
-pintos -p ../../examples/echo -a echo -- -q;
-pintos -q run 'echo';
+pintos -p ../../examples/halt -a halt -- -q;
+pintos -q run 'halt';

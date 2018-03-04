@@ -4,6 +4,10 @@
 #include "threads/interrupt.h"
 #include "threads/thread.h"
 
+/***********/
+#include "devices/shutdown.h" /* For use in the halt syscall */
+/***********/
+
 static void syscall_handler (struct intr_frame *);
 
 void
@@ -47,6 +51,22 @@ syscall_SYS_WRITE(struct intr_frame *f)
   }
 }
 
+void 
+syscall_SYS_EXIT(struct intr_frame *f)
+{
+  printf("Called SYS_EXIT\n");
+  thread_exit();
+}
+
+void 
+syscall_SYS_HALT(struct intr_frame *f)
+{
+  printf("Called SYS_HALT\n");
+  shutdown_power_off();
+}
+
+
+
 void
 syscall_init (void) 
 {
@@ -72,6 +92,14 @@ syscall_handler (struct intr_frame *f)
       syscall_SYS_WRITE(f);
       break;
     
+    case SYS_EXIT:
+      syscall_SYS_EXIT(f);
+      break;
+
+    case SYS_HALT:
+      syscall_SYS_HALT(f);
+      break;
+
     default:
       printf("Default syscall");
       break;
