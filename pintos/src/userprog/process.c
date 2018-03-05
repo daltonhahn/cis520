@@ -18,7 +18,7 @@
 #include "threads/thread.h"
 #include "threads/vaddr.h"
 
-#define INITIAL_USER_PAGE 0x08048000 |- PGSIZE
+#define INITIAL_USER_PAGE 0x08048000 - PGSIZE
 
 static thread_func start_process NO_RETURN;
 static bool load (const char *cmdline, void (**eip) (void), void **esp);
