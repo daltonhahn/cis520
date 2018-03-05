@@ -22,6 +22,7 @@
 
 static thread_func start_process NO_RETURN;
 static bool load (const char *cmdline, void (**eip) (void), void **esp);
+static bool install_page (void *upage, void *kpage, bool writable);
 
 /* Starts a new thread running a user program loaded from
    FILENAME.  The new thread may be scheduled (and may even exit)
@@ -54,16 +55,21 @@ start_process (void *cmd_string) // CHANGED FILE_NAME TO BE COMMAND STRING FOR A
 {
   char *file_name[15];
   char *first_token;
+  char *next_token;
   struct intr_frame if_;
   bool success;
   char *next_ptr;	//Next token of command string
 
+
+  int argc = 0;
+
+
   //Parse command string retrieve exec_name
   first_token = strtok_r(cmd_string, " \t", &next_ptr);
 
-  ASSERT(strlen(filename_ptr) < sizeof(file_name));
+  ASSERT(strlen(first_token) < sizeof(file_name));
 
-  strlcpy(file_name, cmd_string, strcspn(cmd_string, " \t"));
+  strlcpy(file_name, first_token, strcspn(cmd_string, " \t") + 1); //srcspn gives us the index of difference, begins counting from 0, add one to get proper length
 
   /* Initialize interrupt frame and load executable. */
   memset (&if_, 0, sizeof if_);
@@ -72,19 +78,23 @@ start_process (void *cmd_string) // CHANGED FILE_NAME TO BE COMMAND STRING FOR A
   if_.eflags = FLAG_IF | FLAG_MBS;
   success = load (file_name, &if_.eip, &if_.esp);
 
-  argv[argc] = next_token;
 
-  while(1)
+  printf("%s: Pushed to stack\n", file_name);
+  push_arg(&if_.esp, file_name);
+  argc++;
+
+  // Tokenize the command string from command line
+  while(true)
   {
     next_token = strtok_r(NULL, " \t", &next_ptr);
     if(next_token == NULL)
       break;
-    argv[++argc] = next_token;
+    printf("%s: Pushed to stack\n", next_token);
+    push_arg(&if_.esp, next_token);
+    argc++;
   }
-
-  push_arg(&if_.esp, argv);
+  printf("Number of arguments in argc: %d\n", argc);
   push_arg(&if_.esp, argc);
-  push_arg(&if_.esp, 0xff00ff00);
 
   /* If load failed, quit. */
   palloc_free_page (cmd_string);
@@ -115,11 +125,12 @@ start_process (void *cmd_string) // CHANGED FILE_NAME TO BE COMMAND STRING FOR A
       }
   }
 
-  int argc;
-  char **argv;
-
   if_.esp = if_.esp - 128*4;
-  strlcpy((char *)INITIAL_USER_PAGE, cmd_string, strlen(cmd_string));
+  printf("%d\n", sizeof(INITIAL_USER_PAGE));
+  strlcpy((char *)INITIAL_USER_PAGE, file_name, strlen(file_name));
+  // Why is our initial_user_page size only 4? Are we supposed to be saving just our executable file_name in this page? I.e - "echo"
+  // Do we need to be pushing on more pointers and references to the stack, see Stanford Project Details doc for stack trace
+  // https://web.stanford.edu/class/cs140/projects/pintos/pintos_3.html#SEC51
 
   /****************************/
 
@@ -382,7 +393,6 @@ load (const char *file_name, void (**eip) (void), void **esp)
 }
 
 /* load() helpers. */
-
 static bool install_page (void *upage, void *kpage, bool writable);
 
 /* Checks whether PHDR describes a valid, loadable segment in
