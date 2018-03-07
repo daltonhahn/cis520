@@ -283,6 +283,7 @@ thread_tid (void)
 void
 thread_exit (void) 
 {
+  sema_up(&thread_current()->parent->wait_child_sema);
   ASSERT (!intr_context ());
 
 #ifdef USERPROG

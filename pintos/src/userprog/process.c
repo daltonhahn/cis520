@@ -39,7 +39,10 @@ process_execute (const char *file_name)
   strlcpy (fn_copy, file_name, PGSIZE);
 
   /* Create a new thread to execute FILE_NAME. */
-  tid = thread_create (file_name, PRI_DEFAULT, start_process, fn_copy);
+  char* garb;
+  char* exec_name = strtok_r(file_name, " \t", &garb);
+  printf("%s: was printed\n", exec_name);
+  tid = thread_create (exec_name, PRI_DEFAULT, start_process, fn_copy);
   if (tid == TID_ERROR)
     palloc_free_page (fn_copy); 
   return tid;
@@ -88,13 +91,15 @@ start_process (void *file_name_)
 int
 process_wait (tid_t child_tid UNUSED) 
 {
-  struct thread * cur_thread = thread_current();
+  sema_init(&thread_current()->wait_child_sema, 0);
+  sema_down(&thread_current()->wait_child_sema);
+  // struct thread * cur_thread = thread_current();
 
-  cur_thread->waiting_for_child = true;
-  sema_init(&cur_thread->wait_child_sema, 0);
-  sema_down(&cur_thread->wait_child_sema);
-  cur_thread->waiting_for_child = false;
-  return -1;
+  // cur_thread->waiting_for_child = true;
+  // sema_init(&cur_thread->wait_child_sema, 0);
+  // sema_down(&cur_thread->wait_child_sema);
+  // cur_thread->waiting_for_child = false;
+  // return -1;
 }
 
 /* Free the current process's resources. */
@@ -120,6 +125,7 @@ process_exit (void)
       pagedir_activate (NULL);
       pagedir_destroy (pd);
     }
+
 }
 
 /* Sets up the CPU for running user code in the current
@@ -201,7 +207,7 @@ struct Elf32_Phdr
 #define PF_W 2          /* Writable. */
 #define PF_R 4          /* Readable. */
 
-static bool setup_stack (void **esp);
+static bool setup_stack (void **esp, char * file_name);
 static bool validate_segment (const struct Elf32_Phdr *, struct file *);
 static bool load_segment (struct file *file, off_t ofs, uint8_t *upage,
                           uint32_t read_bytes, uint32_t zero_bytes,
@@ -228,10 +234,10 @@ load (const char *file_name, void (**eip) (void), void **esp)
   process_activate ();
 
   /* Open executable file. */
-  file = filesys_open (file_name);
+  file = filesys_open (t->name);
   if (file == NULL) 
     {
-      printf ("load: %s: open failed\n", file_name);
+      printf ("load: %s: open failed\n", t->name);
       goto done; 
     }
 
@@ -308,7 +314,7 @@ load (const char *file_name, void (**eip) (void), void **esp)
     }
 
   /* Set up stack. */
-  if (!setup_stack (esp))
+  if (!setup_stack (esp, file_name))
     goto done;
 
   /* Start address. */
@@ -433,18 +439,96 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
 /* Create a minimal stack by mapping a zeroed page at the top of
    user virtual memory. */
 static bool
-setup_stack (void **esp) 
+setup_stack (void **esp, char* file_name) 
 {
   uint8_t *kpage;
   bool success = false;
 
   kpage = palloc_get_page (PAL_USER | PAL_ZERO);
-  if (kpage != NULL) 
+  if (kpage != NULL)
     {
       success = install_page (((uint8_t *) PHYS_BASE) - PGSIZE, kpage, true);
-      if (success)
-        *esp = PHYS_BASE - 12; // Changed to allow arguments.
-      else
+      if (success) {
+  	*esp = PHYS_BASE;
+
+        uint8_t *argstr_head;
+        char *cmd_name = thread_current ()->name;
+        int strlength, total_length;
+        int argc;
+
+        /*push the arguments string into stack*/
+        strlength = strlen(file_name) + 1;
+        *esp -= strlength;
+        memcpy(*esp, file_name, strlength);
+        total_length += strlength;
+
+        /*push command name into stack*/
+        strlength = strlen(cmd_name) + 1;
+        *esp -= strlength;
+        argstr_head = *esp;
+        memcpy(*esp, cmd_name, strlength);
+        total_length += strlength;
+
+        /*set alignment, get the starting address, modify *esp */
+        *esp -= 4 - total_length % 4;
+
+        /* push argv[argc] null into the stack */
+        *esp -= 4;
+        * (uint32_t *) *esp = (uint32_t) NULL;
+
+        /* scan throught the file name with arguments string downward,
+         * using the cur_addr and total_length above to define boundary.
+         * omitting the beginning space or '\0', but for every encounter
+         * after, push the last non-space-and-'\0' address, which is current
+         * address minus 1, as one of argv to the stack, and set the space to
+         * '\0', multiple adjancent spaces and '0' is treated as one.
+         */
+        int i = total_length - 1;
+        /*omitting the starting space and '\0' */
+        while (*(argstr_head + i) == ' ' ||  *(argstr_head + i) == '\0')
+          {
+            if (*(argstr_head + i) == ' ')
+              {
+                *(argstr_head + i) = '\0';
+              }
+            i--;
+          }
+
+        /*scan through args string, push args address into stack*/
+        char *mark;
+        for (mark = (char *)(argstr_head + i); i > 0;
+             i--, mark = (char*)(argstr_head+i))
+          {
+            /*detect args, if found, push it's address to stack*/
+            if ( (*mark == '\0' || *mark == ' ') &&
+                 (*(mark+1) != '\0' && *(mark+1) != ' '))
+              {
+                *esp -= 4;
+                * (uint32_t *) *esp = (uint32_t) mark + 1;
+                argc++;
+              }
+            /*set space to '\0', so that each arg string will terminate*/
+            if (*mark == ' ')
+              *mark = '\0';
+          }
+
+        /*push one more arg, which is the command name, into stack*/
+        *esp -= 4;
+        * (uint32_t *) *esp = (uint32_t) argstr_head;
+        argc++;
+
+        /*push argv*/
+        * (uint32_t *) (*esp - 4) = *(uint32_t *) esp;
+        *esp -= 4;
+
+        /*push argc*/
+        *esp -= 4;
+        * (int *) *esp = argc;
+
+        /*push return address*/
+        *esp -= 4;
+        * (uint32_t *) *esp = 0x0;
+      } else
         palloc_free_page (kpage);
     }
   return success;
