@@ -11,10 +11,16 @@
 /***********/
 
 static void syscall_handler (struct intr_frame *);
-void syscall_SYS_HALT();
-void syscall_SYS_EXIT(int status);
-void syscall_SYS_WRITE(int fd, const void *buffer, unsigned size);
+void halt();
+void exit(int status);
+int write(int fd, const void *buffer, unsigned size);
 bool check_ptr (const void *usr_ptr);
+bool create (const char *file_name, unsigned size);
+
+/***********
+Structs
+***********/
+struct lock fs_lock;
 
 bool
 check_ptr (const void *usr_ptr)
@@ -30,6 +36,7 @@ void
 syscall_init (void) 
 {
   intr_register_int (0x30, 3, INTR_ON, syscall_handler, "syscall");
+  lock_init(&fs_lock);
 }
 
 static void
@@ -39,17 +46,17 @@ syscall_handler (struct intr_frame *f)
   if (!check_ptr (f->esp) || !check_ptr (f->esp + 1) ||
       !check_ptr (f->esp + 2) || !check_ptr (f->esp + 3))
   {
-    syscall_SYS_EXIT(-1);
+    exit(-1);
   }
 
   switch(*(int*)f->esp)
   {
     case SYS_HALT:
-      syscall_SYS_HALT();
+      halt();
       break;
     
     case SYS_EXIT:
-      syscall_SYS_EXIT(*(int *)(f->esp+4));
+      exit(*(int *)(f->esp+4));
       break;
 
     case SYS_EXEC:
@@ -61,7 +68,7 @@ syscall_handler (struct intr_frame *f)
       break;
 
     case SYS_CREATE:
-      //printf("NOT IMPLEMENTED YET - SYS_CREATE\n");
+      create ((char *)(f->esp+4), (unsigned *)(f->esp+8));
       break;
 
     case SYS_REMOVE:
@@ -81,7 +88,7 @@ syscall_handler (struct intr_frame *f)
       break;
 
     case SYS_WRITE:
-      syscall_SYS_WRITE(*(int *)(f->esp+4), (void *)*(uint32_t *)(f->esp+8), *(unsigned *)(f->esp+12));
+      f->eax = write(*(int *)(f->esp+4), (void *)*(uint32_t *)(f->esp+8), *(unsigned *)(f->esp+12));
       break;
 
     case SYS_SEEK:
@@ -102,39 +109,32 @@ syscall_handler (struct intr_frame *f)
   }
 }
 
-void
-syscall_SYS_WRITE(int fd, const void *buffer, unsigned size)
+int
+write(int fd, const void *buffer, unsigned size)
 {
+
+  if (!check_ptr(buffer) || !check_ptr(buffer + size - 1))
+    exit (-1);
+
   switch(fd)
   {
+    case STDIN_FILENO:
+      return -1;
+
     case STDOUT_FILENO:
-      //Option 1
-      while(size--){
-	      printf("%c", *(char *)buffer++);
-      }
-      //Option 2 
-      /*
-      if((* (char *)buffer == 0x0a) && (size == 1) )
-      {
-        printf("%c", '\n');
-      }
-      else
-      {
-        printf("%s", buffer);
-      }
-      */
-      
-      
+      putbuf(buffer, size);
+      return size;
       break;
 
     default:
       printf("Write Syscall");
+      return -1;
       break;
   }
 }
 
 void 
-syscall_SYS_EXIT(int status)
+exit(int status)
 {
   struct thread *cur_thread = thread_current();
 
@@ -148,7 +148,21 @@ syscall_SYS_EXIT(int status)
 }
 
 void
-syscall_SYS_HALT()
+halt()
 {
   shutdown_power_off();
+}
+
+bool
+create (const char *file_name, unsigned size)
+{
+  bool status;
+
+  if (!check_ptr(file_name))
+    exit (-1);
+
+  lock_acquire (&fs_lock);
+  status = filesys_create(file_name, size);  
+  lock_release (&fs_lock);
+  return status;
 }
