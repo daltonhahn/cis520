@@ -145,6 +145,7 @@ syscall_SYS_EXIT(struct intr_frame *f)
     cur_thread->parent->child_exit_status = status;
     sema_up(&cur_thread->parent->wait_child_sema);
   }
+  printf("%s: exit(%d)\n", cur_thread->name, status);
   thread_exit();
 }
 

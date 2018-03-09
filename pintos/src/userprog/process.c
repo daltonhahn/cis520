@@ -41,7 +41,7 @@ process_execute (const char *file_name)
   /* Create a new thread to execute FILE_NAME. */
   char* garb;
   char* exec_name = strtok_r(file_name, " \t", &garb);
-  printf("%s: was printed\n", exec_name);
+  //printf("%s: was printed\n", exec_name);
   tid = thread_create (exec_name, PRI_DEFAULT, start_process, fn_copy);
   if (tid == TID_ERROR)
     palloc_free_page (fn_copy); 
@@ -91,15 +91,15 @@ start_process (void *file_name_)
 int
 process_wait (tid_t child_tid UNUSED) 
 {
-  sema_init(&thread_current()->wait_child_sema, 0);
-  sema_down(&thread_current()->wait_child_sema);
-  // struct thread * cur_thread = thread_current();
+  // sema_init(&thread_current()->wait_child_sema, 0);
+  // sema_down(&thread_current()->wait_child_sema);
+  struct thread * cur_thread = thread_current();
 
-  // cur_thread->waiting_for_child = true;
-  // sema_init(&cur_thread->wait_child_sema, 0);
-  // sema_down(&cur_thread->wait_child_sema);
-  // cur_thread->waiting_for_child = false;
-  // return -1;
+  cur_thread->waiting_for_child = true;
+  sema_init(&cur_thread->wait_child_sema, 0);
+  sema_down(&cur_thread->wait_child_sema);
+  cur_thread->waiting_for_child = false;
+  return -1;
 }
 
 /* Free the current process's resources. */
@@ -511,11 +511,6 @@ setup_stack (void **esp, char* file_name)
             if (*mark == ' ')
               *mark = '\0';
           }
-
-        /*push one more arg, which is the command name, into stack*/
-        *esp -= 4;
-        * (uint32_t *) *esp = (uint32_t) argstr_head;
-        argc++;
 
         /*push argv*/
         * (uint32_t *) (*esp - 4) = *(uint32_t *) esp;
