@@ -3,16 +3,28 @@
 #include <syscall-nr.h>
 #include "threads/interrupt.h"
 #include "threads/thread.h"
+#include "threads/vaddr.h"
+#include "userprog/pagedir.h"
 
 /***********/
 #include "devices/shutdown.h" /* For use in the halt syscall */
 /***********/
 
 static void syscall_handler (struct intr_frame *);
-void syscall_SYS_HALT(struct intr_frame *);
-void syscall_SYS_EXIT(struct intr_frame *);
-void syscall_SYS_WRITE(struct intr_frame *);
+void syscall_SYS_HALT();
+void syscall_SYS_EXIT(int status);
+void syscall_SYS_WRITE(int fd, const void *buffer, unsigned size);
+bool check_ptr (const void *usr_ptr);
 
+bool
+check_ptr (const void *usr_ptr)
+{
+  if (usr_ptr != NULL && is_user_vaddr (usr_ptr))
+    {
+      return (pagedir_get_page (thread_current()->pagedir, usr_ptr)) != NULL;
+    }
+  return false;
+}
 
 void
 syscall_init (void) 
@@ -23,64 +35,61 @@ syscall_init (void)
 static void
 syscall_handler (struct intr_frame *f) 
 {
-  // printf ("system call!\n");
-  // thread_exit ();
-  /*
-  uint32_t * esp = (uint32_t *)(f->esp);
-  char * buffer = (char *)*(esp+2);
 
-  printf("%s\n", buffer);
-  */
+  if (!check_ptr (f->esp) || !check_ptr (f->esp + 1) ||
+      !check_ptr (f->esp + 2) || !check_ptr (f->esp + 3))
+  {
+    syscall_SYS_EXIT(-1);
+  }
 
-  uint32_t syscall_num = *(uint32_t *)(f->esp);
-  switch(syscall_num)
+  switch(*(int*)f->esp)
   {
     case SYS_HALT:
-     syscall_SYS_HALT(f);
-     break;
-     
+      syscall_SYS_HALT();
+      break;
+    
     case SYS_EXIT:
-      syscall_SYS_EXIT(f);
+      syscall_SYS_EXIT(*(int *)(f->esp+4));
       break;
 
     case SYS_EXEC:
-      printf("NOT IMPLEMENTED YET - SYS_EXEC\n");
+      //printf("NOT IMPLEMENTED YET - SYS_EXEC\n");
       break;
 
     case SYS_WAIT:
-      printf("NOT IMPLEMENTED YET - SYS_WAIT\n");
+      //printf("NOT IMPLEMENTED YET - SYS_WAIT\n");
       break;
 
     case SYS_CREATE:
-      printf("NOT IMPLEMENTED YET - SYS_CREATE\n");
+      //printf("NOT IMPLEMENTED YET - SYS_CREATE\n");
       break;
 
     case SYS_REMOVE:
-      printf("NOT IMPLEMENTED YET - SYS_REMOVE\n");
+      //printf("NOT IMPLEMENTED YET - SYS_REMOVE\n");
       break;
 
     case SYS_OPEN:
-      printf("NOT IMPLEMENTED YET - SYS_OPEN\n");
+      //printf("NOT IMPLEMENTED YET - SYS_OPEN\n");
       break;
 
     case SYS_FILESIZE:
-      printf("NOT IMPLEMENTED YET - SYS_FILESIZE\n");
+      //printf("NOT IMPLEMENTED YET - SYS_FILESIZE\n");
       break;
 
     case SYS_READ:
-      printf("NOT IMPLEMENTED YET - SYS_READ\n");
+      //printf("NOT IMPLEMENTED YET - SYS_READ\n");
       break;
 
     case SYS_WRITE:
-      syscall_SYS_WRITE(f);
+      syscall_SYS_WRITE(*(int *)(f->esp+4), (void *)*(uint32_t *)(f->esp+8), *(unsigned *)(f->esp+12));
       break;
 
     case SYS_SEEK:
-      printf("NOT IMPLEMENTED YET - SYS_SEEK\n");
+      //printf("NOT IMPLEMENTED YET - SYS_SEEK\n");
       break;
 
     case SYS_TELL:
-      printf("NOT IMPLEMENTED YET - SYS_TELL\n");
+      //printf("NOT IMPLEMENTED YET - SYS_TELL\n");
       break;
 
     case SYS_CLOSE:
@@ -88,24 +97,14 @@ syscall_handler (struct intr_frame *f)
       break;
 
     default:
-      printf("Default SYSCALL Catcher");
+      //printf("Default SYSCALL Catcher");
       break;
   }
 }
 
 void
-syscall_SYS_WRITE(struct intr_frame *f)
+syscall_SYS_WRITE(int fd, const void *buffer, unsigned size)
 {
-  int fd;
-  const void *buffer;
-  unsigned size;
-
-  fd = *(int *)(f->esp+4);
-  buffer = (void *)*(uint32_t *)(f->esp+8);
-  size = *(unsigned *)(f->esp+12);
-
-  //printf("File Descriptor: <%d> Pointer: <%x> Size: <%d>\n", fd, (unsigned)buffer, size);
-
   switch(fd)
   {
     case STDOUT_FILENO:
@@ -135,10 +134,9 @@ syscall_SYS_WRITE(struct intr_frame *f)
 }
 
 void 
-syscall_SYS_EXIT(struct intr_frame *f)
+syscall_SYS_EXIT(int status)
 {
   struct thread *cur_thread = thread_current();
-  int status = *(int *)(f->esp+4);
 
   if(cur_thread->parent->waiting_for_child == true)
   {
@@ -150,12 +148,7 @@ syscall_SYS_EXIT(struct intr_frame *f)
 }
 
 void
-syscall_SYS_HALT(struct intr_frame *f)
+syscall_SYS_HALT()
 {
-  printf("Called SYS_HALT\n");
   shutdown_power_off();
 }
-
-
-
-
