@@ -133,18 +133,31 @@ write(int fd, const void *buffer, unsigned size)
   }
 }
 
-void 
-exit(int status)
+void
+exit (int status)
 {
-  struct thread *cur_thread = thread_current();
-
-  if(cur_thread->parent->waiting_for_child == true)
-  {
-    cur_thread->parent->child_exit_status = status;
-    sema_up(&cur_thread->parent->wait_child_sema);
-  }
-  printf("%s: exit(%d)\n", cur_thread->name, status);
-  thread_exit();
+  /* later on, we need to determine if there is process waiting for it */
+  /* process_exit (); */
+  struct child_status *child;
+  struct thread *cur = thread_current ();
+  printf ("%s: exit(%d)\n", cur->name, status);
+  struct thread *parent = thread_get_by_id (cur->parent_id);
+  if (parent != NULL) 
+    {
+      struct list_elem *e = list_tail(&parent->children);
+      while ((e = list_prev (e)) != list_head (&parent->children))
+        {
+          child = list_entry (e, struct child_status, elem_child_status);
+          if (child->child_id == cur->tid)
+          {
+            lock_acquire (&parent->lock_child);
+            child->is_exit_called = true;
+            child->child_exit_status = status;
+            lock_release (&parent->lock_child);
+          }
+        }
+    }
+  thread_exit ();
 }
 
 void

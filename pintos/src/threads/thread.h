@@ -7,6 +7,7 @@
 
 /*********/
 #include "threads/synch.h"
+#include "filesys/file.h"
 /*********/
 
 /* States in a thread's life cycle. */
@@ -27,6 +28,16 @@ typedef int tid_t;
 #define PRI_MIN 0                       /* Lowest priority. */
 #define PRI_DEFAULT 31                  /* Default priority. */
 #define PRI_MAX 63                      /* Highest priority. */
+
+
+// Added from codyjack for proj 2
+struct child_status {
+  tid_t child_id;
+  bool is_exit_called;
+  bool has_been_waited;
+  int child_exit_status;
+  struct list_elem elem_child_status;  
+};
 
 /* A kernel thread or user process.
 
@@ -97,20 +108,39 @@ struct thread
     /* Shared between thread.c and synch.c. */
     struct list_elem elem;              /* List element. */
 
-
-    /****************/
-    struct thread *parent;		/* Parent process of a running thread */
-    struct semaphore wait_child_sema;	/* Semaphore for parent to wake up child from waiting */
-    bool waiting_for_child;		/* Parent process is waiting for its child to die */
-    int child_exit_status;		/* Informs the parent of exit status of child */
-    /****************/
-
+    // /****************/
+    // struct thread *parent;		/* Parent process of a running thread */
+    // struct semaphore wait_child_sema;	/* Semaphore for parent to wake up child from waiting */
+    // bool waiting_for_child;		/* Parent process is waiting for its child to die */
+    // int child_exit_status;		/* Informs the parent of exit status of child */
+    // /****************/
 
 
 
+tid_t parent_id;                    /* parent thread id */
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
     uint32_t *pagedir;                  /* Page directory. */
+
+    //Added from codyjack
+    
+
+    /* signal to indicate the child's executable-loading status:
+    *  - 0: has not been loaded
+    *  - -1: load failed
+    *  - 1: load success*/
+    int child_load_status;
+
+    /* monitor used to wait the child, owned by wait-syscall and waiting
+      for child to load executable */
+    struct lock lock_child;
+    struct condition cond_child;
+
+    /* list of children, which should be a list of struct child_status */
+    struct list children;
+
+    /* file struct represents the execuatable of the current thread */ 
+    struct file *exec_file;
 #endif
 
     /* Owned by thread.c. */
@@ -152,5 +182,8 @@ int thread_get_nice (void);
 void thread_set_nice (int);
 int thread_get_recent_cpu (void);
 int thread_get_load_avg (void);
+
+
+struct thread *thread_get_by_id (tid_t id); //Added by codyjack
 
 #endif /* threads/thread.h */

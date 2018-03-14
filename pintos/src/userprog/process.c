@@ -89,17 +89,53 @@ start_process (void *file_name_)
    This function will be implemented in problem 2-2.  For now, it
    does nothing. */
 int
-process_wait (tid_t child_tid UNUSED) 
-{
-  // sema_init(&thread_current()->wait_child_sema, 0);
-  // sema_down(&thread_current()->wait_child_sema);
-  struct thread * cur_thread = thread_current();
+// process_wait (tid_t child_tid UNUSED) 
+// {
+//   struct thread * cur_thread = thread_current();
 
-  cur_thread->waiting_for_child = true;
-  sema_init(&cur_thread->wait_child_sema, 0);
-  sema_down(&cur_thread->wait_child_sema);
-  cur_thread->waiting_for_child = false;
-  return -1;
+//   cur_thread->waiting_for_child = true;
+//   sema_init(&cur_thread->wait_child_sema, 0);
+//   sema_down(&cur_thread->wait_child_sema);
+//   cur_thread->waiting_for_child = false;
+//   return -1;
+// }
+process_wait (tid_t child_tid)
+{
+  int status;
+  struct thread *cur;
+  struct child_status *child = NULL;
+  struct list_elem *e;
+  if (child_tid != TID_ERROR)
+   {
+     cur = thread_current ();
+     e = list_tail (&cur->children);
+     while ((e = list_prev (e)) != list_head (&cur->children))
+       {
+         child = list_entry(e, struct child_status, elem_child_status);
+         if (child->child_id == child_tid)
+           break;
+       }
+
+     if (child == NULL)
+       status = -1;
+     else
+       {
+         lock_acquire(&cur->lock_child);
+         while (thread_get_by_id (child_tid) != NULL)
+           cond_wait (&cur->cond_child, &cur->lock_child);
+         if (!child->is_exit_called || child->has_been_waited)
+           status = -1;
+         else
+           { 
+             status = child->child_exit_status;
+             child->has_been_waited = true;
+           }
+         lock_release(&cur->lock_child);
+       }
+   }
+  else 
+    status = TID_ERROR;
+  return status;
 }
 
 /* Free the current process's resources. */
