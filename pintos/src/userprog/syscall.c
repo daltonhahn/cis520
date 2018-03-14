@@ -11,11 +11,15 @@
 /***********/
 
 static void syscall_handler (struct intr_frame *);
+/*****************************/
 void halt();
 void exit(int status);
+pid_t exec(const char* command_line);
+int wait(pid_t);
 int write(int fd, const void *buffer, unsigned size);
 bool check_ptr (const void *usr_ptr);
 bool create (const char *file_name, unsigned size);
+/*****************************/
 
 /***********
 Structs
@@ -60,11 +64,11 @@ syscall_handler (struct intr_frame *f)
       break;
 
     case SYS_EXEC:
-      //printf("NOT IMPLEMENTED YET - SYS_EXEC\n");
+      f->eax = exec(*(char *)(f->esp+4));
       break;
 
     case SYS_WAIT:
-      //printf("NOT IMPLEMENTED YET - SYS_WAIT\n");
+      f->eax = wait(*(f->esp+4));
       break;
 
     case SYS_CREATE:
@@ -152,6 +156,45 @@ halt()
 {
   shutdown_power_off();
 }
+
+/*************************************/
+pid_t
+exec(const char* command_line)
+{
+  tid_t tid;
+  struct thread *curThread;
+
+  if(!check_ptr(command_line))
+  {
+    exit(-1);
+  }
+
+  curThread = thread_current();
+
+  curThread->child_load_status = 0;
+  tid = process_execute(command_line);
+  lock_acquire(&curThread->lock_child);
+
+  while(curThread->child_load_status == 0)
+  {
+    cond_wait(&curThread->cond_child, &curThread->lock_child);
+  }
+  if(curThread->child_load_status == -1)
+  {
+    tid = -1;
+  }
+  lock_release(&curThread->lock_child);
+  return tid;
+}
+
+int
+wait(pid_t process)
+{
+  return process_wait(process);
+}
+
+
+/*****************************************/
 
 bool
 create (const char *file_name, unsigned size)

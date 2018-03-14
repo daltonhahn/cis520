@@ -111,6 +111,17 @@ struct thread
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
     uint32_t *pagedir;                  /* Page directory. */
+
+    /***************************************/
+    tid_t parent_id;
+    int child_load_status;
+    struct lock lock_child;
+    struct condition cond_child;
+
+    struct list children;
+    struct file *exec_file;
+    /**************************************/
+
 #endif
 
     /* Owned by thread.c. */
