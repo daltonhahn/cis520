@@ -27,6 +27,8 @@ struct file_descriptor *get_open_file (int);
 int read (int, void *, unsigned);
 void close (int fd);
 tid_t exec (const char *);
+int filesize (int);
+int wait (tid_t pid);
 
 static void close_open_file (int);
 void close_file_by_owner (tid_t);
@@ -155,6 +157,7 @@ syscall_handler (struct intr_frame *f)
 
     case SYS_WAIT:
       //printf("NOT IMPLEMENTED YET - SYS_WAIT\n");
+      f->eax = wait((unsigned *)(f->esp+4));
       break;
 
     case SYS_CREATE:
@@ -171,6 +174,7 @@ syscall_handler (struct intr_frame *f)
 
     case SYS_FILESIZE:
       //printf("NOT IMPLEMENTED YET - SYS_FILESIZE\n");
+      f->eax = filesize(*(int *)(f->esp+4));
       break;
 
     case SYS_READ:
@@ -366,4 +370,23 @@ exec (const char *cmd_line)
     tid = -1;
   lock_release(&cur->lock_child);
   return tid;
+}
+
+int
+filesize (int fd)
+{
+  struct file_descriptor *fd_struct;
+  int status = -1;
+  lock_acquire (&fs_lock); 
+  fd_struct = get_open_file (fd);
+  if (fd_struct != NULL)
+    status = file_length (fd_struct->file_struct);
+  lock_release (&fs_lock);
+  return status;
+}
+
+int 
+wait (tid_t pid)
+{ 
+  return process_wait(pid);
 }
