@@ -19,7 +19,8 @@ int write(int fd, const void *buffer, unsigned size);
 bool check_ptr (const void *usr_ptr);
 bool create (const char *file_name, unsigned size);
 int open (const char *file_name);
-static struct file_descriptor *get_open_file (int);
+struct file_descriptor *get_open_file (int);
+int read (int, void *, unsigned);
 
 /***********
 Structs
@@ -120,6 +121,7 @@ syscall_handler (struct intr_frame *f)
 
     case SYS_READ:
       //printf("NOT IMPLEMENTED YET - SYS_READ\n");
+      f->eax = read(*(int *)(f->esp+4), (void *)*(uint32_t *)(f->esp+8), *(unsigned *)(f->esp+12));
       break;
 
     case SYS_WRITE:
@@ -228,6 +230,47 @@ create (const char *file_name, unsigned size)
 
   lock_acquire (&fs_lock);
   status = filesys_create(file_name, size);  
+  lock_release (&fs_lock);
+  return status;
+}
+
+int
+read (int fd, void *buffer, unsigned size)
+{
+  struct file_descriptor *fd_struct;
+  int status = 0; 
+
+  if (!check_ptr (buffer) || !check_ptr (buffer + size - 1))
+    exit (-1);
+
+  
+  if (fd == STDOUT_FILENO)
+    {
+      return -1;
+    }
+
+  if (fd == STDIN_FILENO)
+    {
+      lock_acquire(&fs_lock);
+      uint8_t c;
+      unsigned counter = size;
+      uint8_t *buf = buffer;
+      while (counter > 1 && (c = input_getc()) != 0)
+        {
+          *buf = c;
+          buffer++;
+          counter--; 
+        }
+      *buf = 0;
+      lock_release (&fs_lock);
+      return (size - counter);
+    } 
+  lock_acquire(&fs_lock);
+  
+  fd_struct = get_open_file (fd);
+  if (fd_struct != NULL)
+    status = file_read (fd_struct->file_struct, buffer, size);
+
   lock_release (&fs_lock);
   return status;
 }
