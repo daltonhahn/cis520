@@ -49,16 +49,16 @@ pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/create-normal -a c
 perl -I../.. ../../tests/userprog/create-normal.ck tests/userprog/create-normal tests/userprog/create-normal.result
 FAIL tests/userprog/create-normal
 Kernel panic in run: PANIC at ../../filesys/inode.c:78 in inode_create(): assertion `length >= 0' failed.
-Call stack: 0xc0029a67 0xc002edac 0xc002ddc4 0xc002d882 0xc002da33 0xc0021cdf 0xc0021fc7 0x804a476 0x80480d6 0x804812f 0x80488e0
+Call stack: 0xc0029a77 0xc002ef7c 0xc002df96 0xc002d90c 0xc002dc0d 0xc0021cef 0xc0021fd7 0x804a476 0x80480d6 0x804812f 0x80488e0
 Translation of call stack:
 In kernel.o:
-0xc0029a67: debug_panic (.../../lib/kernel/debug.c:38)
-0xc002edac: inode_create (.../../../filesys/inode.c:92)
-0xc002ddc4: filesys_create (..../../filesys/filesys.c:52)
-0xc002d882: create (...../userprog/syscall.c:232)
-0xc002da33: syscall_handler (...../userprog/syscall.c:107)
-0xc0021cdf: intr_handler (..../threads/interrupt.c:378)
-0xc0021fc7: intr_entry (threads/intr-stubs.S:38)
+0xc0029a77: debug_panic (.../../lib/kernel/debug.c:38)
+0xc002ef7c: inode_create (.../../../filesys/inode.c:92)
+0xc002df96: filesys_create (..../../filesys/filesys.c:52)
+0xc002d90c: create (...../userprog/syscall.c:286)
+0xc002dc0d: syscall_handler (...../userprog/syscall.c:161)
+0xc0021cef: intr_handler (..../threads/interrupt.c:378)
+0xc0021fd7: intr_entry (threads/intr-stubs.S:38)
 In tests/userprog/create-normal:
 0x0804a476: create (.../../lib/user/syscall.c:93)
 0x080480d6: test_main (...serprog/create-normal.c:9)
@@ -71,16 +71,16 @@ pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/create-empty -a cr
 perl -I../.. ../../tests/userprog/create-empty.ck tests/userprog/create-empty tests/userprog/create-empty.result
 FAIL tests/userprog/create-empty
 Kernel panic in run: PANIC at ../../filesys/inode.c:78 in inode_create(): assertion `length >= 0' failed.
-Call stack: 0xc0029a67 0xc002edac 0xc002ddc4 0xc002d882 0xc002da33 0xc0021cdf 0xc0021fc7 0x804a466 0x80480c8 0x8048124 0x80488d5
+Call stack: 0xc0029a77 0xc002ef7c 0xc002df96 0xc002d90c 0xc002dc0d 0xc0021cef 0xc0021fd7 0x804a466 0x80480c8 0x8048124 0x80488d5
 Translation of call stack:
 In kernel.o:
-0xc0029a67: debug_panic (.../../lib/kernel/debug.c:38)
-0xc002edac: inode_create (.../../../filesys/inode.c:92)
-0xc002ddc4: filesys_create (..../../filesys/filesys.c:52)
-0xc002d882: create (...../userprog/syscall.c:232)
-0xc002da33: syscall_handler (...../userprog/syscall.c:107)
-0xc0021cdf: intr_handler (..../threads/interrupt.c:378)
-0xc0021fc7: intr_entry (threads/intr-stubs.S:38)
+0xc0029a77: debug_panic (.../../lib/kernel/debug.c:38)
+0xc002ef7c: inode_create (.../../../filesys/inode.c:92)
+0xc002df96: filesys_create (..../../filesys/filesys.c:52)
+0xc002d90c: create (...../userprog/syscall.c:286)
+0xc002dc0d: syscall_handler (...../userprog/syscall.c:161)
+0xc0021cef: intr_handler (..../threads/interrupt.c:378)
+0xc0021fd7: intr_entry (threads/intr-stubs.S:38)
 In tests/userprog/create-empty:
 0x0804a466: create (.../../lib/user/syscall.c:93)
 0x080480c8: test_main (...userprog/create-empty.c:9)
@@ -93,16 +93,16 @@ pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/create-null -a cre
 perl -I../.. ../../tests/userprog/create-null.ck tests/userprog/create-null tests/userprog/create-null.result
 FAIL tests/userprog/create-null
 Kernel panic in run: PANIC at ../../filesys/inode.c:78 in inode_create(): assertion `length >= 0' failed.
-Call stack: 0xc0029a67 0xc002edac 0xc002ddc4 0xc002d882 0xc002da33 0xc0021cdf 0xc0021fc7 0x804a466 0x80480c6 0x8048122 0x80488d3
+Call stack: 0xc0029a77 0xc002ef7c 0xc002df96 0xc002d90c 0xc002dc0d 0xc0021cef 0xc0021fd7 0x804a466 0x80480c6 0x8048122 0x80488d3
 Translation of call stack:
 In kernel.o:
-0xc0029a67: debug_panic (.../../lib/kernel/debug.c:38)
-0xc002edac: inode_create (.../../../filesys/inode.c:92)
-0xc002ddc4: filesys_create (..../../filesys/filesys.c:52)
-0xc002d882: create (...../userprog/syscall.c:232)
-0xc002da33: syscall_handler (...../userprog/syscall.c:107)
-0xc0021cdf: intr_handler (..../threads/interrupt.c:378)
-0xc0021fc7: intr_entry (threads/intr-stubs.S:38)
+0xc0029a77: debug_panic (.../../lib/kernel/debug.c:38)
+0xc002ef7c: inode_create (.../../../filesys/inode.c:92)
+0xc002df96: filesys_create (..../../filesys/filesys.c:52)
+0xc002d90c: create (...../userprog/syscall.c:286)
+0xc002dc0d: syscall_handler (...../userprog/syscall.c:161)
+0xc0021cef: intr_handler (..../threads/interrupt.c:378)
+0xc0021fd7: intr_entry (threads/intr-stubs.S:38)
 In tests/userprog/create-null:
 0x0804a466: create (.../../lib/user/syscall.c:93)
 0x080480c6: test_main (...userprog/create-null.c:10)
@@ -115,16 +115,16 @@ pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/create-bad-ptr -a 
 perl -I../.. ../../tests/userprog/create-bad-ptr.ck tests/userprog/create-bad-ptr tests/userprog/create-bad-ptr.result
 FAIL tests/userprog/create-bad-ptr
 Kernel panic in run: PANIC at ../../filesys/inode.c:78 in inode_create(): assertion `length >= 0' failed.
-Call stack: 0xc0029a67 0xc002edac 0xc002ddc4 0xc002d882 0xc002da33 0xc0021cdf 0xc0021fc7 0x804a466 0x80480c6 0x8048122 0x80488d3
+Call stack: 0xc0029a77 0xc002ef7c 0xc002df96 0xc002d90c 0xc002dc0d 0xc0021cef 0xc0021fd7 0x804a466 0x80480c6 0x8048122 0x80488d3
 Translation of call stack:
 In kernel.o:
-0xc0029a67: debug_panic (.../../lib/kernel/debug.c:38)
-0xc002edac: inode_create (.../../../filesys/inode.c:92)
-0xc002ddc4: filesys_create (..../../filesys/filesys.c:52)
-0xc002d882: create (...../userprog/syscall.c:232)
-0xc002da33: syscall_handler (...../userprog/syscall.c:107)
-0xc0021cdf: intr_handler (..../threads/interrupt.c:378)
-0xc0021fc7: intr_entry (threads/intr-stubs.S:38)
+0xc0029a77: debug_panic (.../../lib/kernel/debug.c:38)
+0xc002ef7c: inode_create (.../../../filesys/inode.c:92)
+0xc002df96: filesys_create (..../../filesys/filesys.c:52)
+0xc002d90c: create (...../userprog/syscall.c:286)
+0xc002dc0d: syscall_handler (...../userprog/syscall.c:161)
+0xc0021cef: intr_handler (..../threads/interrupt.c:378)
+0xc0021fd7: intr_entry (threads/intr-stubs.S:38)
 In tests/userprog/create-bad-ptr:
 0x0804a466: create (.../../lib/user/syscall.c:93)
 0x080480c6: test_main (...rprog/create-bad-ptr.c:11)
@@ -137,16 +137,16 @@ pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/create-long -a cre
 perl -I../.. ../../tests/userprog/create-long.ck tests/userprog/create-long tests/userprog/create-long.result
 FAIL tests/userprog/create-long
 Kernel panic in run: PANIC at ../../filesys/inode.c:78 in inode_create(): assertion `length >= 0' failed.
-Call stack: 0xc0029a67 0xc002edac 0xc002ddc4 0xc002d882 0xc002da33 0xc0021cdf 0xc0021fc7 0x804a496 0x80480f3 0x804814f 0x8048900
+Call stack: 0xc0029a77 0xc002ef7c 0xc002df96 0xc002d90c 0xc002dc0d 0xc0021cef 0xc0021fd7 0x804a496 0x80480f3 0x804814f 0x8048900
 Translation of call stack:
 In kernel.o:
-0xc0029a67: debug_panic (.../../lib/kernel/debug.c:38)
-0xc002edac: inode_create (.../../../filesys/inode.c:92)
-0xc002ddc4: filesys_create (..../../filesys/filesys.c:52)
-0xc002d882: create (...../userprog/syscall.c:232)
-0xc002da33: syscall_handler (...../userprog/syscall.c:107)
-0xc0021cdf: intr_handler (..../threads/interrupt.c:378)
-0xc0021fc7: intr_entry (threads/intr-stubs.S:38)
+0xc0029a77: debug_panic (.../../lib/kernel/debug.c:38)
+0xc002ef7c: inode_create (.../../../filesys/inode.c:92)
+0xc002df96: filesys_create (..../../filesys/filesys.c:52)
+0xc002d90c: create (...../userprog/syscall.c:286)
+0xc002dc0d: syscall_handler (...../userprog/syscall.c:161)
+0xc0021cef: intr_handler (..../threads/interrupt.c:378)
+0xc0021fd7: intr_entry (threads/intr-stubs.S:38)
 In tests/userprog/create-long:
 0x0804a496: create (.../../lib/user/syscall.c:93)
 0x080480f3: test_main (...userprog/create-long.c:16)
@@ -159,16 +159,16 @@ pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/create-exists -a c
 perl -I../.. ../../tests/userprog/create-exists.ck tests/userprog/create-exists tests/userprog/create-exists.result
 FAIL tests/userprog/create-exists
 Kernel panic in run: PANIC at ../../filesys/inode.c:78 in inode_create(): assertion `length >= 0' failed.
-Call stack: 0xc0029a67 0xc002edac 0xc002ddc4 0xc002d882 0xc002da33 0xc0021cdf 0xc0021fc7 0x804a556 0x80480d6 0x804820f 0x80489c0
+Call stack: 0xc0029a77 0xc002ef7c 0xc002df96 0xc002d90c 0xc002dc0d 0xc0021cef 0xc0021fd7 0x804a556 0x80480d6 0x804820f 0x80489c0
 Translation of call stack:
 In kernel.o:
-0xc0029a67: debug_panic (.../../lib/kernel/debug.c:38)
-0xc002edac: inode_create (.../../../filesys/inode.c:92)
-0xc002ddc4: filesys_create (..../../filesys/filesys.c:52)
-0xc002d882: create (...../userprog/syscall.c:232)
-0xc002da33: syscall_handler (...../userprog/syscall.c:107)
-0xc0021cdf: intr_handler (..../threads/interrupt.c:378)
-0xc0021fc7: intr_entry (threads/intr-stubs.S:38)
+0xc0029a77: debug_panic (.../../lib/kernel/debug.c:38)
+0xc002ef7c: inode_create (.../../../filesys/inode.c:92)
+0xc002df96: filesys_create (..../../filesys/filesys.c:52)
+0xc002d90c: create (...../userprog/syscall.c:286)
+0xc002dc0d: syscall_handler (...../userprog/syscall.c:161)
+0xc0021cef: intr_handler (..../threads/interrupt.c:378)
+0xc0021fd7: intr_entry (threads/intr-stubs.S:38)
 In tests/userprog/create-exists:
 0x0804a556: create (.../../lib/user/syscall.c:93)
 0x080480d6: test_main (...erprog/create-exists.c:11)
@@ -181,16 +181,16 @@ pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/create-bound -a cr
 perl -I../.. ../../tests/userprog/create-bound.ck tests/userprog/create-bound tests/userprog/create-bound.result
 FAIL tests/userprog/create-bound
 Kernel panic in run: PANIC at ../../filesys/inode.c:78 in inode_create(): assertion `length >= 0' failed.
-Call stack: 0xc0029a67 0xc002edac 0xc002ddc4 0xc002d882 0xc002da33 0xc0021cdf 0xc0021fc7 0x804a546 0x80480d0 0x8048203 0x80489b4
+Call stack: 0xc0029a77 0xc002ef7c 0xc002df96 0xc002d90c 0xc002dc0d 0xc0021cef 0xc0021fd7 0x804a546 0x80480d0 0x8048203 0x80489b4
 Translation of call stack:
 In kernel.o:
-0xc0029a67: debug_panic (.../../lib/kernel/debug.c:38)
-0xc002edac: inode_create (.../../../filesys/inode.c:92)
-0xc002ddc4: filesys_create (..../../filesys/filesys.c:52)
-0xc002d882: create (...../userprog/syscall.c:232)
-0xc002da33: syscall_handler (...../userprog/syscall.c:107)
-0xc0021cdf: intr_handler (..../threads/interrupt.c:378)
-0xc0021fc7: intr_entry (threads/intr-stubs.S:38)
+0xc0029a77: debug_panic (.../../lib/kernel/debug.c:38)
+0xc002ef7c: inode_create (.../../../filesys/inode.c:92)
+0xc002df96: filesys_create (..../../filesys/filesys.c:52)
+0xc002d90c: create (...../userprog/syscall.c:286)
+0xc002dc0d: syscall_handler (...../userprog/syscall.c:161)
+0xc0021cef: intr_handler (..../threads/interrupt.c:378)
+0xc0021fd7: intr_entry (threads/intr-stubs.S:38)
 In tests/userprog/create-bound:
 0x0804a546: create (.../../lib/user/syscall.c:93)
 0x080480d0: test_main (...serprog/create-bound.c:12)
@@ -225,128 +225,19 @@ perl -I../.. ../../tests/userprog/open-twice.ck tests/userprog/open-twice tests/
 pass tests/userprog/open-twice
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/close-normal -a close-normal -p ../../tests/userprog/sample.txt -a sample.txt -- -q  -f run close-normal < /dev/null 2> tests/userprog/close-normal.errors > tests/userprog/close-normal.output
 perl -I../.. ../../tests/userprog/close-normal.ck tests/userprog/close-normal tests/userprog/close-normal.result
-FAIL tests/userprog/close-normal
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (close-normal) begin
-  (close-normal) open "sample.txt"
-  (close-normal) close "sample.txt"
-  (close-normal) end
-  close-normal: exit(0)
-Differences in `diff -u' format:
-  (close-normal) begin
-  (close-normal) open "sample.txt"
-  (close-normal) close "sample.txt"
-+ NOT IMPLEMENTED YET - SYS_CLOSE
-  (close-normal) end
-  close-normal: exit(0)
+pass tests/userprog/close-normal
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/close-twice -a close-twice -p ../../tests/userprog/sample.txt -a sample.txt -- -q  -f run close-twice < /dev/null 2> tests/userprog/close-twice.errors > tests/userprog/close-twice.output
 perl -I../.. ../../tests/userprog/close-twice.ck tests/userprog/close-twice tests/userprog/close-twice.result
-FAIL tests/userprog/close-twice
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (close-twice) begin
-  (close-twice) open "sample.txt"
-  (close-twice) close "sample.txt"
-  (close-twice) close "sample.txt" again
-  close-twice: exit(-1)
-Differences in `diff -u' format:
-  (close-twice) begin
-  (close-twice) open "sample.txt"
-  (close-twice) close "sample.txt"
-+ NOT IMPLEMENTED YET - SYS_CLOSE
-  (close-twice) close "sample.txt" again
-- close-twice: exit(-1)
-+ NOT IMPLEMENTED YET - SYS_CLOSE
-+ (close-twice) end
-+ close-twice: exit(0)
-Acceptable output:
-  (close-twice) begin
-  (close-twice) open "sample.txt"
-  (close-twice) close "sample.txt"
-  (close-twice) close "sample.txt" again
-  (close-twice) end
-  close-twice: exit(0)
-Differences in `diff -u' format:
-  (close-twice) begin
-  (close-twice) open "sample.txt"
-  (close-twice) close "sample.txt"
-+ NOT IMPLEMENTED YET - SYS_CLOSE
-  (close-twice) close "sample.txt" again
-+ NOT IMPLEMENTED YET - SYS_CLOSE
-  (close-twice) end
-  close-twice: exit(0)
+pass tests/userprog/close-twice
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/close-stdin -a close-stdin -- -q  -f run close-stdin < /dev/null 2> tests/userprog/close-stdin.errors > tests/userprog/close-stdin.output
 perl -I../.. ../../tests/userprog/close-stdin.ck tests/userprog/close-stdin tests/userprog/close-stdin.result
-FAIL tests/userprog/close-stdin
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (close-stdin) begin
-  close-stdin: exit(-1)
-Differences in `diff -u' format:
-  (close-stdin) begin
-- close-stdin: exit(-1)
-+ NOT IMPLEMENTED YET - SYS_CLOSE
-+ (close-stdin) end
-+ close-stdin: exit(0)
-Acceptable output:
-  (close-stdin) begin
-  (close-stdin) end
-  close-stdin: exit(0)
-Differences in `diff -u' format:
-  (close-stdin) begin
-+ NOT IMPLEMENTED YET - SYS_CLOSE
-  (close-stdin) end
-  close-stdin: exit(0)
+pass tests/userprog/close-stdin
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/close-stdout -a close-stdout -- -q  -f run close-stdout < /dev/null 2> tests/userprog/close-stdout.errors > tests/userprog/close-stdout.output
 perl -I../.. ../../tests/userprog/close-stdout.ck tests/userprog/close-stdout tests/userprog/close-stdout.result
-FAIL tests/userprog/close-stdout
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (close-stdout) begin
-  close-stdout: exit(-1)
-Differences in `diff -u' format:
-  (close-stdout) begin
-- close-stdout: exit(-1)
-+ NOT IMPLEMENTED YET - SYS_CLOSE
-+ (close-stdout) end
-+ close-stdout: exit(0)
-Acceptable output:
-  (close-stdout) begin
-  (close-stdout) end
-  close-stdout: exit(0)
-Differences in `diff -u' format:
-  (close-stdout) begin
-+ NOT IMPLEMENTED YET - SYS_CLOSE
-  (close-stdout) end
-  close-stdout: exit(0)
+pass tests/userprog/close-stdout
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/close-bad-fd -a close-bad-fd -- -q  -f run close-bad-fd < /dev/null 2> tests/userprog/close-bad-fd.errors > tests/userprog/close-bad-fd.output
 perl -I../.. ../../tests/userprog/close-bad-fd.ck tests/userprog/close-bad-fd tests/userprog/close-bad-fd.result
-FAIL tests/userprog/close-bad-fd
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (close-bad-fd) begin
-  close-bad-fd: exit(-1)
-Differences in `diff -u' format:
-  (close-bad-fd) begin
-- close-bad-fd: exit(-1)
-+ NOT IMPLEMENTED YET - SYS_CLOSE
-+ (close-bad-fd) end
-+ close-bad-fd: exit(0)
-Acceptable output:
-  (close-bad-fd) begin
-  (close-bad-fd) end
-  close-bad-fd: exit(0)
-Differences in `diff -u' format:
-  (close-bad-fd) begin
-+ NOT IMPLEMENTED YET - SYS_CLOSE
-  (close-bad-fd) end
-  close-bad-fd: exit(0)
+pass tests/userprog/close-bad-fd
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/read-normal -a read-normal -p ../../tests/userprog/sample.txt -a sample.txt -- -q  -f run read-normal < /dev/null 2> tests/userprog/read-normal.errors > tests/userprog/read-normal.output
 perl -I../.. ../../tests/userprog/read-normal.ck tests/userprog/read-normal tests/userprog/read-normal.result
 FAIL tests/userprog/read-normal
@@ -371,16 +262,16 @@ pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/write-normal -a wr
 perl -I../.. ../../tests/userprog/write-normal.ck tests/userprog/write-normal tests/userprog/write-normal.result
 FAIL tests/userprog/write-normal
 Kernel panic in run: PANIC at ../../filesys/inode.c:78 in inode_create(): assertion `length >= 0' failed.
-Call stack: 0xc0029a67 0xc002edac 0xc002ddc4 0xc002d882 0xc002da33 0xc0021cdf 0xc0021fc7 0x804a4d6 0x80480d6 0x8048199 0x804894a
+Call stack: 0xc0029a77 0xc002ef7c 0xc002df96 0xc002d90c 0xc002dc0d 0xc0021cef 0xc0021fd7 0x804a4d6 0x80480d6 0x8048199 0x804894a
 Translation of call stack:
 In kernel.o:
-0xc0029a67: debug_panic (.../../lib/kernel/debug.c:38)
-0xc002edac: inode_create (.../../../filesys/inode.c:92)
-0xc002ddc4: filesys_create (..../../filesys/filesys.c:52)
-0xc002d882: create (...../userprog/syscall.c:232)
-0xc002da33: syscall_handler (...../userprog/syscall.c:107)
-0xc0021cdf: intr_handler (..../threads/interrupt.c:378)
-0xc0021fc7: intr_entry (threads/intr-stubs.S:38)
+0xc0029a77: debug_panic (.../../lib/kernel/debug.c:38)
+0xc002ef7c: inode_create (.../../../filesys/inode.c:92)
+0xc002df96: filesys_create (..../../filesys/filesys.c:52)
+0xc002d90c: create (...../userprog/syscall.c:286)
+0xc002dc0d: syscall_handler (...../userprog/syscall.c:161)
+0xc0021cef: intr_handler (..../threads/interrupt.c:378)
+0xc0021fd7: intr_entry (threads/intr-stubs.S:38)
 In tests/userprog/write-normal:
 0x0804a4d6: create (.../../lib/user/syscall.c:93)
 0x080480d6: test_main (...serprog/write-normal.c:13)
@@ -408,249 +299,318 @@ pass tests/userprog/write-bad-fd
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/exec-once -a exec-once -p tests/userprog/child-simple -a child-simple -- -q  -f run exec-once < /dev/null 2> tests/userprog/exec-once.errors > tests/userprog/exec-once.output
 perl -I../.. ../../tests/userprog/exec-once.ck tests/userprog/exec-once tests/userprog/exec-once.result
 FAIL tests/userprog/exec-once
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (exec-once) begin
-  (child-simple) run
-  child-simple: exit(81)
-  (exec-once) end
-  exec-once: exit(0)
-Differences in `diff -u' format:
-  (exec-once) begin
-- (child-simple) run
-- child-simple: exit(81)
-  (exec-once) end
-  exec-once: exit(0)
+Kernel panic in run: PANIC at ../../lib/kernel/list.c:171 in list_insert(): assertion `is_interior (before) || is_tail (before)' failed.
+Call stack: 0xc0029a77 0xc002a035 0xc002a1de 0xc0022c1c 0xc0022faa 0xc002db12 0xc002dbf1 0xc0021cef 0xc0021fd7 0x804a433 0x80480c0 0x804810f 0x80488c0
+Translation of call stack:
+In kernel.o:
+0xc0029a77: debug_panic (.../../lib/kernel/debug.c:38)
+0xc002a035: list_insert (...t.c:172 (discriminator 1))
+0xc002a1de: list_push_back (.../../lib/kernel/list.c:220)
+0xc0022c1c: sema_down (.../../../threads/synch.c:72)
+0xc0022faa: lock_acquire (...../../threads/synch.c:200)
+0xc002db12: exec (...../userprog/syscall.c:363)
+0xc002dbf1: syscall_handler (...../userprog/syscall.c:153)
+0xc0021cef: intr_handler (..../threads/interrupt.c:378)
+0xc0021fd7: intr_entry (threads/intr-stubs.S:38)
+In tests/userprog/exec-once:
+0x0804a433: exec (.../../lib/user/syscall.c:81)
+0x080480c0: test_main (...s/userprog/exec-once.c:10)
+0x0804810f: main (...ild/../../tests/main.c:13)
+0x080488c0: _start (.../../../lib/user/entry.c:9)
+Translations of user virtual addresses above are based on a guess at
+the binary to use.  If this guess is incorrect, then those
+translations will be misleading.
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/exec-arg -a exec-arg -p tests/userprog/child-args -a child-args -- -q  -f run exec-arg < /dev/null 2> tests/userprog/exec-arg.errors > tests/userprog/exec-arg.output
 perl -I../.. ../../tests/userprog/exec-arg.ck tests/userprog/exec-arg tests/userprog/exec-arg.result
 FAIL tests/userprog/exec-arg
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (exec-arg) begin
-  (args) begin
-  (args) argc = 2
-  (args) argv[0] = 'child-args'
-  (args) argv[1] = 'childarg'
-  (args) argv[2] = null
-  (args) end
-  child-args: exit(0)
-  (exec-arg) end
-  exec-arg: exit(0)
-Differences in `diff -u' format:
-  (exec-arg) begin
-- (args) begin
-- (args) argc = 2
-- (args) argv[0] = 'child-args'
-- (args) argv[1] = 'childarg'
-- (args) argv[2] = null
-- (args) end
-- child-args: exit(0)
-  (exec-arg) end
-  exec-arg: exit(0)
+Kernel panic in run: PANIC at ../../lib/kernel/list.c:171 in list_insert(): assertion `is_interior (before) || is_tail (before)' failed.
+Call stack: 0xc0029a77 0xc002a035 0xc002a1de 0xc0022c1c 0xc0022faa 0xc002db12 0xc002dbf1 0xc0021cef 0xc0021fd7 0x804a433 0x80480c0 0x804810f 0x80488c0
+Translation of call stack:
+In kernel.o:
+0xc0029a77: debug_panic (.../../lib/kernel/debug.c:38)
+0xc002a035: list_insert (...t.c:172 (discriminator 1))
+0xc002a1de: list_push_back (.../../lib/kernel/list.c:220)
+0xc0022c1c: sema_down (.../../../threads/synch.c:72)
+0xc0022faa: lock_acquire (...../../threads/synch.c:200)
+0xc002db12: exec (...../userprog/syscall.c:363)
+0xc002dbf1: syscall_handler (...../userprog/syscall.c:153)
+0xc0021cef: intr_handler (..../threads/interrupt.c:378)
+0xc0021fd7: intr_entry (threads/intr-stubs.S:38)
+In tests/userprog/exec-arg:
+0x0804a433: exec (.../../lib/user/syscall.c:81)
+0x080480c0: test_main (...sts/userprog/exec-arg.c:9)
+0x0804810f: main (...ild/../../tests/main.c:13)
+0x080488c0: _start (.../../../lib/user/entry.c:9)
+Translations of user virtual addresses above are based on a guess at
+the binary to use.  If this guess is incorrect, then those
+translations will be misleading.
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/exec-bound -a exec-bound -p tests/userprog/child-args -a child-args -- -q  -f run exec-bound < /dev/null 2> tests/userprog/exec-bound.errors > tests/userprog/exec-bound.output
 perl -I../.. ../../tests/userprog/exec-bound.ck tests/userprog/exec-bound tests/userprog/exec-bound.result
 FAIL tests/userprog/exec-bound
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (exec-bound) begin
-  (args) begin
-  (args) argc = 3
-  (args) argv[0] = 'child-args'
-  (args) argv[1] = 'arg1'
-  (args) argv[2] = 'arg2'
-  (args) argv[3] = null
-  (args) end
-  child-args: exit(0)
-  (exec-bound) end
-  exec-bound: exit(0)
-Differences in `diff -u' format:
-  (exec-bound) begin
-- (args) begin
-- (args) argc = 3
-- (args) argv[0] = 'child-args'
-- (args) argv[1] = 'arg1'
-- (args) argv[2] = 'arg2'
-- (args) argv[3] = null
-- (args) end
-- child-args: exit(0)
-  (exec-bound) end
-  exec-bound: exit(0)
+Kernel panic in run: PANIC at ../../lib/kernel/list.c:171 in list_insert(): assertion `is_interior (before) || is_tail (before)' failed.
+Call stack: 0xc0029a77 0xc002a035 0xc002a1de 0xc0022c1c 0xc0022faa 0xc002db12 0xc002dbf1 0xc0021cef 0xc0021fd7 0x804a513 0x80480c8 0x80481ee 0x804899f
+Translation of call stack:
+In kernel.o:
+0xc0029a77: debug_panic (.../../lib/kernel/debug.c:38)
+0xc002a035: list_insert (...t.c:172 (discriminator 1))
+0xc002a1de: list_push_back (.../../lib/kernel/list.c:220)
+0xc0022c1c: sema_down (.../../../threads/synch.c:72)
+0xc0022faa: lock_acquire (...../../threads/synch.c:200)
+0xc002db12: exec (...../userprog/syscall.c:363)
+0xc002dbf1: syscall_handler (...../userprog/syscall.c:153)
+0xc0021cef: intr_handler (..../threads/interrupt.c:378)
+0xc0021fd7: intr_entry (threads/intr-stubs.S:38)
+In tests/userprog/exec-bound:
+0x0804a513: exec (.../../lib/user/syscall.c:81)
+0x080480c8: test_main (.../userprog/exec-bound.c:11)
+0x080481ee: main (...ild/../../tests/main.c:13)
+0x0804899f: _start (.../../../lib/user/entry.c:9)
+Translations of user virtual addresses above are based on a guess at
+the binary to use.  If this guess is incorrect, then those
+translations will be misleading.
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/exec-bound-2 -a exec-bound-2 -- -q  -f run exec-bound-2 < /dev/null 2> tests/userprog/exec-bound-2.errors > tests/userprog/exec-bound-2.output
 perl -I../.. ../../tests/userprog/exec-bound-2.ck tests/userprog/exec-bound-2 tests/userprog/exec-bound-2.result
 FAIL tests/userprog/exec-bound-2
-run: should have killed process: FAILED
+Kernel panic in run: PANIC at ../../userprog/exception.c:100 in kill(): Kernel bug - unexpected interrupt in kernel
+Call stack: 0xc0029a77 0xc002d1ef 0xc002d2b3 0xc0021cef 0xc0021fd7 0xc0028e5e 0xc002bf06 0xc002db04 0xc002dbf1 0xc0021cef 0xc0021fd7 0x80480c9 0x80481ef 0x80489a0
+Translation of call stack:
+In kernel.o:
+0xc0029a77: debug_panic (.../../lib/kernel/debug.c:38)
+0xc002d1ef: kill (.../userprog/exception.c:105)
+0xc002d2b3: exception_init (..../userprog/exception.c:31)
+0xc0021cef: intr_handler (..../threads/interrupt.c:378)
+0xc0021fd7: intr_entry (threads/intr-stubs.S:38)
+0xc0028e5e: strlcpy (...ld/../../lib/string.c:333)
+0xc002bf06: process_execute (.../../userprog/process.c:43)
+0xc002db04: exec (...../userprog/syscall.c:361)
+0xc002dbf1: syscall_handler (...../userprog/syscall.c:153)
+0xc0021cef: intr_handler (..../threads/interrupt.c:378)
+0xc0021fd7: intr_entry (threads/intr-stubs.S:38)
+In tests/userprog/exec-bound-2:
+0x080480c9: test_main (...serprog/exec-bound-2.c:19)
+0x080481ef: main (...ild/../../tests/main.c:13)
+0x080489a0: _start (.../../../lib/user/entry.c:9)
+Translations of user virtual addresses above are based on a guess at
+the binary to use.  If this guess is incorrect, then those
+translations will be misleading.
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/exec-bound-3 -a exec-bound-3 -- -q  -f run exec-bound-3 < /dev/null 2> tests/userprog/exec-bound-3.errors > tests/userprog/exec-bound-3.output
 perl -I../.. ../../tests/userprog/exec-bound-3.ck tests/userprog/exec-bound-3 tests/userprog/exec-bound-3.result
 FAIL tests/userprog/exec-bound-3
-run: should have killed process: FAILED
+Kernel panic in run: PANIC at ../../lib/kernel/list.c:171 in list_insert(): assertion `is_interior (before) || is_tail (before)' failed.
+Call stack: 0xc0029a77 0xc002a035 0xc002a1de 0xc0022c1c 0xc0022faa 0xc002db12 0xc002dbf1 0xc0021cef 0xc0021fd7 0x804a513 0x80480c4 0x80481ea 0x804899b
+Translation of call stack:
+In kernel.o:
+0xc0029a77: debug_panic (.../../lib/kernel/debug.c:38)
+0xc002a035: list_insert (...t.c:172 (discriminator 1))
+0xc002a1de: list_push_back (.../../lib/kernel/list.c:220)
+0xc0022c1c: sema_down (.../../../threads/synch.c:72)
+0xc0022faa: lock_acquire (...../../threads/synch.c:200)
+0xc002db12: exec (...../userprog/syscall.c:363)
+0xc002dbf1: syscall_handler (...../userprog/syscall.c:153)
+0xc0021cef: intr_handler (..../threads/interrupt.c:378)
+0xc0021fd7: intr_entry (threads/intr-stubs.S:38)
+In tests/userprog/exec-bound-3:
+0x0804a513: exec (.../../lib/user/syscall.c:81)
+0x080480c4: test_main (...serprog/exec-bound-3.c:27)
+0x080481ea: main (...ild/../../tests/main.c:13)
+0x0804899b: _start (.../../../lib/user/entry.c:9)
+Translations of user virtual addresses above are based on a guess at
+the binary to use.  If this guess is incorrect, then those
+translations will be misleading.
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/exec-multiple -a exec-multiple -p tests/userprog/child-simple -a child-simple -- -q  -f run exec-multiple < /dev/null 2> tests/userprog/exec-multiple.errors > tests/userprog/exec-multiple.output
 perl -I../.. ../../tests/userprog/exec-multiple.ck tests/userprog/exec-multiple tests/userprog/exec-multiple.result
 FAIL tests/userprog/exec-multiple
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (exec-multiple) begin
-  (child-simple) run
-  child-simple: exit(81)
-  (child-simple) run
-  child-simple: exit(81)
-  (child-simple) run
-  child-simple: exit(81)
-  (child-simple) run
-  child-simple: exit(81)
-  (exec-multiple) end
-  exec-multiple: exit(0)
-Differences in `diff -u' format:
-  (exec-multiple) begin
-- (child-simple) run
-- child-simple: exit(81)
-- (child-simple) run
-- child-simple: exit(81)
-- (child-simple) run
-- child-simple: exit(81)
-- (child-simple) run
-- child-simple: exit(81)
-  (exec-multiple) end
-  exec-multiple: exit(0)
+Kernel panic in run: PANIC at ../../lib/kernel/list.c:171 in list_insert(): assertion `is_interior (before) || is_tail (before)' failed.
+Call stack: 0xc0029a77 0xc002a035 0xc002a1de 0xc0022c1c 0xc0022faa 0xc002db12 0xc002dbf1 0xc0021cef 0xc0021fd7 0x804a463 0x80480c1 0x8048141 0x80488f2
+Translation of call stack:
+In kernel.o:
+0xc0029a77: debug_panic (.../../lib/kernel/debug.c:38)
+0xc002a035: list_insert (...t.c:172 (discriminator 1))
+0xc002a1de: list_push_back (.../../lib/kernel/list.c:220)
+0xc0022c1c: sema_down (.../../../threads/synch.c:72)
+0xc0022faa: lock_acquire (...../../threads/synch.c:200)
+0xc002db12: exec (...../userprog/syscall.c:363)
+0xc002dbf1: syscall_handler (...../userprog/syscall.c:153)
+0xc0021cef: intr_handler (..../threads/interrupt.c:378)
+0xc0021fd7: intr_entry (threads/intr-stubs.S:38)
+In tests/userprog/exec-multiple:
+0x0804a463: exec (.../../lib/user/syscall.c:81)
+0x080480c1: test_main (...erprog/exec-multiple.c:10)
+0x08048141: main (...ild/../../tests/main.c:13)
+0x080488f2: _start (.../../../lib/user/entry.c:9)
+Translations of user virtual addresses above are based on a guess at
+the binary to use.  If this guess is incorrect, then those
+translations will be misleading.
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/exec-missing -a exec-missing -- -q  -f run exec-missing < /dev/null 2> tests/userprog/exec-missing.errors > tests/userprog/exec-missing.output
 perl -I../.. ../../tests/userprog/exec-missing.ck tests/userprog/exec-missing tests/userprog/exec-missing.result
 FAIL tests/userprog/exec-missing
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (exec-missing) begin
-  load: no-such-file: open failed
-  no-such-file: exit(-1)
-  (exec-missing) exec("no-such-file"): -1
-  (exec-missing) end
-  exec-missing: exit(0)
-Differences in `diff -u' format:
-  (exec-missing) begin
-- load: no-such-file: open failed
-- no-such-file: exit(-1)
-- (exec-missing) exec("no-such-file"): -1
-+ (exec-missing) exec("no-such-file"): 134524733
-  (exec-missing) end
-  exec-missing: exit(0)
-Acceptable output:
-  (exec-missing) begin
-  (exec-missing) exec("no-such-file"): -1
-  (exec-missing) end
-  exec-missing: exit(0)
-Differences in `diff -u' format:
-  (exec-missing) begin
-- (exec-missing) exec("no-such-file"): -1
-+ (exec-missing) exec("no-such-file"): 134524733
-  (exec-missing) end
-  exec-missing: exit(0)
-Acceptable output:
-  (exec-missing) begin
-  load: no-such-file: open failed
-  (exec-missing) exec("no-such-file"): -1
-  (exec-missing) end
-  exec-missing: exit(0)
-Differences in `diff -u' format:
-  (exec-missing) begin
-- load: no-such-file: open failed
-- (exec-missing) exec("no-such-file"): -1
-+ (exec-missing) exec("no-such-file"): 134524733
-  (exec-missing) end
-  exec-missing: exit(0)
-Acceptable output:
-  (exec-missing) begin
-  load: no-such-file: open failed
-  (exec-missing) exec("no-such-file"): -1
-  no-such-file: exit(-1)
-  (exec-missing) end
-  exec-missing: exit(0)
-Differences in `diff -u' format:
-  (exec-missing) begin
-- load: no-such-file: open failed
-- (exec-missing) exec("no-such-file"): -1
-- no-such-file: exit(-1)
-+ (exec-missing) exec("no-such-file"): 134524733
-  (exec-missing) end
-  exec-missing: exit(0)
+Kernel panic in run: PANIC at ../../lib/kernel/list.c:171 in list_insert(): assertion `is_interior (before) || is_tail (before)' failed.
+Call stack: 0xc0029a77 0xc002a035 0xc002a1de 0xc0022c1c 0xc0022faa 0xc002db12 0xc002dbf1 0xc0021cef 0xc0021fd7 0x804a433 0x80480c0 0x8048119 0x80488ca
+Translation of call stack:
+In kernel.o:
+0xc0029a77: debug_panic (.../../lib/kernel/debug.c:38)
+0xc002a035: list_insert (...t.c:172 (discriminator 1))
+0xc002a1de: list_push_back (.../../lib/kernel/list.c:220)
+0xc0022c1c: sema_down (.../../../threads/synch.c:72)
+0xc0022faa: lock_acquire (...../../threads/synch.c:200)
+0xc002db12: exec (...../userprog/syscall.c:363)
+0xc002dbf1: syscall_handler (...../userprog/syscall.c:153)
+0xc0021cef: intr_handler (..../threads/interrupt.c:378)
+0xc0021fd7: intr_entry (threads/intr-stubs.S:38)
+In tests/userprog/exec-missing:
+0x0804a433: exec (.../../lib/user/syscall.c:81)
+0x080480c0: test_main (...serprog/exec-missing.c:11)
+0x08048119: main (...ild/../../tests/main.c:13)
+0x080488ca: _start (.../../../lib/user/entry.c:9)
+Translations of user virtual addresses above are based on a guess at
+the binary to use.  If this guess is incorrect, then those
+translations will be misleading.
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/exec-bad-ptr -a exec-bad-ptr -- -q  -f run exec-bad-ptr < /dev/null 2> tests/userprog/exec-bad-ptr.errors > tests/userprog/exec-bad-ptr.output
 perl -I../.. ../../tests/userprog/exec-bad-ptr.ck tests/userprog/exec-bad-ptr tests/userprog/exec-bad-ptr.result
-pass tests/userprog/exec-bad-ptr
+FAIL tests/userprog/exec-bad-ptr
+Kernel panic in run: PANIC at ../../lib/kernel/list.c:171 in list_insert(): assertion `is_interior (before) || is_tail (before)' failed.
+Call stack: 0xc0029a77 0xc002a035 0xc002a1de 0xc0022c1c 0xc0022faa 0xc002db12 0xc002dbf1 0xc0021cef 0xc0021fd7 0x804a423 0x80480be 0x8048105 0x80488b6
+Translation of call stack:
+In kernel.o:
+0xc0029a77: debug_panic (.../../lib/kernel/debug.c:38)
+0xc002a035: list_insert (...t.c:172 (discriminator 1))
+0xc002a1de: list_push_back (.../../lib/kernel/list.c:220)
+0xc0022c1c: sema_down (.../../../threads/synch.c:72)
+0xc0022faa: lock_acquire (...../../threads/synch.c:200)
+0xc002db12: exec (...../userprog/syscall.c:363)
+0xc002dbf1: syscall_handler (...../userprog/syscall.c:153)
+0xc0021cef: intr_handler (..../threads/interrupt.c:378)
+0xc0021fd7: intr_entry (threads/intr-stubs.S:38)
+In tests/userprog/exec-bad-ptr:
+0x0804a423: exec (.../../lib/user/syscall.c:81)
+0x080480be: test_main (...serprog/exec-bad-ptr.c:11)
+0x08048105: main (...ild/../../tests/main.c:13)
+0x080488b6: _start (.../../../lib/user/entry.c:9)
+Translations of user virtual addresses above are based on a guess at
+the binary to use.  If this guess is incorrect, then those
+translations will be misleading.
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/wait-simple -a wait-simple -p tests/userprog/child-simple -a child-simple -- -q  -f run wait-simple < /dev/null 2> tests/userprog/wait-simple.errors > tests/userprog/wait-simple.output
 perl -I../.. ../../tests/userprog/wait-simple.ck tests/userprog/wait-simple tests/userprog/wait-simple.result
 FAIL tests/userprog/wait-simple
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (wait-simple) begin
-  (child-simple) run
-  child-simple: exit(81)
-  (wait-simple) wait(exec()) = 81
-  (wait-simple) end
-  wait-simple: exit(0)
-Differences in `diff -u' format:
-  (wait-simple) begin
-- (child-simple) run
-- child-simple: exit(81)
-- (wait-simple) wait(exec()) = 81
-+ (wait-simple) wait(exec()) = 134524749
-  (wait-simple) end
-  wait-simple: exit(0)
+Kernel panic in run: PANIC at ../../lib/kernel/list.c:171 in list_insert(): assertion `is_interior (before) || is_tail (before)' failed.
+Call stack: 0xc0029a77 0xc002a035 0xc002a1de 0xc0022c1c 0xc0022faa 0xc002db12 0xc002dbf1 0xc0021cef 0xc0021fd7 0x804a443 0x80480c0 0x8048121 0x80488d2
+Translation of call stack:
+In kernel.o:
+0xc0029a77: debug_panic (.../../lib/kernel/debug.c:38)
+0xc002a035: list_insert (...t.c:172 (discriminator 1))
+0xc002a1de: list_push_back (.../../lib/kernel/list.c:220)
+0xc0022c1c: sema_down (.../../../threads/synch.c:72)
+0xc0022faa: lock_acquire (...../../threads/synch.c:200)
+0xc002db12: exec (...../userprog/syscall.c:363)
+0xc002dbf1: syscall_handler (...../userprog/syscall.c:153)
+0xc0021cef: intr_handler (..../threads/interrupt.c:378)
+0xc0021fd7: intr_entry (threads/intr-stubs.S:38)
+In tests/userprog/wait-simple:
+0x0804a443: exec (.../../lib/user/syscall.c:81)
+0x080480c0: test_main (...userprog/wait-simple.c:10)
+0x08048121: main (...ild/../../tests/main.c:13)
+0x080488d2: _start (.../../../lib/user/entry.c:9)
+Translations of user virtual addresses above are based on a guess at
+the binary to use.  If this guess is incorrect, then those
+translations will be misleading.
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/wait-twice -a wait-twice -p tests/userprog/child-simple -a child-simple -- -q  -f run wait-twice < /dev/null 2> tests/userprog/wait-twice.errors > tests/userprog/wait-twice.output
 perl -I../.. ../../tests/userprog/wait-twice.ck tests/userprog/wait-twice tests/userprog/wait-twice.result
 FAIL tests/userprog/wait-twice
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (wait-twice) begin
-  (child-simple) run
-  child-simple: exit(81)
-  (wait-twice) wait(exec()) = 81
-  (wait-twice) wait(exec()) = -1
-  (wait-twice) end
-  wait-twice: exit(0)
-Differences in `diff -u' format:
-  (wait-twice) begin
-- (child-simple) run
-- child-simple: exit(81)
-- (wait-twice) wait(exec()) = 81
-- (wait-twice) wait(exec()) = -1
-+ (wait-twice) wait(exec()) = 134524781
-+ (wait-twice) wait(exec()) = 38
-  (wait-twice) end
-  wait-twice: exit(0)
+Kernel panic in run: PANIC at ../../lib/kernel/list.c:171 in list_insert(): assertion `is_interior (before) || is_tail (before)' failed.
+Call stack: 0xc0029a77 0xc002a035 0xc002a1de 0xc0022c1c 0xc0022faa 0xc002db12 0xc002dbf1 0xc0021cef 0xc0021fd7 0x804a463 0x80480c8 0x8048146 0x80488f7
+Translation of call stack:
+In kernel.o:
+0xc0029a77: debug_panic (.../../lib/kernel/debug.c:38)
+0xc002a035: list_insert (...t.c:172 (discriminator 1))
+0xc002a1de: list_push_back (.../../lib/kernel/list.c:220)
+0xc0022c1c: sema_down (.../../../threads/synch.c:72)
+0xc0022faa: lock_acquire (...../../threads/synch.c:200)
+0xc002db12: exec (...../userprog/syscall.c:363)
+0xc002dbf1: syscall_handler (...../userprog/syscall.c:153)
+0xc0021cef: intr_handler (..../threads/interrupt.c:378)
+0xc0021fd7: intr_entry (threads/intr-stubs.S:38)
+In tests/userprog/wait-twice:
+0x0804a463: exec (.../../lib/user/syscall.c:81)
+0x080480c8: test_main (.../userprog/wait-twice.c:12)
+0x08048146: main (...ild/../../tests/main.c:13)
+0x080488f7: _start (.../../../lib/user/entry.c:9)
+Translations of user virtual addresses above are based on a guess at
+the binary to use.  If this guess is incorrect, then those
+translations will be misleading.
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/wait-killed -a wait-killed -p tests/userprog/child-bad -a child-bad -- -q  -f run wait-killed < /dev/null 2> tests/userprog/wait-killed.errors > tests/userprog/wait-killed.output
 perl -I../.. ../../tests/userprog/wait-killed.ck tests/userprog/wait-killed tests/userprog/wait-killed.result
 FAIL tests/userprog/wait-killed
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (wait-killed) begin
-  (child-bad) begin
-  child-bad: exit(-1)
-  (wait-killed) wait(exec()) = -1
-  (wait-killed) end
-  wait-killed: exit(0)
-Differences in `diff -u' format:
-  (wait-killed) begin
-- (child-bad) begin
-- child-bad: exit(-1)
-- (wait-killed) wait(exec()) = -1
-+ (wait-killed) wait(exec()) = 134524749
-  (wait-killed) end
-  wait-killed: exit(0)
+Kernel panic in run: PANIC at ../../lib/kernel/list.c:171 in list_insert(): assertion `is_interior (before) || is_tail (before)' failed.
+Call stack: 0xc0029a77 0xc002a035 0xc002a1de 0xc0022c1c 0xc0022faa 0xc002db12 0xc002dbf1 0xc0021cef 0xc0021fd7 0x804a443 0x80480c0 0x8048121 0x80488d2
+Translation of call stack:
+In kernel.o:
+0xc0029a77: debug_panic (.../../lib/kernel/debug.c:38)
+0xc002a035: list_insert (...t.c:172 (discriminator 1))
+0xc002a1de: list_push_back (.../../lib/kernel/list.c:220)
+0xc0022c1c: sema_down (.../../../threads/synch.c:72)
+0xc0022faa: lock_acquire (...../../threads/synch.c:200)
+0xc002db12: exec (...../userprog/syscall.c:363)
+0xc002dbf1: syscall_handler (...../userprog/syscall.c:153)
+0xc0021cef: intr_handler (..../threads/interrupt.c:378)
+0xc0021fd7: intr_entry (threads/intr-stubs.S:38)
+In tests/userprog/wait-killed:
+0x0804a443: exec (.../../lib/user/syscall.c:81)
+0x080480c0: test_main (...userprog/wait-killed.c:10)
+0x08048121: main (...ild/../../tests/main.c:13)
+0x080488d2: _start (.../../../lib/user/entry.c:9)
+Translations of user virtual addresses above are based on a guess at
+the binary to use.  If this guess is incorrect, then those
+translations will be misleading.
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/wait-bad-pid -a wait-bad-pid -- -q  -f run wait-bad-pid < /dev/null 2> tests/userprog/wait-bad-pid.errors > tests/userprog/wait-bad-pid.output
 perl -I../.. ../../tests/userprog/wait-bad-pid.ck tests/userprog/wait-bad-pid tests/userprog/wait-bad-pid.result
 pass tests/userprog/wait-bad-pid
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/multi-recurse -a multi-recurse -- -q  -f run 'multi-recurse 15' < /dev/null 2> tests/userprog/multi-recurse.errors > tests/userprog/multi-recurse.output
 perl -I../.. ../../tests/userprog/multi-recurse.ck tests/userprog/multi-recurse tests/userprog/multi-recurse.result
 FAIL tests/userprog/multi-recurse
-run: wait(exec("multi-recurse 14")) returned 41: FAILED
+Kernel panic in run: PANIC at ../../lib/kernel/list.c:171 in list_insert(): assertion `is_interior (before) || is_tail (before)' failed.
+Call stack: 0xc0029a77 0xc002a035 0xc002a1de 0xc0022c1c 0xc0022faa 0xc002db12 0xc002dbf1 0xc0021cef 0xc0021fd7 0x804a8e3 0x8048123 0x804891b
+Translation of call stack:
+In kernel.o:
+0xc0029a77: debug_panic (.../../lib/kernel/debug.c:38)
+0xc002a035: list_insert (...t.c:172 (discriminator 1))
+0xc002a1de: list_push_back (.../../lib/kernel/list.c:220)
+0xc0022c1c: sema_down (.../../../threads/synch.c:72)
+0xc0022faa: lock_acquire (...../../threads/synch.c:200)
+0xc002db12: exec (...../userprog/syscall.c:363)
+0xc002dbf1: syscall_handler (...../userprog/syscall.c:153)
+0xc0021cef: intr_handler (..../threads/interrupt.c:378)
+0xc0021fd7: intr_entry (threads/intr-stubs.S:38)
+In tests/userprog/multi-recurse:
+0x0804a8e3: exec (.../../lib/user/syscall.c:81)
+0x08048123: main (...erprog/multi-recurse.c:25)
+0x0804891b: _start (.../../../lib/user/entry.c:9)
+Translations of user virtual addresses above are based on a guess at
+the binary to use.  If this guess is incorrect, then those
+translations will be misleading.
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/multi-child-fd -a multi-child-fd -p ../../tests/userprog/sample.txt -a sample.txt -p tests/userprog/child-close -a child-close -- -q  -f run multi-child-fd < /dev/null 2> tests/userprog/multi-child-fd.errors > tests/userprog/multi-child-fd.output
 perl -I../.. ../../tests/userprog/multi-child-fd.ck tests/userprog/multi-child-fd tests/userprog/multi-child-fd.result
 FAIL tests/userprog/multi-child-fd
-run: read of 239 bytes at offset 0 in "sample.txt" returned 0: FAILED
+Kernel panic in run: PANIC at ../../lib/kernel/list.c:171 in list_insert(): assertion `is_interior (before) || is_tail (before)' failed.
+Call stack: 0xc0029a77 0xc002a035 0xc002a1de 0xc0022c1c 0xc0022faa 0xc002db12 0xc002dbf1 0xc0021cef 0xc0021fd7 0x804a4c3 0x8048106 0x804819e 0x804894f
+Translation of call stack:
+In kernel.o:
+0xc0029a77: debug_panic (.../../lib/kernel/debug.c:38)
+0xc002a035: list_insert (...t.c:172 (discriminator 1))
+0xc002a1de: list_push_back (.../../lib/kernel/list.c:220)
+0xc0022c1c: sema_down (.../../../threads/synch.c:72)
+0xc0022faa: lock_acquire (...../../threads/synch.c:200)
+0xc002db12: exec (...../userprog/syscall.c:363)
+0xc002dbf1: syscall_handler (...../userprog/syscall.c:153)
+0xc0021cef: intr_handler (..../threads/interrupt.c:378)
+0xc0021fd7: intr_entry (threads/intr-stubs.S:38)
+In tests/userprog/multi-child-fd:
+0x0804a4c3: exec (.../../lib/user/syscall.c:81)
+0x08048106: test_main (...rprog/multi-child-fd.c:22)
+0x0804819e: main (...ild/../../tests/main.c:13)
+0x0804894f: _start (.../../../lib/user/entry.c:9)
+Translations of user virtual addresses above are based on a guess at
+the binary to use.  If this guess is incorrect, then those
+translations will be misleading.
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/rox-simple -a rox-simple -- -q  -f run rox-simple < /dev/null 2> tests/userprog/rox-simple.errors > tests/userprog/rox-simple.output
 perl -I../.. ../../tests/userprog/rox-simple.ck tests/userprog/rox-simple tests/userprog/rox-simple.result
 FAIL tests/userprog/rox-simple
@@ -666,7 +626,11 @@ run: read "child-rox": FAILED
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/bad-read -a bad-read -- -q  -f run bad-read < /dev/null 2> tests/userprog/bad-read.errors > tests/userprog/bad-read.output
 perl -I../.. ../../tests/userprog/bad-read.ck tests/userprog/bad-read tests/userprog/bad-read.result
 FAIL tests/userprog/bad-read
-run: TIMEOUT after 61 seconds of wall-clock time - load average: 1.74, 0.66, 0.49
+run: TIMEOUT after 61 seconds of wall-clock time - load average: 0.30, 0.22, 0.21
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/bad-write -a bad-write -- -q  -f run bad-write < /dev/null 2> tests/userprog/bad-write.errors > tests/userprog/bad-write.output
-../../tests/Make.tests:74: recipe for target 'tests/userprog/bad-write.output' failed
+perl -I../.. ../../tests/userprog/bad-write.ck tests/userprog/bad-write tests/userprog/bad-write.result
+FAIL tests/userprog/bad-write
+run: TIMEOUT after 61 seconds of wall-clock time - load average: 0.19, 0.21, 0.21
+pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/bad-read2 -a bad-read2 -- -q  -f run bad-read2 < /dev/null 2> tests/userprog/bad-read2.errors > tests/userprog/bad-read2.output
+../../tests/Make.tests:74: recipe for target 'tests/userprog/bad-read2.output' failed
 ../Makefile.kernel:10: recipe for target 'check' failed

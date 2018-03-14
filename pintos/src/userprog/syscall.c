@@ -5,8 +5,12 @@
 #include "threads/thread.h"
 #include "threads/vaddr.h"
 #include "userprog/pagedir.h"
+
 #include "filesys/filesys.h"
 #include "threads/malloc.h"
+#include "userprog/process.h"
+#include "filesys/file.h"
+#include "devices/input.h"
 
 /***********/
 #include "devices/shutdown.h" /* For use in the halt syscall */
@@ -21,6 +25,11 @@ bool create (const char *file_name, unsigned size);
 int open (const char *file_name);
 struct file_descriptor *get_open_file (int);
 int read (int, void *, unsigned);
+void close (int fd);
+tid_t exec (const char *);
+
+static void close_open_file (int);
+void close_file_by_owner (tid_t);
 
 /***********
 Structs
@@ -68,6 +77,50 @@ get_open_file (int fd)
 }
 
 void
+close_open_file (int fd)
+{
+  struct list_elem *e;
+  struct list_elem *prev;
+  struct file_descriptor *fd_struct; 
+  e = list_end (&open_files);
+  while (e != list_head (&open_files)) 
+    {
+      prev = list_prev (e);
+      fd_struct = list_entry (e, struct file_descriptor, elem);
+      if (fd_struct->fd_num == fd)
+	{
+	  list_remove (e);
+          file_close (fd_struct->file_struct);
+	  free (fd_struct);
+	  return ;
+	}
+      e = prev;
+    }
+  return ;
+}
+
+void
+close_file_by_owner (tid_t tid)
+{
+  struct list_elem *e;
+  struct list_elem *next;
+  struct file_descriptor *fd_struct; 
+  e = list_begin (&open_files);
+  while (e != list_tail (&open_files)) 
+    {
+      next = list_next (e);
+      fd_struct = list_entry (e, struct file_descriptor, elem);
+      if (fd_struct->owner == tid)
+	{
+	  list_remove (e);
+	  file_close (fd_struct->file_struct);
+          free (fd_struct);
+	}
+      e = next;
+    }
+}
+
+void
 syscall_init (void) 
 {
   intr_register_int (0x30, 3, INTR_ON, syscall_handler, "syscall");
@@ -97,6 +150,7 @@ syscall_handler (struct intr_frame *f)
 
     case SYS_EXEC:
       //printf("NOT IMPLEMENTED YET - SYS_EXEC\n");
+      f->eax = exec((char *)(f->esp+4));
       break;
 
     case SYS_WAIT:
@@ -137,7 +191,7 @@ syscall_handler (struct intr_frame *f)
       break;
 
     case SYS_CLOSE:
-      printf("NOT IMPLEMENTED YET - SYS_CLOSE\n");
+      close(*(int *)(f->esp+4));
       break;
 
     default:
@@ -273,4 +327,43 @@ read (int fd, void *buffer, unsigned size)
 
   lock_release (&fs_lock);
   return status;
+}
+
+void 
+close (int fd)
+{
+  struct file_descriptor *fd_struct;
+  lock_acquire (&fs_lock); 
+  fd_struct = get_open_file (fd);
+  if (fd_struct != NULL && fd_struct->owner == thread_current ()->tid)
+    close_open_file (fd);
+  lock_release (&fs_lock);
+  return ; 
+}
+
+tid_t
+exec (const char *cmd_line)
+{
+  /* a thread's id. When there is a user process within a kernel thread, we
+   * use one-to-one mapping from tid to pid, which means pid = tid
+   */
+  tid_t tid;
+  struct thread *cur;
+  /* check if the user pinter is valid */
+  if (!check_ptr (cmd_line))
+    {
+      exit (-1);
+    }
+
+  cur = thread_current ();
+
+  cur->child_load_status = 0;
+  tid = process_execute (cmd_line);
+  lock_acquire(&cur->lock_child);
+  while (cur->child_load_status == 0)
+    cond_wait(&cur->cond_child, &cur->lock_child);
+  if (cur->child_load_status == -1)
+    tid = -1;
+  lock_release(&cur->lock_child);
+  return tid;
 }
