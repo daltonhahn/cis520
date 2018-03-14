@@ -8,32 +8,7 @@ perl -I../.. ../../tests/userprog/args-single.ck tests/userprog/args-single test
 pass tests/userprog/args-single
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/args-multiple -a args-multiple -- -q  -f run 'args-multiple some arguments for you!' < /dev/null 2> tests/userprog/args-multiple.errors > tests/userprog/args-multiple.output
 perl -I../.. ../../tests/userprog/args-multiple.ck tests/userprog/args-multiple tests/userprog/args-multiple.result
-FAIL tests/userprog/args-multiple
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (args) begin
-  (args) argc = 5
-  (args) argv[0] = 'args-multiple'
-  (args) argv[1] = 'some'
-  (args) argv[2] = 'arguments'
-  (args) argv[3] = 'for'
-  (args) argv[4] = 'you!'
-  (args) argv[5] = null
-  (args) end
-  args-multiple: exit(0)
-Differences in `diff -u' format:
-  (args) begin
-- (args) argc = 5
-- (args) argv[0] = 'args-multiple'
-- (args) argv[1] = 'some'
-- (args) argv[2] = 'arguments'
-- (args) argv[3] = 'for'
-- (args) argv[4] = 'you!'
-- (args) argv[5] = null
-+ (args) argc = -1072648427
-  (args) end
-  args-multiple: exit(0)
+pass tests/userprog/args-multiple
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/args-many -a args-many -- -q  -f run 'args-many a b c d e f g h i j k l m n o p q r s t u v' < /dev/null 2> tests/userprog/args-many.errors > tests/userprog/args-many.output
 perl -I../.. ../../tests/userprog/args-many.ck tests/userprog/args-many tests/userprog/args-many.result
 pass tests/userprog/args-many
@@ -74,14 +49,14 @@ pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/create-normal -a c
 perl -I../.. ../../tests/userprog/create-normal.ck tests/userprog/create-normal tests/userprog/create-normal.result
 FAIL tests/userprog/create-normal
 Kernel panic in run: PANIC at ../../filesys/inode.c:78 in inode_create(): assertion `length >= 0' failed.
-Call stack: 0xc0029a67 0xc002eb1c 0xc002db33 0xc002d702 0xc002d7c6 0xc0021cdf 0xc0021fc7 0x804a476 0x80480d6 0x804812f 0x80488e0
+Call stack: 0xc0029a67 0xc002ec7c 0xc002dc9e 0xc002d867 0xc002d92b 0xc0021cdf 0xc0021fc7 0x804a476 0x80480d6 0x804812f 0x80488e0
 Translation of call stack:
 In kernel.o:
 0xc0029a67: debug_panic (.../../lib/kernel/debug.c:38)
-0xc002eb1c: inode_create (.../../../filesys/inode.c:92)
-0xc002db33: filesys_create (..../../filesys/filesys.c:52)
-0xc002d702: create (...../userprog/syscall.c:168)
-0xc002d7c6: syscall_handler (...../userprog/syscall.c:112)
+0xc002ec7c: inode_create (.../../../filesys/inode.c:92)
+0xc002dc9e: filesys_create (..../../filesys/filesys.c:52)
+0xc002d867: create (...../userprog/syscall.c:230)
+0xc002d92b: syscall_handler (...../userprog/syscall.c:106)
 0xc0021cdf: intr_handler (..../threads/interrupt.c:378)
 0xc0021fc7: intr_entry (threads/intr-stubs.S:38)
 In tests/userprog/create-normal:
@@ -96,14 +71,14 @@ pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/create-empty -a cr
 perl -I../.. ../../tests/userprog/create-empty.ck tests/userprog/create-empty tests/userprog/create-empty.result
 FAIL tests/userprog/create-empty
 Kernel panic in run: PANIC at ../../filesys/inode.c:78 in inode_create(): assertion `length >= 0' failed.
-Call stack: 0xc0029a67 0xc002eb1c 0xc002db33 0xc002d702 0xc002d7c6 0xc0021cdf 0xc0021fc7 0x804a466 0x80480c8 0x8048124 0x80488d5
+Call stack: 0xc0029a67 0xc002ec7c 0xc002dc9e 0xc002d867 0xc002d92b 0xc0021cdf 0xc0021fc7 0x804a466 0x80480c8 0x8048124 0x80488d5
 Translation of call stack:
 In kernel.o:
 0xc0029a67: debug_panic (.../../lib/kernel/debug.c:38)
-0xc002eb1c: inode_create (.../../../filesys/inode.c:92)
-0xc002db33: filesys_create (..../../filesys/filesys.c:52)
-0xc002d702: create (...../userprog/syscall.c:168)
-0xc002d7c6: syscall_handler (...../userprog/syscall.c:112)
+0xc002ec7c: inode_create (.../../../filesys/inode.c:92)
+0xc002dc9e: filesys_create (..../../filesys/filesys.c:52)
+0xc002d867: create (...../userprog/syscall.c:230)
+0xc002d92b: syscall_handler (...../userprog/syscall.c:106)
 0xc0021cdf: intr_handler (..../threads/interrupt.c:378)
 0xc0021fc7: intr_entry (threads/intr-stubs.S:38)
 In tests/userprog/create-empty:
@@ -118,14 +93,14 @@ pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/create-null -a cre
 perl -I../.. ../../tests/userprog/create-null.ck tests/userprog/create-null tests/userprog/create-null.result
 FAIL tests/userprog/create-null
 Kernel panic in run: PANIC at ../../filesys/inode.c:78 in inode_create(): assertion `length >= 0' failed.
-Call stack: 0xc0029a67 0xc002eb1c 0xc002db33 0xc002d702 0xc002d7c6 0xc0021cdf 0xc0021fc7 0x804a466 0x80480c6 0x8048122 0x80488d3
+Call stack: 0xc0029a67 0xc002ec7c 0xc002dc9e 0xc002d867 0xc002d92b 0xc0021cdf 0xc0021fc7 0x804a466 0x80480c6 0x8048122 0x80488d3
 Translation of call stack:
 In kernel.o:
 0xc0029a67: debug_panic (.../../lib/kernel/debug.c:38)
-0xc002eb1c: inode_create (.../../../filesys/inode.c:92)
-0xc002db33: filesys_create (..../../filesys/filesys.c:52)
-0xc002d702: create (...../userprog/syscall.c:168)
-0xc002d7c6: syscall_handler (...../userprog/syscall.c:112)
+0xc002ec7c: inode_create (.../../../filesys/inode.c:92)
+0xc002dc9e: filesys_create (..../../filesys/filesys.c:52)
+0xc002d867: create (...../userprog/syscall.c:230)
+0xc002d92b: syscall_handler (...../userprog/syscall.c:106)
 0xc0021cdf: intr_handler (..../threads/interrupt.c:378)
 0xc0021fc7: intr_entry (threads/intr-stubs.S:38)
 In tests/userprog/create-null:
@@ -140,14 +115,14 @@ pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/create-bad-ptr -a 
 perl -I../.. ../../tests/userprog/create-bad-ptr.ck tests/userprog/create-bad-ptr tests/userprog/create-bad-ptr.result
 FAIL tests/userprog/create-bad-ptr
 Kernel panic in run: PANIC at ../../filesys/inode.c:78 in inode_create(): assertion `length >= 0' failed.
-Call stack: 0xc0029a67 0xc002eb1c 0xc002db33 0xc002d702 0xc002d7c6 0xc0021cdf 0xc0021fc7 0x804a466 0x80480c6 0x8048122 0x80488d3
+Call stack: 0xc0029a67 0xc002ec7c 0xc002dc9e 0xc002d867 0xc002d92b 0xc0021cdf 0xc0021fc7 0x804a466 0x80480c6 0x8048122 0x80488d3
 Translation of call stack:
 In kernel.o:
 0xc0029a67: debug_panic (.../../lib/kernel/debug.c:38)
-0xc002eb1c: inode_create (.../../../filesys/inode.c:92)
-0xc002db33: filesys_create (..../../filesys/filesys.c:52)
-0xc002d702: create (...../userprog/syscall.c:168)
-0xc002d7c6: syscall_handler (...../userprog/syscall.c:112)
+0xc002ec7c: inode_create (.../../../filesys/inode.c:92)
+0xc002dc9e: filesys_create (..../../filesys/filesys.c:52)
+0xc002d867: create (...../userprog/syscall.c:230)
+0xc002d92b: syscall_handler (...../userprog/syscall.c:106)
 0xc0021cdf: intr_handler (..../threads/interrupt.c:378)
 0xc0021fc7: intr_entry (threads/intr-stubs.S:38)
 In tests/userprog/create-bad-ptr:
@@ -162,14 +137,14 @@ pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/create-long -a cre
 perl -I../.. ../../tests/userprog/create-long.ck tests/userprog/create-long tests/userprog/create-long.result
 FAIL tests/userprog/create-long
 Kernel panic in run: PANIC at ../../filesys/inode.c:78 in inode_create(): assertion `length >= 0' failed.
-Call stack: 0xc0029a67 0xc002eb1c 0xc002db33 0xc002d702 0xc002d7c6 0xc0021cdf 0xc0021fc7 0x804a496 0x80480f3 0x804814f 0x8048900
+Call stack: 0xc0029a67 0xc002ec7c 0xc002dc9e 0xc002d867 0xc002d92b 0xc0021cdf 0xc0021fc7 0x804a496 0x80480f3 0x804814f 0x8048900
 Translation of call stack:
 In kernel.o:
 0xc0029a67: debug_panic (.../../lib/kernel/debug.c:38)
-0xc002eb1c: inode_create (.../../../filesys/inode.c:92)
-0xc002db33: filesys_create (..../../filesys/filesys.c:52)
-0xc002d702: create (...../userprog/syscall.c:168)
-0xc002d7c6: syscall_handler (...../userprog/syscall.c:112)
+0xc002ec7c: inode_create (.../../../filesys/inode.c:92)
+0xc002dc9e: filesys_create (..../../filesys/filesys.c:52)
+0xc002d867: create (...../userprog/syscall.c:230)
+0xc002d92b: syscall_handler (...../userprog/syscall.c:106)
 0xc0021cdf: intr_handler (..../threads/interrupt.c:378)
 0xc0021fc7: intr_entry (threads/intr-stubs.S:38)
 In tests/userprog/create-long:
@@ -184,14 +159,14 @@ pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/create-exists -a c
 perl -I../.. ../../tests/userprog/create-exists.ck tests/userprog/create-exists tests/userprog/create-exists.result
 FAIL tests/userprog/create-exists
 Kernel panic in run: PANIC at ../../filesys/inode.c:78 in inode_create(): assertion `length >= 0' failed.
-Call stack: 0xc0029a67 0xc002eb1c 0xc002db33 0xc002d702 0xc002d7c6 0xc0021cdf 0xc0021fc7 0x804a556 0x80480d6 0x804820f 0x80489c0
+Call stack: 0xc0029a67 0xc002ec7c 0xc002dc9e 0xc002d867 0xc002d92b 0xc0021cdf 0xc0021fc7 0x804a556 0x80480d6 0x804820f 0x80489c0
 Translation of call stack:
 In kernel.o:
 0xc0029a67: debug_panic (.../../lib/kernel/debug.c:38)
-0xc002eb1c: inode_create (.../../../filesys/inode.c:92)
-0xc002db33: filesys_create (..../../filesys/filesys.c:52)
-0xc002d702: create (...../userprog/syscall.c:168)
-0xc002d7c6: syscall_handler (...../userprog/syscall.c:112)
+0xc002ec7c: inode_create (.../../../filesys/inode.c:92)
+0xc002dc9e: filesys_create (..../../filesys/filesys.c:52)
+0xc002d867: create (...../userprog/syscall.c:230)
+0xc002d92b: syscall_handler (...../userprog/syscall.c:106)
 0xc0021cdf: intr_handler (..../threads/interrupt.c:378)
 0xc0021fc7: intr_entry (threads/intr-stubs.S:38)
 In tests/userprog/create-exists:
@@ -206,14 +181,14 @@ pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/create-bound -a cr
 perl -I../.. ../../tests/userprog/create-bound.ck tests/userprog/create-bound tests/userprog/create-bound.result
 FAIL tests/userprog/create-bound
 Kernel panic in run: PANIC at ../../filesys/inode.c:78 in inode_create(): assertion `length >= 0' failed.
-Call stack: 0xc0029a67 0xc002eb1c 0xc002db33 0xc002d702 0xc002d7c6 0xc0021cdf 0xc0021fc7 0x804a546 0x80480d0 0x8048203 0x80489b4
+Call stack: 0xc0029a67 0xc002ec7c 0xc002dc9e 0xc002d867 0xc002d92b 0xc0021cdf 0xc0021fc7 0x804a546 0x80480d0 0x8048203 0x80489b4
 Translation of call stack:
 In kernel.o:
 0xc0029a67: debug_panic (.../../lib/kernel/debug.c:38)
-0xc002eb1c: inode_create (.../../../filesys/inode.c:92)
-0xc002db33: filesys_create (..../../filesys/filesys.c:52)
-0xc002d702: create (...../userprog/syscall.c:168)
-0xc002d7c6: syscall_handler (...../userprog/syscall.c:112)
+0xc002ec7c: inode_create (.../../../filesys/inode.c:92)
+0xc002dc9e: filesys_create (..../../filesys/filesys.c:52)
+0xc002d867: create (...../userprog/syscall.c:230)
+0xc002d92b: syscall_handler (...../userprog/syscall.c:106)
 0xc0021cdf: intr_handler (..../threads/interrupt.c:378)
 0xc0021fc7: intr_entry (threads/intr-stubs.S:38)
 In tests/userprog/create-bound:
@@ -333,6 +308,15 @@ Test output failed to match any acceptable form.
 
 Acceptable output:
   (close-stdout) begin
+  (close-stdout) end
+  close-stdout: exit(0)
+Differences in `diff -u' format:
+  (close-stdout) begin
++ NOT IMPLEMENTED YET - SYS_CLOSE
+  (close-stdout) end
+  close-stdout: exit(0)
+Acceptable output:
+  (close-stdout) begin
   close-stdout: exit(-1)
 Differences in `diff -u' format:
   (close-stdout) begin
@@ -340,20 +324,20 @@ Differences in `diff -u' format:
 + NOT IMPLEMENTED YET - SYS_CLOSE
 + (close-stdout) end
 + close-stdout: exit(0)
-Acceptable output:
-  (close-stdout) begin
-  (close-stdout) end
-  close-stdout: exit(0)
-Differences in `diff -u' format:
-  (close-stdout) begin
-+ NOT IMPLEMENTED YET - SYS_CLOSE
-  (close-stdout) end
-  close-stdout: exit(0)
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/close-bad-fd -a close-bad-fd -- -q  -f run close-bad-fd < /dev/null 2> tests/userprog/close-bad-fd.errors > tests/userprog/close-bad-fd.output
 perl -I../.. ../../tests/userprog/close-bad-fd.ck tests/userprog/close-bad-fd tests/userprog/close-bad-fd.result
 FAIL tests/userprog/close-bad-fd
 Test output failed to match any acceptable form.
 
+Acceptable output:
+  (close-bad-fd) begin
+  (close-bad-fd) end
+  close-bad-fd: exit(0)
+Differences in `diff -u' format:
+  (close-bad-fd) begin
++ NOT IMPLEMENTED YET - SYS_CLOSE
+  (close-bad-fd) end
+  close-bad-fd: exit(0)
 Acceptable output:
   (close-bad-fd) begin
   close-bad-fd: exit(-1)
@@ -363,15 +347,6 @@ Differences in `diff -u' format:
 + NOT IMPLEMENTED YET - SYS_CLOSE
 + (close-bad-fd) end
 + close-bad-fd: exit(0)
-Acceptable output:
-  (close-bad-fd) begin
-  (close-bad-fd) end
-  close-bad-fd: exit(0)
-Differences in `diff -u' format:
-  (close-bad-fd) begin
-+ NOT IMPLEMENTED YET - SYS_CLOSE
-  (close-bad-fd) end
-  close-bad-fd: exit(0)
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/read-normal -a read-normal -p ../../tests/userprog/sample.txt -a sample.txt -- -q  -f run read-normal < /dev/null 2> tests/userprog/read-normal.errors > tests/userprog/read-normal.output
 perl -I../.. ../../tests/userprog/read-normal.ck tests/userprog/read-normal tests/userprog/read-normal.result
 FAIL tests/userprog/read-normal
@@ -398,14 +373,14 @@ pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/write-normal -a wr
 perl -I../.. ../../tests/userprog/write-normal.ck tests/userprog/write-normal tests/userprog/write-normal.result
 FAIL tests/userprog/write-normal
 Kernel panic in run: PANIC at ../../filesys/inode.c:78 in inode_create(): assertion `length >= 0' failed.
-Call stack: 0xc0029a67 0xc002eb1c 0xc002db33 0xc002d702 0xc002d7c6 0xc0021cdf 0xc0021fc7 0x804a4d6 0x80480d6 0x8048199 0x804894a
+Call stack: 0xc0029a67 0xc002ec7c 0xc002dc9e 0xc002d867 0xc002d92b 0xc0021cdf 0xc0021fc7 0x804a4d6 0x80480d6 0x8048199 0x804894a
 Translation of call stack:
 In kernel.o:
 0xc0029a67: debug_panic (.../../lib/kernel/debug.c:38)
-0xc002eb1c: inode_create (.../../../filesys/inode.c:92)
-0xc002db33: filesys_create (..../../filesys/filesys.c:52)
-0xc002d702: create (...../userprog/syscall.c:168)
-0xc002d7c6: syscall_handler (...../userprog/syscall.c:112)
+0xc002ec7c: inode_create (.../../../filesys/inode.c:92)
+0xc002dc9e: filesys_create (..../../filesys/filesys.c:52)
+0xc002d867: create (...../userprog/syscall.c:230)
+0xc002d92b: syscall_handler (...../userprog/syscall.c:106)
 0xc0021cdf: intr_handler (..../threads/interrupt.c:378)
 0xc0021fc7: intr_entry (threads/intr-stubs.S:38)
 In tests/userprog/write-normal:
@@ -422,36 +397,16 @@ pass tests/userprog/write-bad-ptr
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/write-boundary -a write-boundary -p ../../tests/userprog/sample.txt -a sample.txt -- -q  -f run write-boundary < /dev/null 2> tests/userprog/write-boundary.errors > tests/userprog/write-boundary.output
 perl -I../.. ../../tests/userprog/write-boundary.ck tests/userprog/write-boundary tests/userprog/write-boundary.result
 FAIL tests/userprog/write-boundary
-run: Write Syscall(write-boundary) write() returned 13 instead of 239: FAILED
+run: write() returned 0 instead of 239: FAILED
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/write-zero -a write-zero -p ../../tests/userprog/sample.txt -a sample.txt -- -q  -f run write-zero < /dev/null 2> tests/userprog/write-zero.errors > tests/userprog/write-zero.output
 perl -I../.. ../../tests/userprog/write-zero.ck tests/userprog/write-zero tests/userprog/write-zero.result
-FAIL tests/userprog/write-zero
-run: Write Syscall(write-zero) write() returned 13 instead of 0: FAILED
+pass tests/userprog/write-zero
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/write-stdin -a write-stdin -- -q  -f run write-stdin < /dev/null 2> tests/userprog/write-stdin.errors > tests/userprog/write-stdin.output
 perl -I../.. ../../tests/userprog/write-stdin.ck tests/userprog/write-stdin tests/userprog/write-stdin.result
 pass tests/userprog/write-stdin
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/write-bad-fd -a write-bad-fd -- -q  -f run write-bad-fd < /dev/null 2> tests/userprog/write-bad-fd.errors > tests/userprog/write-bad-fd.output
 perl -I../.. ../../tests/userprog/write-bad-fd.ck tests/userprog/write-bad-fd tests/userprog/write-bad-fd.result
-FAIL tests/userprog/write-bad-fd
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (write-bad-fd) begin
-  write-bad-fd: exit(-1)
-Differences in `diff -u' format:
-  (write-bad-fd) begin
-- write-bad-fd: exit(-1)
-+ Write SyscallWrite SyscallWrite SyscallWrite SyscallWrite SyscallWrite SyscallWrite Syscall(write-bad-fd) end
-+ write-bad-fd: exit(0)
-Acceptable output:
-  (write-bad-fd) begin
-  (write-bad-fd) end
-  write-bad-fd: exit(0)
-Differences in `diff -u' format:
-  (write-bad-fd) begin
-- (write-bad-fd) end
-+ Write SyscallWrite SyscallWrite SyscallWrite SyscallWrite SyscallWrite SyscallWrite Syscall(write-bad-fd) end
-  write-bad-fd: exit(0)
+pass tests/userprog/write-bad-fd
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/exec-once -a exec-once -p tests/userprog/child-simple -a child-simple -- -q  -f run exec-once < /dev/null 2> tests/userprog/exec-once.errors > tests/userprog/exec-once.output
 perl -I../.. ../../tests/userprog/exec-once.ck tests/userprog/exec-once tests/userprog/exec-once.result
 FAIL tests/userprog/exec-once
@@ -571,6 +526,19 @@ Acceptable output:
   (exec-missing) begin
   load: no-such-file: open failed
   (exec-missing) exec("no-such-file"): -1
+  (exec-missing) end
+  exec-missing: exit(0)
+Differences in `diff -u' format:
+  (exec-missing) begin
+- load: no-such-file: open failed
+- (exec-missing) exec("no-such-file"): -1
++ (exec-missing) exec("no-such-file"): 134524733
+  (exec-missing) end
+  exec-missing: exit(0)
+Acceptable output:
+  (exec-missing) begin
+  load: no-such-file: open failed
+  (exec-missing) exec("no-such-file"): -1
   no-such-file: exit(-1)
   (exec-missing) end
   exec-missing: exit(0)
@@ -579,6 +547,17 @@ Differences in `diff -u' format:
 - load: no-such-file: open failed
 - (exec-missing) exec("no-such-file"): -1
 - no-such-file: exit(-1)
++ (exec-missing) exec("no-such-file"): 134524733
+  (exec-missing) end
+  exec-missing: exit(0)
+Acceptable output:
+  (exec-missing) begin
+  (exec-missing) exec("no-such-file"): -1
+  (exec-missing) end
+  exec-missing: exit(0)
+Differences in `diff -u' format:
+  (exec-missing) begin
+- (exec-missing) exec("no-such-file"): -1
 + (exec-missing) exec("no-such-file"): 134524733
   (exec-missing) end
   exec-missing: exit(0)
@@ -593,30 +572,6 @@ Differences in `diff -u' format:
   (exec-missing) begin
 - load: no-such-file: open failed
 - no-such-file: exit(-1)
-- (exec-missing) exec("no-such-file"): -1
-+ (exec-missing) exec("no-such-file"): 134524733
-  (exec-missing) end
-  exec-missing: exit(0)
-Acceptable output:
-  (exec-missing) begin
-  (exec-missing) exec("no-such-file"): -1
-  (exec-missing) end
-  exec-missing: exit(0)
-Differences in `diff -u' format:
-  (exec-missing) begin
-- (exec-missing) exec("no-such-file"): -1
-+ (exec-missing) exec("no-such-file"): 134524733
-  (exec-missing) end
-  exec-missing: exit(0)
-Acceptable output:
-  (exec-missing) begin
-  load: no-such-file: open failed
-  (exec-missing) exec("no-such-file"): -1
-  (exec-missing) end
-  exec-missing: exit(0)
-Differences in `diff -u' format:
-  (exec-missing) begin
-- load: no-such-file: open failed
 - (exec-missing) exec("no-such-file"): -1
 + (exec-missing) exec("no-such-file"): 134524733
   (exec-missing) end
@@ -711,5 +666,13 @@ perl -I../.. ../../tests/userprog/rox-multichild.ck tests/userprog/rox-multichil
 FAIL tests/userprog/rox-multichild
 run: read "child-rox": FAILED
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/bad-read -a bad-read -- -q  -f run bad-read < /dev/null 2> tests/userprog/bad-read.errors > tests/userprog/bad-read.output
-../../tests/Make.tests:74: recipe for target 'tests/userprog/bad-read.output' failed
+perl -I../.. ../../tests/userprog/bad-read.ck tests/userprog/bad-read tests/userprog/bad-read.result
+FAIL tests/userprog/bad-read
+run: TIMEOUT after 92 seconds of wall-clock time - load average: 0.72, 0.68, 0.55
+pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/bad-write -a bad-write -- -q  -f run bad-write < /dev/null 2> tests/userprog/bad-write.errors > tests/userprog/bad-write.output
+perl -I../.. ../../tests/userprog/bad-write.ck tests/userprog/bad-write tests/userprog/bad-write.result
+FAIL tests/userprog/bad-write
+run: TIMEOUT after 61 seconds of wall-clock time - load average: 0.31, 0.57, 0.52
+pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/bad-read2 -a bad-read2 -- -q  -f run bad-read2 < /dev/null 2> tests/userprog/bad-read2.errors > tests/userprog/bad-read2.output
+../../tests/Make.tests:74: recipe for target 'tests/userprog/bad-read2.output' failed
 ../Makefile.kernel:10: recipe for target 'check' failed
