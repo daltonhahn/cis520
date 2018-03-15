@@ -11,13 +11,14 @@
 #include "userprog/process.h"
 #include "filesys/file.h"
 #include "devices/input.h"
+#include <string.h>
 
 /***********/
 #include "devices/shutdown.h" /* For use in the halt syscall */
 /***********/
 
 static void syscall_handler (struct intr_frame *);
-void halt();
+void halt(void);
 void exit(int status);
 int write(int fd, const void *buffer, unsigned size);
 bool check_ptr (const void *usr_ptr);
@@ -33,6 +34,7 @@ bool remove (const char *file_name);
 void seek (int fd, unsigned position);
 unsigned tell (int fd);
 
+static int allocate_fd(void);
 static void close_open_file (int);
 void close_file_by_owner (tid_t);
 
@@ -137,8 +139,8 @@ static void
 syscall_handler (struct intr_frame *f) 
 {
 
-  if (!check_ptr (f->esp) || !check_ptr (f->esp + 1) ||
-      !check_ptr (f->esp + 2) || !check_ptr (f->esp + 3))
+  if (!check_ptr (f->esp) || !check_ptr (f->esp + 4) ||
+      !check_ptr (f->esp + 8) || !check_ptr (f->esp + 12))
   {
     exit(-1);
   }
@@ -158,11 +160,11 @@ syscall_handler (struct intr_frame *f)
       break;
 
     case SYS_WAIT:
-      f->eax = wait((unsigned *)(f->esp+4));
+      f->eax = wait(*(unsigned *)(f->esp+4));
       break;
 
     case SYS_CREATE:
-      f->eax = create ((char *)(f->esp+4), (unsigned *)(f->esp+8));
+      f->eax = create ((char *)(f->esp+4), *(unsigned *)(f->esp+8));
       break;
 
     case SYS_REMOVE:
@@ -268,7 +270,7 @@ exit(int status)
 }
 
 void
-halt()
+halt(void)
 {
   shutdown_power_off();
 }
@@ -304,7 +306,7 @@ create (const char *file_name, unsigned size)
 {
   bool status;
 
-  if (!check_ptr(file_name))
+  if (!check_ptr(file_name) || strcmp(file_name, "") == 0)
     exit (-1);
 
   lock_acquire (&fs_lock);
