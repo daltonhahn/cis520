@@ -26,9 +26,9 @@ int open (const char *file_name);
 struct file_descriptor *get_open_file (int);
 int read (int, void *, unsigned);
 void close (int fd);
-tid_t exec (const char *);
+pid_t exec (const char *);
 int filesize (int);
-int wait (tid_t pid);
+int wait (pid_t pid);
 
 static void close_open_file (int);
 void close_file_by_owner (tid_t);
@@ -345,7 +345,7 @@ close (int fd)
   return ; 
 }
 
-tid_t
+pid_t
 exec (const char *cmd_line)
 {
   /* a thread's id. When there is a user process within a kernel thread, we
@@ -386,7 +386,7 @@ filesize (int fd)
 }
 
 int 
-wait (tid_t pid)
+wait (pid_t pid)
 { 
   return process_wait(pid);
 }

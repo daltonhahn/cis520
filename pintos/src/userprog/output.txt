@@ -372,12 +372,12 @@ pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/exec-bound-2 -a ex
 perl -I../.. ../../tests/userprog/exec-bound-2.ck tests/userprog/exec-bound-2 tests/userprog/exec-bound-2.result
 FAIL tests/userprog/exec-bound-2
 Kernel panic in run: PANIC at ../../userprog/exception.c:100 in kill(): Kernel bug - unexpected interrupt in kernel
-Call stack: 0xc0029a77 0xc002d1ef 0xc002d2b3 0xc0021cef 0xc0021fd7 0xc0028e5e 0xc002bf06 0xc002db04 0xc002dc4c 0xc0021cef 0xc0021fd7 0x80480c9 0x80481ef 0x80489a0
+Call stack: 0xc0029a77 0xc002d1f9 0xc002d2bd 0xc0021cef 0xc0021fd7 0xc0028e5e 0xc002bf06 0xc002db04 0xc002dc4c 0xc0021cef 0xc0021fd7 0x80480c9 0x80481ef 0x80489a0
 Translation of call stack:
 In kernel.o:
 0xc0029a77: debug_panic (.../../lib/kernel/debug.c:38)
-0xc002d1ef: kill (.../userprog/exception.c:105)
-0xc002d2b3: exception_init (..../userprog/exception.c:31)
+0xc002d1f9: kill (.../userprog/exception.c:105)
+0xc002d2bd: exception_init (..../userprog/exception.c:31)
 0xc0021cef: intr_handler (..../threads/interrupt.c:378)
 0xc0021fd7: intr_entry (threads/intr-stubs.S:38)
 0xc0028e5e: strlcpy (...ld/../../lib/string.c:333)
@@ -564,7 +564,7 @@ translations will be misleading.
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/wait-bad-pid -a wait-bad-pid -- -q  -f run wait-bad-pid < /dev/null 2> tests/userprog/wait-bad-pid.errors > tests/userprog/wait-bad-pid.output
 perl -I../.. ../../tests/userprog/wait-bad-pid.ck tests/userprog/wait-bad-pid tests/userprog/wait-bad-pid.result
 FAIL tests/userprog/wait-bad-pid
-run: TIMEOUT after 61 seconds of wall-clock time - load average: 0.53, 0.50, 0.39
+run: TIMEOUT after 69 seconds of wall-clock time - load average: 0.38, 0.43, 0.35
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/multi-recurse -a multi-recurse -- -q  -f run 'multi-recurse 15' < /dev/null 2> tests/userprog/multi-recurse.errors > tests/userprog/multi-recurse.output
 perl -I../.. ../../tests/userprog/multi-recurse.ck tests/userprog/multi-recurse tests/userprog/multi-recurse.result
 FAIL tests/userprog/multi-recurse
@@ -627,11 +627,423 @@ run: read "child-rox": FAILED
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/bad-read -a bad-read -- -q  -f run bad-read < /dev/null 2> tests/userprog/bad-read.errors > tests/userprog/bad-read.output
 perl -I../.. ../../tests/userprog/bad-read.ck tests/userprog/bad-read tests/userprog/bad-read.result
 FAIL tests/userprog/bad-read
-run: TIMEOUT after 61 seconds of wall-clock time - load average: 0.22, 0.42, 0.37
+run: TIMEOUT after 61 seconds of wall-clock time - load average: 0.20, 0.38, 0.33
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/bad-write -a bad-write -- -q  -f run bad-write < /dev/null 2> tests/userprog/bad-write.errors > tests/userprog/bad-write.output
 perl -I../.. ../../tests/userprog/bad-write.ck tests/userprog/bad-write tests/userprog/bad-write.result
 FAIL tests/userprog/bad-write
-run: TIMEOUT after 61 seconds of wall-clock time - load average: 0.20, 0.37, 0.36
+run: TIMEOUT after 61 seconds of wall-clock time - load average: 0.13, 0.32, 0.32
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/bad-read2 -a bad-read2 -- -q  -f run bad-read2 < /dev/null 2> tests/userprog/bad-read2.errors > tests/userprog/bad-read2.output
-../../tests/Make.tests:74: recipe for target 'tests/userprog/bad-read2.output' failed
+perl -I../.. ../../tests/userprog/bad-read2.ck tests/userprog/bad-read2 tests/userprog/bad-read2.result
+FAIL tests/userprog/bad-read2
+run: TIMEOUT after 61 seconds of wall-clock time - load average: 0.15, 0.29, 0.31
+pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/bad-write2 -a bad-write2 -- -q  -f run bad-write2 < /dev/null 2> tests/userprog/bad-write2.errors > tests/userprog/bad-write2.output
+perl -I../.. ../../tests/userprog/bad-write2.ck tests/userprog/bad-write2 tests/userprog/bad-write2.result
+FAIL tests/userprog/bad-write2
+run: TIMEOUT after 61 seconds of wall-clock time - load average: 0.19, 0.28, 0.30
+pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/bad-jump -a bad-jump -- -q  -f run bad-jump < /dev/null 2> tests/userprog/bad-jump.errors > tests/userprog/bad-jump.output
+perl -I../.. ../../tests/userprog/bad-jump.ck tests/userprog/bad-jump tests/userprog/bad-jump.result
+FAIL tests/userprog/bad-jump
+run: TIMEOUT after 61 seconds of wall-clock time - load average: 0.12, 0.24, 0.28
+pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/bad-jump2 -a bad-jump2 -- -q  -f run bad-jump2 < /dev/null 2> tests/userprog/bad-jump2.errors > tests/userprog/bad-jump2.output
+perl -I../.. ../../tests/userprog/bad-jump2.ck tests/userprog/bad-jump2 tests/userprog/bad-jump2.result
+FAIL tests/userprog/bad-jump2
+run: TIMEOUT after 61 seconds of wall-clock time - load average: 0.20, 0.24, 0.27
+pintos -v -k -T 360 --qemu  --filesys-size=2 -p tests/userprog/no-vm/multi-oom -a multi-oom -- -q  -f run multi-oom < /dev/null 2> tests/userprog/no-vm/multi-oom.errors > tests/userprog/no-vm/multi-oom.output
+perl -I../.. ../../tests/userprog/no-vm/multi-oom.ck tests/userprog/no-vm/multi-oom tests/userprog/no-vm/multi-oom.result
+FAIL tests/userprog/no-vm/multi-oom
+Kernel panic in run: PANIC at ../../lib/kernel/list.c:171 in list_insert(): assertion `is_interior (before) || is_tail (before)' failed.
+Call stack: 0xc0029a77 0xc002a035 0xc002a1de 0xc0022c1c 0xc0022faa 0xc002db12 0xc002dc4c 0xc0021cef 0xc0021fd7 0x804ab33 0x80482a9 0x8048b79
+Translation of call stack:
+In kernel.o:
+0xc0029a77: debug_panic (.../../lib/kernel/debug.c:38)
+0xc002a035: list_insert (...t.c:172 (discriminator 1))
+0xc002a1de: list_push_back (.../../lib/kernel/list.c:220)
+0xc0022c1c: sema_down (.../../../threads/synch.c:72)
+0xc0022faa: lock_acquire (...../../threads/synch.c:200)
+0xc002db12: exec (...../userprog/syscall.c:367)
+0xc002dc4c: syscall_handler (...../userprog/syscall.c:155)
+0xc0021cef: intr_handler (..../threads/interrupt.c:378)
+0xc0021fd7: intr_entry (threads/intr-stubs.S:38)
+In tests/userprog/no-vm/multi-oom:
+0x0804ab33: exec (.../../lib/user/syscall.c:81)
+0x080482a9: main (...rog/no-vm/multi-oom.c:148)
+0x08048b79: _start (.../../../lib/user/entry.c:9)
+Translations of user virtual addresses above are based on a guess at
+the binary to use.  If this guess is incorrect, then those
+translations will be misleading.
+pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/filesys/base/lg-create -a lg-create -- -q  -f run lg-create < /dev/null 2> tests/filesys/base/lg-create.errors > tests/filesys/base/lg-create.output
+perl -I../.. ../../tests/filesys/base/lg-create.ck tests/filesys/base/lg-create tests/filesys/base/lg-create.result
+FAIL tests/filesys/base/lg-create
+Kernel panic in run: PANIC at ../../filesys/inode.c:78 in inode_create(): assertion `length >= 0' failed.
+Call stack: 0xc0029a77 0xc002f01c 0xc002e037 0xc002d90c 0xc002dc78 0xc0021cef 0xc0021fd7 0x804a606 0x80480db 0x8048a3a 0x8048a76
+Translation of call stack:
+In kernel.o:
+0xc0029a77: debug_panic (.../../lib/kernel/debug.c:38)
+0xc002f01c: inode_create (.../../../filesys/inode.c:92)
+0xc002e037: filesys_create (..../../filesys/filesys.c:52)
+0xc002d90c: create (...../userprog/syscall.c:290)
+0xc002dc78: syscall_handler (...../userprog/syscall.c:164)
+0xc0021cef: intr_handler (..../threads/interrupt.c:378)
+0xc0021fd7: intr_entry (threads/intr-stubs.S:38)
+In tests/filesys/base/lg-create:
+0x0804a606: create (.../../lib/user/syscall.c:93)
+0x080480db: test_main (...sts/filesys/create.inc:13)
+0x08048a3a: main (...ild/../../tests/main.c:13)
+0x08048a76: _start (.../../../lib/user/entry.c:9)
+Translations of user virtual addresses above are based on a guess at
+the binary to use.  If this guess is incorrect, then those
+translations will be misleading.
+pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/filesys/base/lg-full -a lg-full -- -q  -f run lg-full < /dev/null 2> tests/filesys/base/lg-full.errors > tests/filesys/base/lg-full.output
+perl -I../.. ../../tests/filesys/base/lg-full.ck tests/filesys/base/lg-full tests/filesys/base/lg-full.result
+FAIL tests/filesys/base/lg-full
+Kernel panic in run: PANIC at ../../filesys/inode.c:78 in inode_create(): assertion `length >= 0' failed.
+Call stack: 0xc0029a77 0xc002f01c 0xc002e037 0xc002d90c 0xc002dc78 0xc0021cef 0xc0021fd7 0x804a5e6 0x80488be 0x80480f6 0x8048a1e 0x8048a5a
+Translation of call stack:
+In kernel.o:
+0xc0029a77: debug_panic (.../../lib/kernel/debug.c:38)
+0xc002f01c: inode_create (.../../../filesys/inode.c:92)
+0xc002e037: filesys_create (..../../filesys/filesys.c:52)
+0xc002d90c: create (...../userprog/syscall.c:290)
+0xc002dc78: syscall_handler (...../userprog/syscall.c:164)
+0xc0021cef: intr_handler (..../threads/interrupt.c:378)
+0xc0021fd7: intr_entry (threads/intr-stubs.S:38)
+In tests/filesys/base/lg-full:
+0x0804a5e6: create (.../../lib/user/syscall.c:93)
+0x080488be: seq_test (...sts/filesys/seq-test.c:15)
+0x080480f6: test_main (.../filesys/base/full.inc:20)
+0x08048a1e: main (...ild/../../tests/main.c:13)
+0x08048a5a: _start (.../../../lib/user/entry.c:9)
+Translations of user virtual addresses above are based on a guess at
+the binary to use.  If this guess is incorrect, then those
+translations will be misleading.
+pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/filesys/base/lg-random -a lg-random -- -q  -f run lg-random < /dev/null 2> tests/filesys/base/lg-random.errors > tests/filesys/base/lg-random.output
+perl -I../.. ../../tests/filesys/base/lg-random.ck tests/filesys/base/lg-random tests/filesys/base/lg-random.result
+FAIL tests/filesys/base/lg-random
+Kernel panic in run: PANIC at ../../filesys/inode.c:78 in inode_create(): assertion `length >= 0' failed.
+Call stack: 0xc0029a77 0xc002f01c 0xc002e037 0xc002d90c 0xc002dc78 0xc0021cef 0xc0021fd7 0x804a846 0x8048117 0x8048c72 0x8048cae
+Translation of call stack:
+In kernel.o:
+0xc0029a77: debug_panic (.../../lib/kernel/debug.c:38)
+0xc002f01c: inode_create (.../../../filesys/inode.c:92)
+0xc002e037: filesys_create (..../../filesys/filesys.c:52)
+0xc002d90c: create (...../userprog/syscall.c:290)
+0xc002dc78: syscall_handler (...../userprog/syscall.c:164)
+0xc0021cef: intr_handler (..../threads/interrupt.c:378)
+0xc0021fd7: intr_entry (threads/intr-stubs.S:38)
+In tests/filesys/base/lg-random:
+0x0804a846: create (.../../lib/user/syscall.c:93)
+0x08048117: test_main (...ilesys/base/random.inc:32)
+0x08048c72: main (...ild/../../tests/main.c:13)
+0x08048cae: _start (.../../../lib/user/entry.c:9)
+Translations of user virtual addresses above are based on a guess at
+the binary to use.  If this guess is incorrect, then those
+translations will be misleading.
+pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/filesys/base/lg-seq-block -a lg-seq-block -- -q  -f run lg-seq-block < /dev/null 2> tests/filesys/base/lg-seq-block.errors > tests/filesys/base/lg-seq-block.output
+perl -I../.. ../../tests/filesys/base/lg-seq-block.ck tests/filesys/base/lg-seq-block tests/filesys/base/lg-seq-block.result
+FAIL tests/filesys/base/lg-seq-block
+Kernel panic in run: PANIC at ../../filesys/inode.c:78 in inode_create(): assertion `length >= 0' failed.
+Call stack: 0xc0029a77 0xc002f01c 0xc002e037 0xc002d90c 0xc002dc78 0xc0021cef 0xc0021fd7 0x804a5e6 0x80488be 0x80480f6 0x8048a1e 0x8048a5a
+Translation of call stack:
+In kernel.o:
+0xc0029a77: debug_panic (.../../lib/kernel/debug.c:38)
+0xc002f01c: inode_create (.../../../filesys/inode.c:92)
+0xc002e037: filesys_create (..../../filesys/filesys.c:52)
+0xc002d90c: create (...../userprog/syscall.c:290)
+0xc002dc78: syscall_handler (...../userprog/syscall.c:164)
+0xc0021cef: intr_handler (..../threads/interrupt.c:378)
+0xc0021fd7: intr_entry (threads/intr-stubs.S:38)
+In tests/filesys/base/lg-seq-block:
+0x0804a5e6: create (.../../lib/user/syscall.c:93)
+0x080488be: seq_test (...sts/filesys/seq-test.c:15)
+0x080480f6: test_main (...sys/base/seq-block.inc:20)
+0x08048a1e: main (...ild/../../tests/main.c:13)
+0x08048a5a: _start (.../../../lib/user/entry.c:9)
+Translations of user virtual addresses above are based on a guess at
+the binary to use.  If this guess is incorrect, then those
+translations will be misleading.
+pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/filesys/base/lg-seq-random -a lg-seq-random -- -q  -f run lg-seq-random < /dev/null 2> tests/filesys/base/lg-seq-random.errors > tests/filesys/base/lg-seq-random.output
+perl -I../.. ../../tests/filesys/base/lg-seq-random.ck tests/filesys/base/lg-seq-random tests/filesys/base/lg-seq-random.result
+FAIL tests/filesys/base/lg-seq-random
+Kernel panic in run: PANIC at ../../filesys/inode.c:78 in inode_create(): assertion `length >= 0' failed.
+Call stack: 0xc0029a77 0xc002f01c 0xc002e037 0xc002d90c 0xc002dc78 0xc0021cef 0xc0021fd7 0x804a626 0x80488f4 0x804812c 0x8048a54 0x8048a90
+Translation of call stack:
+In kernel.o:
+0xc0029a77: debug_panic (.../../lib/kernel/debug.c:38)
+0xc002f01c: inode_create (.../../../filesys/inode.c:92)
+0xc002e037: filesys_create (..../../filesys/filesys.c:52)
+0xc002d90c: create (...../userprog/syscall.c:290)
+0xc002dc78: syscall_handler (...../userprog/syscall.c:164)
+0xc0021cef: intr_handler (..../threads/interrupt.c:378)
+0xc0021fd7: intr_entry (threads/intr-stubs.S:38)
+In tests/filesys/base/lg-seq-random:
+0x0804a626: create (.../../lib/user/syscall.c:93)
+0x080488f4: seq_test (...sts/filesys/seq-test.c:15)
+0x0804812c: test_main (...ys/base/seq-random.inc:22)
+0x08048a54: main (...ild/../../tests/main.c:13)
+0x08048a90: _start (.../../../lib/user/entry.c:9)
+Translations of user virtual addresses above are based on a guess at
+the binary to use.  If this guess is incorrect, then those
+translations will be misleading.
+pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/filesys/base/sm-create -a sm-create -- -q  -f run sm-create < /dev/null 2> tests/filesys/base/sm-create.errors > tests/filesys/base/sm-create.output
+perl -I../.. ../../tests/filesys/base/sm-create.ck tests/filesys/base/sm-create tests/filesys/base/sm-create.result
+FAIL tests/filesys/base/sm-create
+Kernel panic in run: PANIC at ../../filesys/inode.c:78 in inode_create(): assertion `length >= 0' failed.
+Call stack: 0xc0029a77 0xc002f01c 0xc002e037 0xc002d90c 0xc002dc78 0xc0021cef 0xc0021fd7 0x804a606 0x80480db 0x8048a3a 0x8048a76
+Translation of call stack:
+In kernel.o:
+0xc0029a77: debug_panic (.../../lib/kernel/debug.c:38)
+0xc002f01c: inode_create (.../../../filesys/inode.c:92)
+0xc002e037: filesys_create (..../../filesys/filesys.c:52)
+0xc002d90c: create (...../userprog/syscall.c:290)
+0xc002dc78: syscall_handler (...../userprog/syscall.c:164)
+0xc0021cef: intr_handler (..../threads/interrupt.c:378)
+0xc0021fd7: intr_entry (threads/intr-stubs.S:38)
+In tests/filesys/base/sm-create:
+0x0804a606: create (.../../lib/user/syscall.c:93)
+0x080480db: test_main (...sts/filesys/create.inc:13)
+0x08048a3a: main (...ild/../../tests/main.c:13)
+0x08048a76: _start (.../../../lib/user/entry.c:9)
+Translations of user virtual addresses above are based on a guess at
+the binary to use.  If this guess is incorrect, then those
+translations will be misleading.
+pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/filesys/base/sm-full -a sm-full -- -q  -f run sm-full < /dev/null 2> tests/filesys/base/sm-full.errors > tests/filesys/base/sm-full.output
+perl -I../.. ../../tests/filesys/base/sm-full.ck tests/filesys/base/sm-full tests/filesys/base/sm-full.result
+FAIL tests/filesys/base/sm-full
+Kernel panic in run: PANIC at ../../filesys/inode.c:78 in inode_create(): assertion `length >= 0' failed.
+Call stack: 0xc0029a77 0xc002f01c 0xc002e037 0xc002d90c 0xc002dc78 0xc0021cef 0xc0021fd7 0x804a5e6 0x80488be 0x80480f6 0x8048a1e 0x8048a5a
+Translation of call stack:
+In kernel.o:
+0xc0029a77: debug_panic (.../../lib/kernel/debug.c:38)
+0xc002f01c: inode_create (.../../../filesys/inode.c:92)
+0xc002e037: filesys_create (..../../filesys/filesys.c:52)
+0xc002d90c: create (...../userprog/syscall.c:290)
+0xc002dc78: syscall_handler (...../userprog/syscall.c:164)
+0xc0021cef: intr_handler (..../threads/interrupt.c:378)
+0xc0021fd7: intr_entry (threads/intr-stubs.S:38)
+In tests/filesys/base/sm-full:
+0x0804a5e6: create (.../../lib/user/syscall.c:93)
+0x080488be: seq_test (...sts/filesys/seq-test.c:15)
+0x080480f6: test_main (.../filesys/base/full.inc:20)
+0x08048a1e: main (...ild/../../tests/main.c:13)
+0x08048a5a: _start (.../../../lib/user/entry.c:9)
+Translations of user virtual addresses above are based on a guess at
+the binary to use.  If this guess is incorrect, then those
+translations will be misleading.
+pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/filesys/base/sm-random -a sm-random -- -q  -f run sm-random < /dev/null 2> tests/filesys/base/sm-random.errors > tests/filesys/base/sm-random.output
+perl -I../.. ../../tests/filesys/base/sm-random.ck tests/filesys/base/sm-random tests/filesys/base/sm-random.result
+FAIL tests/filesys/base/sm-random
+Kernel panic in run: PANIC at ../../filesys/inode.c:78 in inode_create(): assertion `length >= 0' failed.
+Call stack: 0xc0029a77 0xc002f01c 0xc002e037 0xc002d90c 0xc002dc78 0xc0021cef 0xc0021fd7 0x804a806 0x8048112 0x8048c39 0x8048c75
+Translation of call stack:
+In kernel.o:
+0xc0029a77: debug_panic (.../../lib/kernel/debug.c:38)
+0xc002f01c: inode_create (.../../../filesys/inode.c:92)
+0xc002e037: filesys_create (..../../filesys/filesys.c:52)
+0xc002d90c: create (...../userprog/syscall.c:290)
+0xc002dc78: syscall_handler (...../userprog/syscall.c:164)
+0xc0021cef: intr_handler (..../threads/interrupt.c:378)
+0xc0021fd7: intr_entry (threads/intr-stubs.S:38)
+In tests/filesys/base/sm-random:
+0x0804a806: create (.../../lib/user/syscall.c:93)
+0x08048112: test_main (...ilesys/base/random.inc:32)
+0x08048c39: main (...ild/../../tests/main.c:13)
+0x08048c75: _start (.../../../lib/user/entry.c:9)
+Translations of user virtual addresses above are based on a guess at
+the binary to use.  If this guess is incorrect, then those
+translations will be misleading.
+pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/filesys/base/sm-seq-block -a sm-seq-block -- -q  -f run sm-seq-block < /dev/null 2> tests/filesys/base/sm-seq-block.errors > tests/filesys/base/sm-seq-block.output
+perl -I../.. ../../tests/filesys/base/sm-seq-block.ck tests/filesys/base/sm-seq-block tests/filesys/base/sm-seq-block.result
+FAIL tests/filesys/base/sm-seq-block
+Kernel panic in run: PANIC at ../../filesys/inode.c:78 in inode_create(): assertion `length >= 0' failed.
+Call stack: 0xc0029a77 0xc002f01c 0xc002e037 0xc002d90c 0xc002dc78 0xc0021cef 0xc0021fd7 0x804a5e6 0x80488be 0x80480f6 0x8048a1e 0x8048a5a
+Translation of call stack:
+In kernel.o:
+0xc0029a77: debug_panic (.../../lib/kernel/debug.c:38)
+0xc002f01c: inode_create (.../../../filesys/inode.c:92)
+0xc002e037: filesys_create (..../../filesys/filesys.c:52)
+0xc002d90c: create (...../userprog/syscall.c:290)
+0xc002dc78: syscall_handler (...../userprog/syscall.c:164)
+0xc0021cef: intr_handler (..../threads/interrupt.c:378)
+0xc0021fd7: intr_entry (threads/intr-stubs.S:38)
+In tests/filesys/base/sm-seq-block:
+0x0804a5e6: create (.../../lib/user/syscall.c:93)
+0x080488be: seq_test (...sts/filesys/seq-test.c:15)
+0x080480f6: test_main (...sys/base/seq-block.inc:20)
+0x08048a1e: main (...ild/../../tests/main.c:13)
+0x08048a5a: _start (.../../../lib/user/entry.c:9)
+Translations of user virtual addresses above are based on a guess at
+the binary to use.  If this guess is incorrect, then those
+translations will be misleading.
+pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/filesys/base/sm-seq-random -a sm-seq-random -- -q  -f run sm-seq-random < /dev/null 2> tests/filesys/base/sm-seq-random.errors > tests/filesys/base/sm-seq-random.output
+perl -I../.. ../../tests/filesys/base/sm-seq-random.ck tests/filesys/base/sm-seq-random tests/filesys/base/sm-seq-random.result
+FAIL tests/filesys/base/sm-seq-random
+Kernel panic in run: PANIC at ../../filesys/inode.c:78 in inode_create(): assertion `length >= 0' failed.
+Call stack: 0xc0029a77 0xc002f01c 0xc002e037 0xc002d90c 0xc002dc78 0xc0021cef 0xc0021fd7 0x804a626 0x80488f4 0x804812c 0x8048a54 0x8048a90
+Translation of call stack:
+In kernel.o:
+0xc0029a77: debug_panic (.../../lib/kernel/debug.c:38)
+0xc002f01c: inode_create (.../../../filesys/inode.c:92)
+0xc002e037: filesys_create (..../../filesys/filesys.c:52)
+0xc002d90c: create (...../userprog/syscall.c:290)
+0xc002dc78: syscall_handler (...../userprog/syscall.c:164)
+0xc0021cef: intr_handler (..../threads/interrupt.c:378)
+0xc0021fd7: intr_entry (threads/intr-stubs.S:38)
+In tests/filesys/base/sm-seq-random:
+0x0804a626: create (.../../lib/user/syscall.c:93)
+0x080488f4: seq_test (...sts/filesys/seq-test.c:15)
+0x0804812c: test_main (...ys/base/seq-random.inc:22)
+0x08048a54: main (...ild/../../tests/main.c:13)
+0x08048a90: _start (.../../../lib/user/entry.c:9)
+Translations of user virtual addresses above are based on a guess at
+the binary to use.  If this guess is incorrect, then those
+translations will be misleading.
+pintos -v -k -T 300 --qemu  --filesys-size=2 -p tests/filesys/base/syn-read -a syn-read -p tests/filesys/base/child-syn-read -a child-syn-read -- -q  -f run syn-read < /dev/null 2> tests/filesys/base/syn-read.errors > tests/filesys/base/syn-read.output
+perl -I../.. ../../tests/filesys/base/syn-read.ck tests/filesys/base/syn-read tests/filesys/base/syn-read.result
+FAIL tests/filesys/base/syn-read
+Kernel panic in run: PANIC at ../../filesys/inode.c:78 in inode_create(): assertion `length >= 0' failed.
+Call stack: 0xc0029a77 0xc002f01c 0xc002e037 0xc002d90c 0xc002dc78 0xc0021cef 0xc0021fd7 0x804a6d6 0x80480dc 0x8048b0e 0x8048b4a
+Translation of call stack:
+In kernel.o:
+0xc0029a77: debug_panic (.../../lib/kernel/debug.c:38)
+0xc002f01c: inode_create (.../../../filesys/inode.c:92)
+0xc002e037: filesys_create (..../../filesys/filesys.c:52)
+0xc002d90c: create (...../userprog/syscall.c:290)
+0xc002dc78: syscall_handler (...../userprog/syscall.c:164)
+0xc0021cef: intr_handler (..../threads/interrupt.c:378)
+0xc0021fd7: intr_entry (threads/intr-stubs.S:38)
+In tests/filesys/base/syn-read:
+0x0804a6d6: create (.../../lib/user/syscall.c:93)
+0x080480dc: test_main (...ilesys/base/syn-read.c:22)
+0x08048b0e: main (...ild/../../tests/main.c:13)
+0x08048b4a: _start (.../../../lib/user/entry.c:9)
+Translations of user virtual addresses above are based on a guess at
+the binary to use.  If this guess is incorrect, then those
+translations will be misleading.
+pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/filesys/base/syn-remove -a syn-remove -- -q  -f run syn-remove < /dev/null 2> tests/filesys/base/syn-remove.errors > tests/filesys/base/syn-remove.output
+perl -I../.. ../../tests/filesys/base/syn-remove.ck tests/filesys/base/syn-remove tests/filesys/base/syn-remove.result
+FAIL tests/filesys/base/syn-remove
+Kernel panic in run: PANIC at ../../filesys/inode.c:78 in inode_create(): assertion `length >= 0' failed.
+Call stack: 0xc0029a77 0xc002f01c 0xc002e037 0xc002d90c 0xc002dc78 0xc0021cef 0xc0021fd7 0x804a786 0x80480dc 0x8048bb9 0x8048bf5
+Translation of call stack:
+In kernel.o:
+0xc0029a77: debug_panic (.../../lib/kernel/debug.c:38)
+0xc002f01c: inode_create (.../../../filesys/inode.c:92)
+0xc002e037: filesys_create (..../../filesys/filesys.c:52)
+0xc002d90c: create (...../userprog/syscall.c:290)
+0xc002dc78: syscall_handler (...../userprog/syscall.c:164)
+0xc0021cef: intr_handler (..../threads/interrupt.c:378)
+0xc0021fd7: intr_entry (threads/intr-stubs.S:38)
+In tests/filesys/base/syn-remove:
+0x0804a786: create (.../../lib/user/syscall.c:93)
+0x080480dc: test_main (...esys/base/syn-remove.c:19)
+0x08048bb9: main (...ild/../../tests/main.c:13)
+0x08048bf5: _start (.../../../lib/user/entry.c:9)
+Translations of user virtual addresses above are based on a guess at
+the binary to use.  If this guess is incorrect, then those
+translations will be misleading.
+pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/filesys/base/syn-write -a syn-write -p tests/filesys/base/child-syn-wrt -a child-syn-wrt -- -q  -f run syn-write < /dev/null 2> tests/filesys/base/syn-write.errors > tests/filesys/base/syn-write.output
+perl -I../.. ../../tests/filesys/base/syn-write.ck tests/filesys/base/syn-write tests/filesys/base/syn-write.result
+FAIL tests/filesys/base/syn-write
+Kernel panic in run: PANIC at ../../filesys/inode.c:78 in inode_create(): assertion `length >= 0' failed.
+Call stack: 0xc0029a77 0xc002f01c 0xc002e037 0xc002d90c 0xc002dc78 0xc0021cef 0xc0021fd7 0x804a6e6 0x80480db 0x8048b1e 0x8048b5a
+Translation of call stack:
+In kernel.o:
+0xc0029a77: debug_panic (.../../lib/kernel/debug.c:38)
+0xc002f01c: inode_create (.../../../filesys/inode.c:92)
+0xc002e037: filesys_create (..../../filesys/filesys.c:52)
+0xc002d90c: create (...../userprog/syscall.c:290)
+0xc002dc78: syscall_handler (...../userprog/syscall.c:164)
+0xc0021cef: intr_handler (..../threads/interrupt.c:378)
+0xc0021fd7: intr_entry (threads/intr-stubs.S:38)
+In tests/filesys/base/syn-write:
+0x0804a6e6: create (.../../lib/user/syscall.c:93)
+0x080480db: test_main (...lesys/base/syn-write.c:22)
+0x08048b1e: main (...ild/../../tests/main.c:13)
+0x08048b5a: _start (.../../../lib/user/entry.c:9)
+Translations of user virtual addresses above are based on a guess at
+the binary to use.  If this guess is incorrect, then those
+translations will be misleading.
+pass tests/userprog/args-none
+pass tests/userprog/args-single
+pass tests/userprog/args-multiple
+pass tests/userprog/args-many
+pass tests/userprog/args-dbl-space
+pass tests/userprog/sc-bad-sp
+FAIL tests/userprog/sc-bad-arg
+pass tests/userprog/sc-boundary
+pass tests/userprog/sc-boundary-2
+pass tests/userprog/sc-boundary-3
+pass tests/userprog/halt
+pass tests/userprog/exit
+FAIL tests/userprog/create-normal
+FAIL tests/userprog/create-empty
+FAIL tests/userprog/create-null
+FAIL tests/userprog/create-bad-ptr
+FAIL tests/userprog/create-long
+FAIL tests/userprog/create-exists
+FAIL tests/userprog/create-bound
+pass tests/userprog/open-normal
+FAIL tests/userprog/open-missing
+pass tests/userprog/open-boundary
+FAIL tests/userprog/open-empty
+pass tests/userprog/open-null
+FAIL tests/userprog/open-bad-ptr
+pass tests/userprog/open-twice
+pass tests/userprog/close-normal
+pass tests/userprog/close-twice
+pass tests/userprog/close-stdin
+pass tests/userprog/close-stdout
+pass tests/userprog/close-bad-fd
+FAIL tests/userprog/read-normal
+pass tests/userprog/read-bad-ptr
+FAIL tests/userprog/read-boundary
+pass tests/userprog/read-zero
+pass tests/userprog/read-stdout
+pass tests/userprog/read-bad-fd
+FAIL tests/userprog/write-normal
+pass tests/userprog/write-bad-ptr
+FAIL tests/userprog/write-boundary
+pass tests/userprog/write-zero
+pass tests/userprog/write-stdin
+pass tests/userprog/write-bad-fd
+FAIL tests/userprog/exec-once
+FAIL tests/userprog/exec-arg
+FAIL tests/userprog/exec-bound
+FAIL tests/userprog/exec-bound-2
+FAIL tests/userprog/exec-bound-3
+FAIL tests/userprog/exec-multiple
+FAIL tests/userprog/exec-missing
+FAIL tests/userprog/exec-bad-ptr
+FAIL tests/userprog/wait-simple
+FAIL tests/userprog/wait-twice
+FAIL tests/userprog/wait-killed
+FAIL tests/userprog/wait-bad-pid
+FAIL tests/userprog/multi-recurse
+FAIL tests/userprog/multi-child-fd
+FAIL tests/userprog/rox-simple
+FAIL tests/userprog/rox-child
+FAIL tests/userprog/rox-multichild
+FAIL tests/userprog/bad-read
+FAIL tests/userprog/bad-write
+FAIL tests/userprog/bad-read2
+FAIL tests/userprog/bad-write2
+FAIL tests/userprog/bad-jump
+FAIL tests/userprog/bad-jump2
+FAIL tests/userprog/no-vm/multi-oom
+FAIL tests/filesys/base/lg-create
+FAIL tests/filesys/base/lg-full
+FAIL tests/filesys/base/lg-random
+FAIL tests/filesys/base/lg-seq-block
+FAIL tests/filesys/base/lg-seq-random
+FAIL tests/filesys/base/sm-create
+FAIL tests/filesys/base/sm-full
+FAIL tests/filesys/base/sm-random
+FAIL tests/filesys/base/sm-seq-block
+FAIL tests/filesys/base/sm-seq-random
+FAIL tests/filesys/base/syn-read
+FAIL tests/filesys/base/syn-remove
+FAIL tests/filesys/base/syn-write
+52 of 80 tests failed.
+../../tests/Make.tests:26: recipe for target 'check' failed
+make[1]: Leaving directory '/net/files.cis.ksu.edu/exports/home/b/blehmg/cis520/pintos/src/userprog/build'
 ../Makefile.kernel:10: recipe for target 'check' failed
