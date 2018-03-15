@@ -29,6 +29,9 @@ void close (int fd);
 pid_t exec (const char *);
 int filesize (int);
 int wait (pid_t pid);
+bool remove (const char *file_name);
+void seek (int fd, unsigned position);
+unsigned tell (int fd);
 
 static void close_open_file (int);
 void close_file_by_owner (tid_t);
@@ -151,12 +154,10 @@ syscall_handler (struct intr_frame *f)
       break;
 
     case SYS_EXEC:
-      //printf("NOT IMPLEMENTED YET - SYS_EXEC\n");
       f->eax = exec((char *)(f->esp+4));
       break;
 
     case SYS_WAIT:
-      //printf("NOT IMPLEMENTED YET - SYS_WAIT\n");
       f->eax = wait((unsigned *)(f->esp+4));
       break;
 
@@ -165,20 +166,18 @@ syscall_handler (struct intr_frame *f)
       break;
 
     case SYS_REMOVE:
-      //printf("NOT IMPLEMENTED YET - SYS_REMOVE\n");
+      f->eax = remove((char *)(f->esp+4));
       break;
 
     case SYS_OPEN:
-      //printf("NOT IMPLEMENTED YET - SYS_OPEN\n");
+      f->eax = open((char *)(f->esp+4));
       break;
 
     case SYS_FILESIZE:
-      //printf("NOT IMPLEMENTED YET - SYS_FILESIZE\n");
       f->eax = filesize(*(int *)(f->esp+4));
       break;
 
     case SYS_READ:
-      //printf("NOT IMPLEMENTED YET - SYS_READ\n");
       f->eax = read(*(int *)(f->esp+4), (void *)*(uint32_t *)(f->esp+8), *(unsigned *)(f->esp+12));
       break;
 
@@ -187,11 +186,11 @@ syscall_handler (struct intr_frame *f)
       break;
 
     case SYS_SEEK:
-      //printf("NOT IMPLEMENTED YET - SYS_SEEK\n");
+      seek(*(int *)(f->esp+4), *(int *)(f->esp+8));
       break;
 
     case SYS_TELL:
-      //printf("NOT IMPLEMENTED YET - SYS_TELL\n");
+      f->eax = tell(*(int *)(f->esp+4));
       break;
 
     case SYS_CLOSE:
@@ -235,15 +234,37 @@ write(int fd, const void *buffer, unsigned size)
 void 
 exit(int status)
 {
-  struct thread *cur_thread = thread_current();
+  // struct thread *cur_thread = thread_current();
 
-  if(cur_thread->parent->waiting_for_child == true)
-  {
-    cur_thread->parent->child_exit_status = status;
-    sema_up(&cur_thread->parent->wait_child_sema);
-  }
-  printf("%s: exit(%d)\n", cur_thread->name, status);
-  thread_exit();
+  // if(cur_thread->parent->waiting_for_child == true)
+  // {
+  //   cur_thread->parent->child_exit_status = status;
+  //   sema_up(&cur_thread->parent->wait_child_sema);
+  // }
+  // printf("%s: exit(%d)\n", cur_thread->name, status);
+  // thread_exit();
+  /* later on, we need to determine if there is process waiting for it */
+  /* process_exit (); */
+  struct child_status *child;
+  struct thread *cur = thread_current ();
+  printf ("%s: exit(%d)\n", cur->name, status);
+  struct thread *parent = thread_get_by_id (cur->parent_id);
+  if (parent != NULL) 
+    {
+      struct list_elem *e = list_tail(&parent->children);
+      while ((e = list_prev (e)) != list_head (&parent->children))
+        {
+          child = list_entry (e, struct child_status, elem_child_status);
+          if (child->child_id == cur->tid)
+          {
+            lock_acquire (&parent->lock_child);
+            child->is_exit_called = true;
+            child->child_exit_status = status;
+            lock_release (&parent->lock_child);
+          }
+        }
+    }
+   thread_exit ();
 }
 
 void
@@ -389,4 +410,43 @@ int
 wait (pid_t pid)
 { 
   return process_wait(pid);
+}
+
+bool 
+remove (const char *file_name)
+{
+  bool status;
+  if (!check_ptr (file_name))
+    exit (-1);
+ 
+  lock_acquire (&fs_lock);  
+  status = filesys_remove (file_name);
+  lock_release (&fs_lock);
+  return status;
+}
+
+void 
+seek (int fd, unsigned position)
+{
+  struct file_descriptor *fd_struct;
+  lock_acquire (&fs_lock); 
+  fd_struct = get_open_file (fd);
+  if (fd_struct != NULL)
+    file_seek (fd_struct->file_struct, position);
+  lock_release (&fs_lock);
+  return ;
+}
+ 
+unsigned 
+tell (int fd)
+{
+  struct file_descriptor *fd_struct;
+  int status = 0;
+  lock_acquire (&fs_lock); 
+  fd_struct = get_open_file (fd);
+  if (fd_struct != NULL)
+    status = file_tell (fd_struct->file_struct);
+ 
+  lock_release (&fs_lock);
+  return status;
 }

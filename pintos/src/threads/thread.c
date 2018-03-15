@@ -171,7 +171,8 @@ thread_create (const char *name, int priority,
   struct switch_entry_frame *ef;
   struct switch_threads_frame *sf;
   tid_t tid;
-
+  //added
+  enum intr_level old_level;
   ASSERT (function != NULL);
 
   /* Allocate thread. */
@@ -183,9 +184,10 @@ thread_create (const char *name, int priority,
   init_thread (t, name, priority);
   tid = t->tid = allocate_tid ();
   /*****************/
-  t->parent = thread_current(); /* New thread is being created by parent thread, set t's parent to currently running thread */
+  //t->parent = thread_current(); /* New thread is being created by parent thread, set t's parent to currently running thread */
   /*****************/
-
+  t->parent_id = thread_current()->tid;
+  old_level = intr_disable ();
   /* Stack frame for kernel_thread(). */
   kf = alloc_frame (t, sizeof *kf);
   kf->eip = NULL;
@@ -200,7 +202,7 @@ thread_create (const char *name, int priority,
   sf = alloc_frame (t, sizeof *sf);
   sf->eip = switch_entry;
   sf->ebp = 0;
-
+intr_set_level (old_level);
   /* Add to run queue. */
   thread_unblock (t);
 
@@ -466,6 +468,14 @@ init_thread (struct thread *t, const char *name, int priority)
   strlcpy (t->name, name, sizeof t->name);
   t->stack = (uint8_t *) t + PGSIZE;
   t->priority = priority;
+
+  #ifdef USERPROG
+    t->child_load_status = 0;
+    lock_init (&t->lock_child);
+    cond_init (&t->cond_child);
+    list_init (&t->children);
+  #endif
+
   t->magic = THREAD_MAGIC;
 
   old_level = intr_disable ();
@@ -586,3 +596,21 @@ allocate_tid (void)
 /* Offset of `stack' member within `struct thread'.
    Used by switch.S, which can't figure it out on its own. */
 uint32_t thread_stack_ofs = offsetof (struct thread, stack);
+
+
+/* Get the thread by its tid */
+struct thread
+*thread_get_by_id (tid_t id)
+{
+  ASSERT (id != TID_ERROR);
+  struct list_elem *e;
+  struct thread *t;
+  e = list_tail (&all_list);
+  while ((e = list_prev (e)) != list_head (&all_list))
+    {
+      t = list_entry (e, struct thread, allelem);
+      if (t->tid == id && t->status != THREAD_DYING)
+        return t;
+    }
+  return NULL;
+}
