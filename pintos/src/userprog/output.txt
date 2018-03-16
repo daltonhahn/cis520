@@ -59,68 +59,16 @@ perl -I../.. ../../tests/userprog/create-bound.ck tests/userprog/create-bound te
 pass tests/userprog/create-bound
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/open-normal -a open-normal -p ../../tests/userprog/sample.txt -a sample.txt -- -q  -f run open-normal < /dev/null 2> tests/userprog/open-normal.errors > tests/userprog/open-normal.output
 perl -I../.. ../../tests/userprog/open-normal.ck tests/userprog/open-normal tests/userprog/open-normal.result
-FAIL tests/userprog/open-normal
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (open-normal) begin
-  (open-normal) end
-  open-normal: exit(0)
-Differences in `diff -u' format:
-  (open-normal) begin
-+ File Name: sample.txt
-+ Made it past if f NULL
-+ Status: 2
-  (open-normal) end
-  open-normal: exit(0)
+pass tests/userprog/open-normal
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/open-missing -a open-missing -- -q  -f run open-missing < /dev/null 2> tests/userprog/open-missing.errors > tests/userprog/open-missing.output
 perl -I../.. ../../tests/userprog/open-missing.ck tests/userprog/open-missing tests/userprog/open-missing.result
-FAIL tests/userprog/open-missing
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (open-missing) begin
-  (open-missing) end
-  open-missing: exit(0)
-Differences in `diff -u' format:
-  (open-missing) begin
-+ File Name: no-such-file
-+ Status: -1
-  (open-missing) end
-  open-missing: exit(0)
+pass tests/userprog/open-missing
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/open-boundary -a open-boundary -p ../../tests/userprog/sample.txt -a sample.txt -- -q  -f run open-boundary < /dev/null 2> tests/userprog/open-boundary.errors > tests/userprog/open-boundary.output
 perl -I../.. ../../tests/userprog/open-boundary.ck tests/userprog/open-boundary tests/userprog/open-boundary.result
-FAIL tests/userprog/open-boundary
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (open-boundary) begin
-  (open-boundary) open "sample.txt"
-  (open-boundary) end
-  open-boundary: exit(0)
-Differences in `diff -u' format:
-  (open-boundary) begin
-  (open-boundary) open "sample.txt"
-+ File Name: sample.txt
-+ Made it past if f NULL
-+ Status: 2
-  (open-boundary) end
-  open-boundary: exit(0)
+pass tests/userprog/open-boundary
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/open-empty -a open-empty -- -q  -f run open-empty < /dev/null 2> tests/userprog/open-empty.errors > tests/userprog/open-empty.output
 perl -I../.. ../../tests/userprog/open-empty.ck tests/userprog/open-empty tests/userprog/open-empty.result
-FAIL tests/userprog/open-empty
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (open-empty) begin
-  (open-empty) end
-  open-empty: exit(0)
-Differences in `diff -u' format:
-  (open-empty) begin
-+ File Name: 
-+ Status: -1
-  (open-empty) end
-  open-empty: exit(0)
+pass tests/userprog/open-empty
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/open-null -a open-null -- -q  -f run open-null < /dev/null 2> tests/userprog/open-null.errors > tests/userprog/open-null.output
 perl -I../.. ../../tests/userprog/open-null.ck tests/userprog/open-null tests/userprog/open-null.result
 pass tests/userprog/open-null
@@ -129,92 +77,13 @@ perl -I../.. ../../tests/userprog/open-bad-ptr.ck tests/userprog/open-bad-ptr te
 pass tests/userprog/open-bad-ptr
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/open-twice -a open-twice -p ../../tests/userprog/sample.txt -a sample.txt -- -q  -f run open-twice < /dev/null 2> tests/userprog/open-twice.errors > tests/userprog/open-twice.output
 perl -I../.. ../../tests/userprog/open-twice.ck tests/userprog/open-twice tests/userprog/open-twice.result
-FAIL tests/userprog/open-twice
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (open-twice) begin
-  (open-twice) open "sample.txt" once
-  (open-twice) open "sample.txt" again
-  (open-twice) end
-  open-twice: exit(0)
-Differences in `diff -u' format:
-  (open-twice) begin
-+ File Name: sample.txt
-+ Made it past if f NULL
-+ Status: 2
-+ File Name: sample.txt
-+ Made it past if f NULL
-+ Status: 3
-  (open-twice) open "sample.txt" once
-+ File Name: sample.txt
-+ Made it past if f NULL
-+ Status: 4
-  (open-twice) open "sample.txt" again
-+ File Name: sample.txt
-+ Made it past if f NULL
-+ Status: 5
-  (open-twice) end
-  open-twice: exit(0)
+pass tests/userprog/open-twice
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/close-normal -a close-normal -p ../../tests/userprog/sample.txt -a sample.txt -- -q  -f run close-normal < /dev/null 2> tests/userprog/close-normal.errors > tests/userprog/close-normal.output
 perl -I../.. ../../tests/userprog/close-normal.ck tests/userprog/close-normal tests/userprog/close-normal.result
-FAIL tests/userprog/close-normal
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (close-normal) begin
-  (close-normal) open "sample.txt"
-  (close-normal) close "sample.txt"
-  (close-normal) end
-  close-normal: exit(0)
-Differences in `diff -u' format:
-  (close-normal) begin
-  (close-normal) open "sample.txt"
-+ File Name: sample.txt
-+ Made it past if f NULL
-+ Status: 2
-  (close-normal) close "sample.txt"
-  (close-normal) end
-  close-normal: exit(0)
+pass tests/userprog/close-normal
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/close-twice -a close-twice -p ../../tests/userprog/sample.txt -a sample.txt -- -q  -f run close-twice < /dev/null 2> tests/userprog/close-twice.errors > tests/userprog/close-twice.output
 perl -I../.. ../../tests/userprog/close-twice.ck tests/userprog/close-twice tests/userprog/close-twice.result
-FAIL tests/userprog/close-twice
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (close-twice) begin
-  (close-twice) open "sample.txt"
-  (close-twice) close "sample.txt"
-  (close-twice) close "sample.txt" again
-  (close-twice) end
-  close-twice: exit(0)
-Differences in `diff -u' format:
-  (close-twice) begin
-  (close-twice) open "sample.txt"
-+ File Name: sample.txt
-+ Made it past if f NULL
-+ Status: 2
-  (close-twice) close "sample.txt"
-  (close-twice) close "sample.txt" again
-  (close-twice) end
-  close-twice: exit(0)
-Acceptable output:
-  (close-twice) begin
-  (close-twice) open "sample.txt"
-  (close-twice) close "sample.txt"
-  (close-twice) close "sample.txt" again
-  close-twice: exit(-1)
-Differences in `diff -u' format:
-  (close-twice) begin
-  (close-twice) open "sample.txt"
-+ File Name: sample.txt
-+ Made it past if f NULL
-+ Status: 2
-  (close-twice) close "sample.txt"
-  (close-twice) close "sample.txt" again
-- close-twice: exit(-1)
-+ (close-twice) end
-+ close-twice: exit(0)
+pass tests/userprog/close-twice
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/close-stdin -a close-stdin -- -q  -f run close-stdin < /dev/null 2> tests/userprog/close-stdin.errors > tests/userprog/close-stdin.output
 perl -I../.. ../../tests/userprog/close-stdin.ck tests/userprog/close-stdin tests/userprog/close-stdin.result
 pass tests/userprog/close-stdin
@@ -226,92 +95,16 @@ perl -I../.. ../../tests/userprog/close-bad-fd.ck tests/userprog/close-bad-fd te
 pass tests/userprog/close-bad-fd
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/read-normal -a read-normal -p ../../tests/userprog/sample.txt -a sample.txt -- -q  -f run read-normal < /dev/null 2> tests/userprog/read-normal.errors > tests/userprog/read-normal.output
 perl -I../.. ../../tests/userprog/read-normal.ck tests/userprog/read-normal tests/userprog/read-normal.result
-FAIL tests/userprog/read-normal
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (read-normal) begin
-  (read-normal) open "sample.txt" for verification
-  (read-normal) verified contents of "sample.txt"
-  (read-normal) close "sample.txt"
-  (read-normal) end
-  read-normal: exit(0)
-Differences in `diff -u' format:
-  (read-normal) begin
-  (read-normal) open "sample.txt" for verification
-+ File Name: sample.txt
-+ Made it past if f NULL
-+ Status: 2
-  (read-normal) verified contents of "sample.txt"
-  (read-normal) close "sample.txt"
-  (read-normal) end
-  read-normal: exit(0)
+pass tests/userprog/read-normal
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/read-bad-ptr -a read-bad-ptr -p ../../tests/userprog/sample.txt -a sample.txt -- -q  -f run read-bad-ptr < /dev/null 2> tests/userprog/read-bad-ptr.errors > tests/userprog/read-bad-ptr.output
 perl -I../.. ../../tests/userprog/read-bad-ptr.ck tests/userprog/read-bad-ptr tests/userprog/read-bad-ptr.result
-FAIL tests/userprog/read-bad-ptr
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (read-bad-ptr) begin
-  (read-bad-ptr) open "sample.txt"
-  read-bad-ptr: exit(-1)
-Differences in `diff -u' format:
-  (read-bad-ptr) begin
-  (read-bad-ptr) open "sample.txt"
-+ File Name: sample.txt
-+ Made it past if f NULL
-+ Status: 2
-  read-bad-ptr: exit(-1)
-Acceptable output:
-  (read-bad-ptr) begin
-  (read-bad-ptr) open "sample.txt"
-  (read-bad-ptr) end
-  read-bad-ptr: exit(0)
-Differences in `diff -u' format:
-  (read-bad-ptr) begin
-  (read-bad-ptr) open "sample.txt"
-- (read-bad-ptr) end
-- read-bad-ptr: exit(0)
-+ File Name: sample.txt
-+ Made it past if f NULL
-+ Status: 2
-+ read-bad-ptr: exit(-1)
+pass tests/userprog/read-bad-ptr
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/read-boundary -a read-boundary -p ../../tests/userprog/sample.txt -a sample.txt -- -q  -f run read-boundary < /dev/null 2> tests/userprog/read-boundary.errors > tests/userprog/read-boundary.output
 perl -I../.. ../../tests/userprog/read-boundary.ck tests/userprog/read-boundary tests/userprog/read-boundary.result
-FAIL tests/userprog/read-boundary
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (read-boundary) begin
-  (read-boundary) open "sample.txt"
-  (read-boundary) end
-  read-boundary: exit(0)
-Differences in `diff -u' format:
-  (read-boundary) begin
-  (read-boundary) open "sample.txt"
-+ File Name: sample.txt
-+ Made it past if f NULL
-+ Status: 2
-  (read-boundary) end
-  read-boundary: exit(0)
+pass tests/userprog/read-boundary
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/read-zero -a read-zero -p ../../tests/userprog/sample.txt -a sample.txt -- -q  -f run read-zero < /dev/null 2> tests/userprog/read-zero.errors > tests/userprog/read-zero.output
 perl -I../.. ../../tests/userprog/read-zero.ck tests/userprog/read-zero tests/userprog/read-zero.result
-FAIL tests/userprog/read-zero
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (read-zero) begin
-  (read-zero) open "sample.txt"
-  (read-zero) end
-  read-zero: exit(0)
-Differences in `diff -u' format:
-  (read-zero) begin
-  (read-zero) open "sample.txt"
-+ File Name: sample.txt
-+ Made it past if f NULL
-+ Status: 2
-  (read-zero) end
-  read-zero: exit(0)
+pass tests/userprog/read-zero
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/read-stdout -a read-stdout -- -q  -f run read-stdout < /dev/null 2> tests/userprog/read-stdout.errors > tests/userprog/read-stdout.output
 perl -I../.. ../../tests/userprog/read-stdout.ck tests/userprog/read-stdout tests/userprog/read-stdout.result
 pass tests/userprog/read-stdout
@@ -320,90 +113,16 @@ perl -I../.. ../../tests/userprog/read-bad-fd.ck tests/userprog/read-bad-fd test
 pass tests/userprog/read-bad-fd
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/write-normal -a write-normal -p ../../tests/userprog/sample.txt -a sample.txt -- -q  -f run write-normal < /dev/null 2> tests/userprog/write-normal.errors > tests/userprog/write-normal.output
 perl -I../.. ../../tests/userprog/write-normal.ck tests/userprog/write-normal tests/userprog/write-normal.result
-FAIL tests/userprog/write-normal
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (write-normal) begin
-  (write-normal) create "test.txt"
-  (write-normal) open "test.txt"
-  (write-normal) end
-  write-normal: exit(0)
-Differences in `diff -u' format:
-  (write-normal) begin
-  (write-normal) create "test.txt"
-  (write-normal) open "test.txt"
-+ File Name: test.txt
-+ Made it past if f NULL
-+ Status: 2
-  (write-normal) end
-  write-normal: exit(0)
+pass tests/userprog/write-normal
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/write-bad-ptr -a write-bad-ptr -p ../../tests/userprog/sample.txt -a sample.txt -- -q  -f run write-bad-ptr < /dev/null 2> tests/userprog/write-bad-ptr.errors > tests/userprog/write-bad-ptr.output
 perl -I../.. ../../tests/userprog/write-bad-ptr.ck tests/userprog/write-bad-ptr tests/userprog/write-bad-ptr.result
-FAIL tests/userprog/write-bad-ptr
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (write-bad-ptr) begin
-  (write-bad-ptr) open "sample.txt"
-  (write-bad-ptr) end
-  write-bad-ptr: exit(0)
-Differences in `diff -u' format:
-  (write-bad-ptr) begin
-  (write-bad-ptr) open "sample.txt"
-- (write-bad-ptr) end
-- write-bad-ptr: exit(0)
-+ File Name: sample.txt
-+ Made it past if f NULL
-+ Status: 2
-+ write-bad-ptr: exit(-1)
-Acceptable output:
-  (write-bad-ptr) begin
-  (write-bad-ptr) open "sample.txt"
-  write-bad-ptr: exit(-1)
-Differences in `diff -u' format:
-  (write-bad-ptr) begin
-  (write-bad-ptr) open "sample.txt"
-+ File Name: sample.txt
-+ Made it past if f NULL
-+ Status: 2
-  write-bad-ptr: exit(-1)
+pass tests/userprog/write-bad-ptr
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/write-boundary -a write-boundary -p ../../tests/userprog/sample.txt -a sample.txt -- -q  -f run write-boundary < /dev/null 2> tests/userprog/write-boundary.errors > tests/userprog/write-boundary.output
 perl -I../.. ../../tests/userprog/write-boundary.ck tests/userprog/write-boundary tests/userprog/write-boundary.result
-FAIL tests/userprog/write-boundary
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (write-boundary) begin
-  (write-boundary) open "sample.txt"
-  (write-boundary) end
-  write-boundary: exit(0)
-Differences in `diff -u' format:
-  (write-boundary) begin
-  (write-boundary) open "sample.txt"
-+ File Name: sample.txt
-+ Made it past if f NULL
-+ Status: 2
-  (write-boundary) end
-  write-boundary: exit(0)
+pass tests/userprog/write-boundary
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/write-zero -a write-zero -p ../../tests/userprog/sample.txt -a sample.txt -- -q  -f run write-zero < /dev/null 2> tests/userprog/write-zero.errors > tests/userprog/write-zero.output
 perl -I../.. ../../tests/userprog/write-zero.ck tests/userprog/write-zero tests/userprog/write-zero.result
-FAIL tests/userprog/write-zero
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (write-zero) begin
-  (write-zero) open "sample.txt"
-  (write-zero) end
-  write-zero: exit(0)
-Differences in `diff -u' format:
-  (write-zero) begin
-  (write-zero) open "sample.txt"
-+ File Name: sample.txt
-+ Made it past if f NULL
-+ Status: 2
-  (write-zero) end
-  write-zero: exit(0)
+pass tests/userprog/write-zero
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/write-stdin -a write-stdin -- -q  -f run write-stdin < /dev/null 2> tests/userprog/write-stdin.errors > tests/userprog/write-stdin.output
 perl -I../.. ../../tests/userprog/write-stdin.ck tests/userprog/write-stdin tests/userprog/write-stdin.result
 pass tests/userprog/write-stdin
@@ -416,19 +135,19 @@ pass tests/userprog/exec-once
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/exec-arg -a exec-arg -p tests/userprog/child-args -a child-args -- -q  -f run exec-arg < /dev/null 2> tests/userprog/exec-arg.errors > tests/userprog/exec-arg.output
 perl -I../.. ../../tests/userprog/exec-arg.ck tests/userprog/exec-arg tests/userprog/exec-arg.result
 FAIL tests/userprog/exec-arg
-Kernel panic in run: PANIC at ../../userprog/exception.c:100 in kill(): Kernel bug - unexpected interrupt in kernel
-Call stack: 0xc0029b37 0xc002d47c 0xc002d540 0xc0021daf 0xc0022097 0xc0028e08 0xc002bfdd 0xc002de1d 0xc002e09c 0xc0021daf 0xc0022097 0x804a433 0x80480c0 0x804810f 0x80488c0
+Kernel panic in run: PANIC at ../../userprog/exception.c:102 in kill(): Kernel bug - unexpected interrupt in kernel
+Call stack: 0xc0029b37 0xc002d47c 0xc002d549 0xc0021daf 0xc0022097 0xc0028e08 0xc002bfdd 0xc002de76 0xc002e0f5 0xc0021daf 0xc0022097 0x804a433 0x80480c0 0x804810f 0x80488c0
 Translation of call stack:
 In kernel.o:
 0xc0029b37: debug_panic (.../../lib/kernel/debug.c:38)
-0xc002d47c: kill (.../userprog/exception.c:105)
-0xc002d540: exception_init (..../userprog/exception.c:31)
+0xc002d47c: kill (.../userprog/exception.c:107)
+0xc002d549: exit (.../userprog/exception.c:171)
 0xc0021daf: intr_handler (..../threads/interrupt.c:378)
 0xc0022097: intr_entry (threads/intr-stubs.S:38)
 0xc0028e08: strtok_r (...ld/../../lib/string.c:269)
 0xc002bfdd: process_execute (.../../userprog/process.c:49)
-0xc002de1d: exec (...../userprog/syscall.c:382)
-0xc002e09c: syscall_handler (...../userprog/syscall.c:162)
+0xc002de76: exec (...../userprog/syscall.c:379)
+0xc002e0f5: syscall_handler (...../userprog/syscall.c:162)
 0xc0021daf: intr_handler (..../threads/interrupt.c:378)
 0xc0022097: intr_entry (threads/intr-stubs.S:38)
 In tests/userprog/exec-arg:
@@ -447,30 +166,7 @@ perl -I../.. ../../tests/userprog/exec-bound-2.ck tests/userprog/exec-bound-2 te
 pass tests/userprog/exec-bound-2
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/exec-bound-3 -a exec-bound-3 -- -q  -f run exec-bound-3 < /dev/null 2> tests/userprog/exec-bound-3.errors > tests/userprog/exec-bound-3.output
 perl -I../.. ../../tests/userprog/exec-bound-3.ck tests/userprog/exec-bound-3 tests/userprog/exec-bound-3.result
-FAIL tests/userprog/exec-bound-3
-Kernel panic in run: PANIC at ../../userprog/exception.c:100 in kill(): Kernel bug - unexpected interrupt in kernel
-Call stack: 0xc0029b37 0xc002d47c 0xc002d540 0xc0021daf 0xc0022097 0xc0028f1e 0xc002bfc4 0xc002de1d 0xc002e09c 0xc0021daf 0xc0022097 0x804a513 0x80480c4 0x80481ea 0x804899b
-Translation of call stack:
-In kernel.o:
-0xc0029b37: debug_panic (.../../lib/kernel/debug.c:38)
-0xc002d47c: kill (.../userprog/exception.c:105)
-0xc002d540: exception_init (..../userprog/exception.c:31)
-0xc0021daf: intr_handler (..../threads/interrupt.c:378)
-0xc0022097: intr_entry (threads/intr-stubs.S:38)
-0xc0028f1e: strlcpy (...ld/../../lib/string.c:333)
-0xc002bfc4: process_execute (.../../userprog/process.c:47)
-0xc002de1d: exec (...../userprog/syscall.c:382)
-0xc002e09c: syscall_handler (...../userprog/syscall.c:162)
-0xc0021daf: intr_handler (..../threads/interrupt.c:378)
-0xc0022097: intr_entry (threads/intr-stubs.S:38)
-In tests/userprog/exec-bound-3:
-0x0804a513: exec (.../../lib/user/syscall.c:81)
-0x080480c4: test_main (...serprog/exec-bound-3.c:27)
-0x080481ea: main (...ild/../../tests/main.c:13)
-0x0804899b: _start (.../../../lib/user/entry.c:9)
-Translations of user virtual addresses above are based on a guess at
-the binary to use.  If this guess is incorrect, then those
-translations will be misleading.
+pass tests/userprog/exec-bound-3
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/exec-multiple -a exec-multiple -p tests/userprog/child-simple -a child-simple -- -q  -f run exec-multiple < /dev/null 2> tests/userprog/exec-multiple.errors > tests/userprog/exec-multiple.output
 perl -I../.. ../../tests/userprog/exec-multiple.ck tests/userprog/exec-multiple tests/userprog/exec-multiple.result
 pass tests/userprog/exec-multiple
@@ -497,94 +193,26 @@ perl -I../.. ../../tests/userprog/multi-recurse.ck tests/userprog/multi-recurse 
 pass tests/userprog/multi-recurse
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/multi-child-fd -a multi-child-fd -p ../../tests/userprog/sample.txt -a sample.txt -p tests/userprog/child-close -a child-close -- -q  -f run multi-child-fd < /dev/null 2> tests/userprog/multi-child-fd.errors > tests/userprog/multi-child-fd.output
 perl -I../.. ../../tests/userprog/multi-child-fd.ck tests/userprog/multi-child-fd tests/userprog/multi-child-fd.result
-FAIL tests/userprog/multi-child-fd
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (multi-child-fd) begin
-  (multi-child-fd) open "sample.txt"
-  (child-close) begin
-  (child-close) end
-  child-close: exit(0)
-  (multi-child-fd) wait(exec()) = 0
-  (multi-child-fd) verified contents of "sample.txt"
-  (multi-child-fd) end
-  multi-child-fd: exit(0)
-Differences in `diff -u' format:
-  (multi-child-fd) begin
-  (multi-child-fd) open "sample.txt"
-+ File Name: sample.txt
-+ Made it past if f NULL
-+ Status: 2
-  (child-close) begin
-  (child-close) end
-  child-close: exit(0)
-  (multi-child-fd) wait(exec()) = 0
-  (multi-child-fd) verified contents of "sample.txt"
-  (multi-child-fd) end
-  multi-child-fd: exit(0)
-Acceptable output:
-  (multi-child-fd) begin
-  (multi-child-fd) open "sample.txt"
-  (child-close) begin
-  child-close: exit(-1)
-  (multi-child-fd) wait(exec()) = -1
-  (multi-child-fd) verified contents of "sample.txt"
-  (multi-child-fd) end
-  multi-child-fd: exit(0)
-Differences in `diff -u' format:
-  (multi-child-fd) begin
-  (multi-child-fd) open "sample.txt"
-+ File Name: sample.txt
-+ Made it past if f NULL
-+ Status: 2
-  (child-close) begin
-- child-close: exit(-1)
-- (multi-child-fd) wait(exec()) = -1
-+ (child-close) end
-+ child-close: exit(0)
-+ (multi-child-fd) wait(exec()) = 0
-  (multi-child-fd) verified contents of "sample.txt"
-  (multi-child-fd) end
-  multi-child-fd: exit(0)
+pass tests/userprog/multi-child-fd
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/rox-simple -a rox-simple -- -q  -f run rox-simple < /dev/null 2> tests/userprog/rox-simple.errors > tests/userprog/rox-simple.output
 perl -I../.. ../../tests/userprog/rox-simple.ck tests/userprog/rox-simple tests/userprog/rox-simple.result
-FAIL tests/userprog/rox-simple
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (rox-simple) begin
-  (rox-simple) open "rox-simple"
-  (rox-simple) read "rox-simple"
-  (rox-simple) try to write "rox-simple"
-  (rox-simple) end
-  rox-simple: exit(0)
-Differences in `diff -u' format:
-  (rox-simple) begin
-  (rox-simple) open "rox-simple"
-+ File Name: rox-simple
-+ Made it past if f NULL
-+ Status: 2
-  (rox-simple) read "rox-simple"
-  (rox-simple) try to write "rox-simple"
-  (rox-simple) end
-  rox-simple: exit(0)
+pass tests/userprog/rox-simple
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/rox-child -a rox-child -p tests/userprog/child-rox -a child-rox -- -q  -f run rox-child < /dev/null 2> tests/userprog/rox-child.errors > tests/userprog/rox-child.output
 perl -I../.. ../../tests/userprog/rox-child.ck tests/userprog/rox-child tests/userprog/rox-child.result
 FAIL tests/userprog/rox-child
-Kernel panic in run: PANIC at ../../userprog/exception.c:100 in kill(): Kernel bug - unexpected interrupt in kernel
-Call stack: 0xc0029b37 0xc002d47c 0xc002d540 0xc0021daf 0xc0022097 0xc0028e08 0xc002bfdd 0xc002de1d 0xc002e09c 0xc0021daf 0xc0022097 0x804a5a3 0x8048167 0x8048284 0x8048a35
+Kernel panic in run: PANIC at ../../userprog/exception.c:102 in kill(): Kernel bug - unexpected interrupt in kernel
+Call stack: 0xc0029b37 0xc002d47c 0xc002d549 0xc0021daf 0xc0022097 0xc0028e08 0xc002bfdd 0xc002de76 0xc002e0f5 0xc0021daf 0xc0022097 0x804a5a3 0x8048167 0x8048284 0x8048a35
 Translation of call stack:
 In kernel.o:
 0xc0029b37: debug_panic (.../../lib/kernel/debug.c:38)
-0xc002d47c: kill (.../userprog/exception.c:105)
-0xc002d540: exception_init (..../userprog/exception.c:31)
+0xc002d47c: kill (.../userprog/exception.c:107)
+0xc002d549: exit (.../userprog/exception.c:171)
 0xc0021daf: intr_handler (..../threads/interrupt.c:378)
 0xc0022097: intr_entry (threads/intr-stubs.S:38)
 0xc0028e08: strtok_r (...ld/../../lib/string.c:269)
 0xc002bfdd: process_execute (.../../userprog/process.c:49)
-0xc002de1d: exec (...../userprog/syscall.c:382)
-0xc002e09c: syscall_handler (...../userprog/syscall.c:162)
+0xc002de76: exec (...../userprog/syscall.c:379)
+0xc002e0f5: syscall_handler (...../userprog/syscall.c:162)
 0xc0021daf: intr_handler (..../threads/interrupt.c:378)
 0xc0022097: intr_entry (threads/intr-stubs.S:38)
 In tests/userprog/rox-child:
@@ -598,19 +226,19 @@ translations will be misleading.
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/rox-multichild -a rox-multichild -p tests/userprog/child-rox -a child-rox -- -q  -f run rox-multichild < /dev/null 2> tests/userprog/rox-multichild.errors > tests/userprog/rox-multichild.output
 perl -I../.. ../../tests/userprog/rox-multichild.ck tests/userprog/rox-multichild tests/userprog/rox-multichild.result
 FAIL tests/userprog/rox-multichild
-Kernel panic in run: PANIC at ../../userprog/exception.c:100 in kill(): Kernel bug - unexpected interrupt in kernel
-Call stack: 0xc0029b37 0xc002d47c 0xc002d540 0xc0021daf 0xc0022097 0xc0028e08 0xc002bfdd 0xc002de1d 0xc002e09c 0xc0021daf 0xc0022097 0x804a5a3 0x8048167 0x8048284 0x8048a35
+Kernel panic in run: PANIC at ../../userprog/exception.c:102 in kill(): Kernel bug - unexpected interrupt in kernel
+Call stack: 0xc0029b37 0xc002d47c 0xc002d549 0xc0021daf 0xc0022097 0xc0028e08 0xc002bfdd 0xc002de76 0xc002e0f5 0xc0021daf 0xc0022097 0x804a5a3 0x8048167 0x8048284 0x8048a35
 Translation of call stack:
 In kernel.o:
 0xc0029b37: debug_panic (.../../lib/kernel/debug.c:38)
-0xc002d47c: kill (.../userprog/exception.c:105)
-0xc002d540: exception_init (..../userprog/exception.c:31)
+0xc002d47c: kill (.../userprog/exception.c:107)
+0xc002d549: exit (.../userprog/exception.c:171)
 0xc0021daf: intr_handler (..../threads/interrupt.c:378)
 0xc0022097: intr_entry (threads/intr-stubs.S:38)
 0xc0028e08: strtok_r (...ld/../../lib/string.c:269)
 0xc002bfdd: process_execute (.../../userprog/process.c:49)
-0xc002de1d: exec (...../userprog/syscall.c:382)
-0xc002e09c: syscall_handler (...../userprog/syscall.c:162)
+0xc002de76: exec (...../userprog/syscall.c:379)
+0xc002e0f5: syscall_handler (...../userprog/syscall.c:162)
 0xc0021daf: intr_handler (..../threads/interrupt.c:378)
 0xc0022097: intr_entry (threads/intr-stubs.S:38)
 In tests/userprog/rox-multichild:
@@ -623,418 +251,62 @@ the binary to use.  If this guess is incorrect, then those
 translations will be misleading.
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/bad-read -a bad-read -- -q  -f run bad-read < /dev/null 2> tests/userprog/bad-read.errors > tests/userprog/bad-read.output
 perl -I../.. ../../tests/userprog/bad-read.ck tests/userprog/bad-read tests/userprog/bad-read.result
-FAIL tests/userprog/bad-read
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (bad-read) begin
-  bad-read: exit(-1)
-Differences in `diff -u' format:
-  (bad-read) begin
-- bad-read: exit(-1)
-
-(User fault messages are excluded for matching purposes.)
+pass tests/userprog/bad-read
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/bad-write -a bad-write -- -q  -f run bad-write < /dev/null 2> tests/userprog/bad-write.errors > tests/userprog/bad-write.output
 perl -I../.. ../../tests/userprog/bad-write.ck tests/userprog/bad-write tests/userprog/bad-write.result
-FAIL tests/userprog/bad-write
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (bad-write) begin
-  bad-write: exit(-1)
-Differences in `diff -u' format:
-  (bad-write) begin
-- bad-write: exit(-1)
-
-(User fault messages are excluded for matching purposes.)
+pass tests/userprog/bad-write
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/bad-read2 -a bad-read2 -- -q  -f run bad-read2 < /dev/null 2> tests/userprog/bad-read2.errors > tests/userprog/bad-read2.output
 perl -I../.. ../../tests/userprog/bad-read2.ck tests/userprog/bad-read2 tests/userprog/bad-read2.result
-FAIL tests/userprog/bad-read2
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (bad-read2) begin
-  bad-read2: exit(-1)
-Differences in `diff -u' format:
-  (bad-read2) begin
-- bad-read2: exit(-1)
-
-(User fault messages are excluded for matching purposes.)
+pass tests/userprog/bad-read2
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/bad-write2 -a bad-write2 -- -q  -f run bad-write2 < /dev/null 2> tests/userprog/bad-write2.errors > tests/userprog/bad-write2.output
 perl -I../.. ../../tests/userprog/bad-write2.ck tests/userprog/bad-write2 tests/userprog/bad-write2.result
-FAIL tests/userprog/bad-write2
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (bad-write2) begin
-  bad-write2: exit(-1)
-Differences in `diff -u' format:
-  (bad-write2) begin
-- bad-write2: exit(-1)
-
-(User fault messages are excluded for matching purposes.)
+pass tests/userprog/bad-write2
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/bad-jump -a bad-jump -- -q  -f run bad-jump < /dev/null 2> tests/userprog/bad-jump.errors > tests/userprog/bad-jump.output
 perl -I../.. ../../tests/userprog/bad-jump.ck tests/userprog/bad-jump tests/userprog/bad-jump.result
-FAIL tests/userprog/bad-jump
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (bad-jump) begin
-  bad-jump: exit(-1)
-Differences in `diff -u' format:
-  (bad-jump) begin
-- bad-jump: exit(-1)
-
-(User fault messages are excluded for matching purposes.)
+pass tests/userprog/bad-jump
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/bad-jump2 -a bad-jump2 -- -q  -f run bad-jump2 < /dev/null 2> tests/userprog/bad-jump2.errors > tests/userprog/bad-jump2.output
 perl -I../.. ../../tests/userprog/bad-jump2.ck tests/userprog/bad-jump2 tests/userprog/bad-jump2.result
-FAIL tests/userprog/bad-jump2
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (bad-jump2) begin
-  bad-jump2: exit(-1)
-Differences in `diff -u' format:
-  (bad-jump2) begin
-- bad-jump2: exit(-1)
-
-(User fault messages are excluded for matching purposes.)
+pass tests/userprog/bad-jump2
 pintos -v -k -T 360 --qemu  --filesys-size=2 -p tests/userprog/no-vm/multi-oom -a multi-oom -- -q  -f run multi-oom < /dev/null 2> tests/userprog/no-vm/multi-oom.errors > tests/userprog/no-vm/multi-oom.output
 perl -I../.. ../../tests/userprog/no-vm/multi-oom.ck tests/userprog/no-vm/multi-oom tests/userprog/no-vm/multi-oom.result
-FAIL tests/userprog/no-vm/multi-oom
-run: TIMEOUT after 360 seconds of host CPU time
+pass tests/userprog/no-vm/multi-oom
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/filesys/base/lg-create -a lg-create -- -q  -f run lg-create < /dev/null 2> tests/filesys/base/lg-create.errors > tests/filesys/base/lg-create.output
 perl -I../.. ../../tests/filesys/base/lg-create.ck tests/filesys/base/lg-create tests/filesys/base/lg-create.result
-FAIL tests/filesys/base/lg-create
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (lg-create) begin
-  (lg-create) create "blargle"
-  (lg-create) open "blargle" for verification
-  (lg-create) verified contents of "blargle"
-  (lg-create) close "blargle"
-  (lg-create) end
-Differences in `diff -u' format:
-  (lg-create) begin
-  (lg-create) create "blargle"
-  (lg-create) open "blargle" for verification
-+ File Name: blargle
-+ Made it past if f NULL
-+ Status: 2
-  (lg-create) verified contents of "blargle"
-  (lg-create) close "blargle"
-  (lg-create) end
-
-(Process exit codes are excluded for matching purposes.)
+pass tests/filesys/base/lg-create
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/filesys/base/lg-full -a lg-full -- -q  -f run lg-full < /dev/null 2> tests/filesys/base/lg-full.errors > tests/filesys/base/lg-full.output
 perl -I../.. ../../tests/filesys/base/lg-full.ck tests/filesys/base/lg-full tests/filesys/base/lg-full.result
-FAIL tests/filesys/base/lg-full
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (lg-full) begin
-  (lg-full) create "quux"
-  (lg-full) open "quux"
-  (lg-full) writing "quux"
-  (lg-full) close "quux"
-  (lg-full) open "quux" for verification
-  (lg-full) verified contents of "quux"
-  (lg-full) close "quux"
-  (lg-full) end
-Differences in `diff -u' format:
-  (lg-full) begin
-  (lg-full) create "quux"
-  (lg-full) open "quux"
-+ File Name: quux
-+ Made it past if f NULL
-+ Status: 2
-  (lg-full) writing "quux"
-  (lg-full) close "quux"
-  (lg-full) open "quux" for verification
-+ File Name: quux
-+ Made it past if f NULL
-+ Status: 3
-  (lg-full) verified contents of "quux"
-  (lg-full) close "quux"
-  (lg-full) end
-
-(Process exit codes are excluded for matching purposes.)
+pass tests/filesys/base/lg-full
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/filesys/base/lg-random -a lg-random -- -q  -f run lg-random < /dev/null 2> tests/filesys/base/lg-random.errors > tests/filesys/base/lg-random.output
 perl -I../.. ../../tests/filesys/base/lg-random.ck tests/filesys/base/lg-random tests/filesys/base/lg-random.result
-FAIL tests/filesys/base/lg-random
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (lg-random) begin
-  (lg-random) create "bazzle"
-  (lg-random) open "bazzle"
-  (lg-random) write "bazzle" in random order
-  (lg-random) read "bazzle" in random order
-  (lg-random) close "bazzle"
-  (lg-random) end
-Differences in `diff -u' format:
-  (lg-random) begin
-  (lg-random) create "bazzle"
-  (lg-random) open "bazzle"
-+ File Name: bazzle
-+ Made it past if f NULL
-+ Status: 2
-  (lg-random) write "bazzle" in random order
-  (lg-random) read "bazzle" in random order
-  (lg-random) close "bazzle"
-  (lg-random) end
-
-(Process exit codes are excluded for matching purposes.)
+pass tests/filesys/base/lg-random
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/filesys/base/lg-seq-block -a lg-seq-block -- -q  -f run lg-seq-block < /dev/null 2> tests/filesys/base/lg-seq-block.errors > tests/filesys/base/lg-seq-block.output
 perl -I../.. ../../tests/filesys/base/lg-seq-block.ck tests/filesys/base/lg-seq-block tests/filesys/base/lg-seq-block.result
-FAIL tests/filesys/base/lg-seq-block
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (lg-seq-block) begin
-  (lg-seq-block) create "noodle"
-  (lg-seq-block) open "noodle"
-  (lg-seq-block) writing "noodle"
-  (lg-seq-block) close "noodle"
-  (lg-seq-block) open "noodle" for verification
-  (lg-seq-block) verified contents of "noodle"
-  (lg-seq-block) close "noodle"
-  (lg-seq-block) end
-Differences in `diff -u' format:
-  (lg-seq-block) begin
-  (lg-seq-block) create "noodle"
-  (lg-seq-block) open "noodle"
-+ File Name: noodle
-+ Made it past if f NULL
-+ Status: 2
-  (lg-seq-block) writing "noodle"
-  (lg-seq-block) close "noodle"
-  (lg-seq-block) open "noodle" for verification
-+ File Name: noodle
-+ Made it past if f NULL
-+ Status: 3
-  (lg-seq-block) verified contents of "noodle"
-  (lg-seq-block) close "noodle"
-  (lg-seq-block) end
-
-(Process exit codes are excluded for matching purposes.)
+pass tests/filesys/base/lg-seq-block
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/filesys/base/lg-seq-random -a lg-seq-random -- -q  -f run lg-seq-random < /dev/null 2> tests/filesys/base/lg-seq-random.errors > tests/filesys/base/lg-seq-random.output
 perl -I../.. ../../tests/filesys/base/lg-seq-random.ck tests/filesys/base/lg-seq-random tests/filesys/base/lg-seq-random.result
-FAIL tests/filesys/base/lg-seq-random
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (lg-seq-random) begin
-  (lg-seq-random) create "nibble"
-  (lg-seq-random) open "nibble"
-  (lg-seq-random) writing "nibble"
-  (lg-seq-random) close "nibble"
-  (lg-seq-random) open "nibble" for verification
-  (lg-seq-random) verified contents of "nibble"
-  (lg-seq-random) close "nibble"
-  (lg-seq-random) end
-Differences in `diff -u' format:
-  (lg-seq-random) begin
-  (lg-seq-random) create "nibble"
-  (lg-seq-random) open "nibble"
-+ File Name: nibble
-+ Made it past if f NULL
-+ Status: 2
-  (lg-seq-random) writing "nibble"
-  (lg-seq-random) close "nibble"
-  (lg-seq-random) open "nibble" for verification
-+ File Name: nibble
-+ Made it past if f NULL
-+ Status: 3
-  (lg-seq-random) verified contents of "nibble"
-  (lg-seq-random) close "nibble"
-  (lg-seq-random) end
-
-(Process exit codes are excluded for matching purposes.)
+pass tests/filesys/base/lg-seq-random
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/filesys/base/sm-create -a sm-create -- -q  -f run sm-create < /dev/null 2> tests/filesys/base/sm-create.errors > tests/filesys/base/sm-create.output
 perl -I../.. ../../tests/filesys/base/sm-create.ck tests/filesys/base/sm-create tests/filesys/base/sm-create.result
-FAIL tests/filesys/base/sm-create
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (sm-create) begin
-  (sm-create) create "blargle"
-  (sm-create) open "blargle" for verification
-  (sm-create) verified contents of "blargle"
-  (sm-create) close "blargle"
-  (sm-create) end
-Differences in `diff -u' format:
-  (sm-create) begin
-  (sm-create) create "blargle"
-  (sm-create) open "blargle" for verification
-+ File Name: blargle
-+ Made it past if f NULL
-+ Status: 2
-  (sm-create) verified contents of "blargle"
-  (sm-create) close "blargle"
-  (sm-create) end
-
-(Process exit codes are excluded for matching purposes.)
+pass tests/filesys/base/sm-create
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/filesys/base/sm-full -a sm-full -- -q  -f run sm-full < /dev/null 2> tests/filesys/base/sm-full.errors > tests/filesys/base/sm-full.output
 perl -I../.. ../../tests/filesys/base/sm-full.ck tests/filesys/base/sm-full tests/filesys/base/sm-full.result
-FAIL tests/filesys/base/sm-full
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (sm-full) begin
-  (sm-full) create "quux"
-  (sm-full) open "quux"
-  (sm-full) writing "quux"
-  (sm-full) close "quux"
-  (sm-full) open "quux" for verification
-  (sm-full) verified contents of "quux"
-  (sm-full) close "quux"
-  (sm-full) end
-Differences in `diff -u' format:
-  (sm-full) begin
-  (sm-full) create "quux"
-  (sm-full) open "quux"
-+ File Name: quux
-+ Made it past if f NULL
-+ Status: 2
-  (sm-full) writing "quux"
-  (sm-full) close "quux"
-  (sm-full) open "quux" for verification
-+ File Name: quux
-+ Made it past if f NULL
-+ Status: 3
-  (sm-full) verified contents of "quux"
-  (sm-full) close "quux"
-  (sm-full) end
-
-(Process exit codes are excluded for matching purposes.)
+pass tests/filesys/base/sm-full
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/filesys/base/sm-random -a sm-random -- -q  -f run sm-random < /dev/null 2> tests/filesys/base/sm-random.errors > tests/filesys/base/sm-random.output
 perl -I../.. ../../tests/filesys/base/sm-random.ck tests/filesys/base/sm-random tests/filesys/base/sm-random.result
-FAIL tests/filesys/base/sm-random
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (sm-random) begin
-  (sm-random) create "bazzle"
-  (sm-random) open "bazzle"
-  (sm-random) write "bazzle" in random order
-  (sm-random) read "bazzle" in random order
-  (sm-random) close "bazzle"
-  (sm-random) end
-Differences in `diff -u' format:
-  (sm-random) begin
-  (sm-random) create "bazzle"
-  (sm-random) open "bazzle"
-+ File Name: bazzle
-+ Made it past if f NULL
-+ Status: 2
-  (sm-random) write "bazzle" in random order
-  (sm-random) read "bazzle" in random order
-  (sm-random) close "bazzle"
-  (sm-random) end
-
-(Process exit codes are excluded for matching purposes.)
+pass tests/filesys/base/sm-random
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/filesys/base/sm-seq-block -a sm-seq-block -- -q  -f run sm-seq-block < /dev/null 2> tests/filesys/base/sm-seq-block.errors > tests/filesys/base/sm-seq-block.output
 perl -I../.. ../../tests/filesys/base/sm-seq-block.ck tests/filesys/base/sm-seq-block tests/filesys/base/sm-seq-block.result
-FAIL tests/filesys/base/sm-seq-block
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (sm-seq-block) begin
-  (sm-seq-block) create "noodle"
-  (sm-seq-block) open "noodle"
-  (sm-seq-block) writing "noodle"
-  (sm-seq-block) close "noodle"
-  (sm-seq-block) open "noodle" for verification
-  (sm-seq-block) verified contents of "noodle"
-  (sm-seq-block) close "noodle"
-  (sm-seq-block) end
-Differences in `diff -u' format:
-  (sm-seq-block) begin
-  (sm-seq-block) create "noodle"
-  (sm-seq-block) open "noodle"
-+ File Name: noodle
-+ Made it past if f NULL
-+ Status: 2
-  (sm-seq-block) writing "noodle"
-  (sm-seq-block) close "noodle"
-  (sm-seq-block) open "noodle" for verification
-+ File Name: noodle
-+ Made it past if f NULL
-+ Status: 3
-  (sm-seq-block) verified contents of "noodle"
-  (sm-seq-block) close "noodle"
-  (sm-seq-block) end
-
-(Process exit codes are excluded for matching purposes.)
+pass tests/filesys/base/sm-seq-block
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/filesys/base/sm-seq-random -a sm-seq-random -- -q  -f run sm-seq-random < /dev/null 2> tests/filesys/base/sm-seq-random.errors > tests/filesys/base/sm-seq-random.output
 perl -I../.. ../../tests/filesys/base/sm-seq-random.ck tests/filesys/base/sm-seq-random tests/filesys/base/sm-seq-random.result
-FAIL tests/filesys/base/sm-seq-random
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (sm-seq-random) begin
-  (sm-seq-random) create "nibble"
-  (sm-seq-random) open "nibble"
-  (sm-seq-random) writing "nibble"
-  (sm-seq-random) close "nibble"
-  (sm-seq-random) open "nibble" for verification
-  (sm-seq-random) verified contents of "nibble"
-  (sm-seq-random) close "nibble"
-  (sm-seq-random) end
-Differences in `diff -u' format:
-  (sm-seq-random) begin
-  (sm-seq-random) create "nibble"
-  (sm-seq-random) open "nibble"
-+ File Name: nibble
-+ Made it past if f NULL
-+ Status: 2
-  (sm-seq-random) writing "nibble"
-  (sm-seq-random) close "nibble"
-  (sm-seq-random) open "nibble" for verification
-+ File Name: nibble
-+ Made it past if f NULL
-+ Status: 3
-  (sm-seq-random) verified contents of "nibble"
-  (sm-seq-random) close "nibble"
-  (sm-seq-random) end
-
-(Process exit codes are excluded for matching purposes.)
+pass tests/filesys/base/sm-seq-random
 pintos -v -k -T 300 --qemu  --filesys-size=2 -p tests/filesys/base/syn-read -a syn-read -p tests/filesys/base/child-syn-read -a child-syn-read -- -q  -f run syn-read < /dev/null 2> tests/filesys/base/syn-read.errors > tests/filesys/base/syn-read.output
 perl -I../.. ../../tests/filesys/base/syn-read.ck tests/filesys/base/syn-read tests/filesys/base/syn-read.result
 FAIL tests/filesys/base/syn-read
 run: exec child 2 of 10: "child-syn-read": FAILED
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/filesys/base/syn-remove -a syn-remove -- -q  -f run syn-remove < /dev/null 2> tests/filesys/base/syn-remove.errors > tests/filesys/base/syn-remove.output
 perl -I../.. ../../tests/filesys/base/syn-remove.ck tests/filesys/base/syn-remove tests/filesys/base/syn-remove.result
-FAIL tests/filesys/base/syn-remove
-Test output failed to match any acceptable form.
-
-Acceptable output:
-  (syn-remove) begin
-  (syn-remove) create "deleteme"
-  (syn-remove) open "deleteme"
-  (syn-remove) remove "deleteme"
-  (syn-remove) write "deleteme"
-  (syn-remove) seek "deleteme" to 0
-  (syn-remove) read "deleteme"
-  (syn-remove) close "deleteme"
-  (syn-remove) end
-Differences in `diff -u' format:
-  (syn-remove) begin
-  (syn-remove) create "deleteme"
-  (syn-remove) open "deleteme"
-+ File Name: deleteme
-+ Made it past if f NULL
-+ Status: 2
-  (syn-remove) remove "deleteme"
-  (syn-remove) write "deleteme"
-  (syn-remove) seek "deleteme" to 0
-  (syn-remove) read "deleteme"
-  (syn-remove) close "deleteme"
-  (syn-remove) end
-
-(Process exit codes are excluded for matching purposes.)
+pass tests/filesys/base/syn-remove
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/filesys/base/syn-write -a syn-write -p tests/filesys/base/child-syn-wrt -a child-syn-wrt -- -q  -f run syn-write < /dev/null 2> tests/filesys/base/syn-write.errors > tests/filesys/base/syn-write.output
 perl -I../.. ../../tests/filesys/base/syn-write.ck tests/filesys/base/syn-write tests/filesys/base/syn-write.result
 FAIL tests/filesys/base/syn-write
@@ -1058,35 +330,35 @@ pass tests/userprog/create-bad-ptr
 pass tests/userprog/create-long
 pass tests/userprog/create-exists
 pass tests/userprog/create-bound
-FAIL tests/userprog/open-normal
-FAIL tests/userprog/open-missing
-FAIL tests/userprog/open-boundary
-FAIL tests/userprog/open-empty
+pass tests/userprog/open-normal
+pass tests/userprog/open-missing
+pass tests/userprog/open-boundary
+pass tests/userprog/open-empty
 pass tests/userprog/open-null
 pass tests/userprog/open-bad-ptr
-FAIL tests/userprog/open-twice
-FAIL tests/userprog/close-normal
-FAIL tests/userprog/close-twice
+pass tests/userprog/open-twice
+pass tests/userprog/close-normal
+pass tests/userprog/close-twice
 pass tests/userprog/close-stdin
 pass tests/userprog/close-stdout
 pass tests/userprog/close-bad-fd
-FAIL tests/userprog/read-normal
-FAIL tests/userprog/read-bad-ptr
-FAIL tests/userprog/read-boundary
-FAIL tests/userprog/read-zero
+pass tests/userprog/read-normal
+pass tests/userprog/read-bad-ptr
+pass tests/userprog/read-boundary
+pass tests/userprog/read-zero
 pass tests/userprog/read-stdout
 pass tests/userprog/read-bad-fd
-FAIL tests/userprog/write-normal
-FAIL tests/userprog/write-bad-ptr
-FAIL tests/userprog/write-boundary
-FAIL tests/userprog/write-zero
+pass tests/userprog/write-normal
+pass tests/userprog/write-bad-ptr
+pass tests/userprog/write-boundary
+pass tests/userprog/write-zero
 pass tests/userprog/write-stdin
 pass tests/userprog/write-bad-fd
 pass tests/userprog/exec-once
 FAIL tests/userprog/exec-arg
 pass tests/userprog/exec-bound
 pass tests/userprog/exec-bound-2
-FAIL tests/userprog/exec-bound-3
+pass tests/userprog/exec-bound-3
 pass tests/userprog/exec-multiple
 pass tests/userprog/exec-missing
 pass tests/userprog/exec-bad-ptr
@@ -1095,31 +367,31 @@ pass tests/userprog/wait-twice
 pass tests/userprog/wait-killed
 pass tests/userprog/wait-bad-pid
 pass tests/userprog/multi-recurse
-FAIL tests/userprog/multi-child-fd
-FAIL tests/userprog/rox-simple
+pass tests/userprog/multi-child-fd
+pass tests/userprog/rox-simple
 FAIL tests/userprog/rox-child
 FAIL tests/userprog/rox-multichild
-FAIL tests/userprog/bad-read
-FAIL tests/userprog/bad-write
-FAIL tests/userprog/bad-read2
-FAIL tests/userprog/bad-write2
-FAIL tests/userprog/bad-jump
-FAIL tests/userprog/bad-jump2
-FAIL tests/userprog/no-vm/multi-oom
-FAIL tests/filesys/base/lg-create
-FAIL tests/filesys/base/lg-full
-FAIL tests/filesys/base/lg-random
-FAIL tests/filesys/base/lg-seq-block
-FAIL tests/filesys/base/lg-seq-random
-FAIL tests/filesys/base/sm-create
-FAIL tests/filesys/base/sm-full
-FAIL tests/filesys/base/sm-random
-FAIL tests/filesys/base/sm-seq-block
-FAIL tests/filesys/base/sm-seq-random
+pass tests/userprog/bad-read
+pass tests/userprog/bad-write
+pass tests/userprog/bad-read2
+pass tests/userprog/bad-write2
+pass tests/userprog/bad-jump
+pass tests/userprog/bad-jump2
+pass tests/userprog/no-vm/multi-oom
+pass tests/filesys/base/lg-create
+pass tests/filesys/base/lg-full
+pass tests/filesys/base/lg-random
+pass tests/filesys/base/lg-seq-block
+pass tests/filesys/base/lg-seq-random
+pass tests/filesys/base/sm-create
+pass tests/filesys/base/sm-full
+pass tests/filesys/base/sm-random
+pass tests/filesys/base/sm-seq-block
+pass tests/filesys/base/sm-seq-random
 FAIL tests/filesys/base/syn-read
-FAIL tests/filesys/base/syn-remove
+pass tests/filesys/base/syn-remove
 FAIL tests/filesys/base/syn-write
-41 of 80 tests failed.
+5 of 80 tests failed.
 ../../tests/Make.tests:26: recipe for target 'check' failed
 make[1]: Leaving directory '/net/files.cis.ksu.edu/exports/home/b/blehmg/cis520/pintos/src/userprog/build'
 ../Makefile.kernel:10: recipe for target 'check' failed
