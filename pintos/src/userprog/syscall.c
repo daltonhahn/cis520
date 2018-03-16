@@ -138,65 +138,68 @@ syscall_init (void)
 static void
 syscall_handler (struct intr_frame *f) 
 {
+  uint32_t *esp;
+  esp = f->esp;
 
-  if (!check_ptr (f->esp) || !check_ptr (f->esp + 4) ||
-      !check_ptr (f->esp + 8) || !check_ptr (f->esp + 12))
-  {
-    exit(-1);
-  }
+  if (!check_ptr (esp) || !check_ptr (esp + 1) ||
+      !check_ptr (esp + 2) || !check_ptr (esp + 3))
+    {
+      exit (-1);
+    }
 
-  switch(*(int*)f->esp)
+  int syscall = *esp;
+  switch(syscall)
   {
     case SYS_HALT:
       halt();
       break;
     
     case SYS_EXIT:
-      exit(*(int *)(f->esp+4));
+      exit (*(esp + 1));
       break;
 
     case SYS_EXEC:
-      f->eax = exec((char *)(f->esp+4));
+      f->eax = exec ((char *) *(esp + 1));
       break;
 
     case SYS_WAIT:
-      f->eax = wait(*(unsigned *)(f->esp+4));
+      f->eax = wait (*(esp + 1));
       break;
 
     case SYS_CREATE:
-      f->eax = create ((char *)(f->esp+4), *(unsigned *)(f->esp+8));
+      f->eax = create ((char *) *(esp + 1), *(esp + 2));
       break;
 
     case SYS_REMOVE:
-      f->eax = remove((char *)(f->esp+4));
+      f->eax = remove ((char *) *(esp + 1));
       break;
 
     case SYS_OPEN:
-      f->eax = open((char *)(f->esp+4));
+      f->eax = open ((char *) *(esp + 1));
       break;
 
     case SYS_FILESIZE:
-      f->eax = filesize(*(int *)(f->esp+4));
+      f->eax = filesize (*(esp + 1));
       break;
 
     case SYS_READ:
-      f->eax = read(*(int *)(f->esp+4), (void *)*(uint32_t *)(f->esp+8), *(unsigned *)(f->esp+12));
+      f->eax = read (*(esp + 1), (void *) *(esp + 2), *(esp + 3));
       break;
 
     case SYS_WRITE:
-      f->eax = write(*(int *)(f->esp+4), (void *)*(uint32_t *)(f->esp+8), *(unsigned *)(f->esp+12));
+      f->eax = write (*(esp + 1), (void *) *(esp + 2), *(esp + 3));
       break;
 
     case SYS_SEEK:
-      seek(*(int *)(f->esp+4), *(int *)(f->esp+8));
+      seek (*(esp + 1), *(esp + 2));
       break;
 
     case SYS_TELL:
-      f->eax = tell(*(int *)(f->esp+4));
+      f->eax = tell (*(esp + 1));
       break;
 
     case SYS_CLOSE:
-      close(*(int *)(f->esp+4));
+      close (*(esp + 1));
       break;
 
     default:
@@ -236,17 +239,6 @@ write(int fd, const void *buffer, unsigned size)
 void 
 exit(int status)
 {
-  // struct thread *cur_thread = thread_current();
-
-  // if(cur_thread->parent->waiting_for_child == true)
-  // {
-  //   cur_thread->parent->child_exit_status = status;
-  //   sema_up(&cur_thread->parent->wait_child_sema);
-  // }
-  // printf("%s: exit(%d)\n", cur_thread->name, status);
-  // thread_exit();
-  /* later on, we need to determine if there is process waiting for it */
-  /* process_exit (); */
   struct child_status *child;
   struct thread *cur = thread_current ();
   printf ("%s: exit(%d)\n", cur->name, status);
@@ -284,7 +276,6 @@ open (const char *file_name)
   
   if (!check_ptr(file_name))
     exit (-1);
-
   lock_acquire (&fs_lock); 
  
   f = filesys_open (file_name);
