@@ -32,6 +32,8 @@ process_execute (const char *file_name)
 {
   char *fn_copy;
   tid_t tid;
+
+  // Used to keep track of child status and current thread
   struct child_status *child; 
   struct thread *cur;
 
@@ -43,14 +45,17 @@ process_execute (const char *file_name)
   strlcpy (fn_copy, file_name, PGSIZE);
 
   /* Create a new thread to execute FILE_NAME. */
-  char* garb;
-  char* exec_name = strtok_r(file_name, " \t", &garb);
-  //printf("%s: was printed\n", exec_name);
+  // Strips out command name and sets that as thread's name
+  char* garb; // garbage pointer
+  char* exec_name = strtok_r(file_name, " \t", &garb); // Name of command
   tid = thread_create (exec_name, PRI_DEFAULT, start_process, fn_copy);
+
+  // Checks thread ID
   if (tid == TID_ERROR)
     palloc_free_page (fn_copy); 
   else 
   { 
+    // Set up newly created thread as child of current thread.
     cur = thread_current ();
     child = calloc (1, sizeof *child);
     if (child != NULL) 
@@ -72,6 +77,7 @@ start_process (void *file_name_)
   char *file_name = file_name_;
   struct intr_frame if_;
   bool success;
+
   int load_status;
   struct thread *cur;
   struct thread *parent;
@@ -89,6 +95,7 @@ start_process (void *file_name_)
   else
     load_status = 1;
 
+  // Notify parent and wake them if they are waiting. 
   cur = thread_current (); 
   parent = thread_get_by_id (cur->parent_id);
   if (parent != NULL)
@@ -123,56 +130,49 @@ start_process (void *file_name_)
 
    This function will be implemented in problem 2-2.  For now, it
    does nothing. */
-// int
-// process_wait (tid_t child_tid) 
-// {
-//   int status;
-//   struct thread *cur;
-//   struct child_status *child = NULL;
-//   struct list_elem *e;
 
-//   // sema_init(&thread_current()->wait_child_sema, 0);
-//   // sema_down(&thread_current()->wait_child_sema);
-//   struct thread * cur_thread = thread_current();
-
-//   cur_thread->waiting_for_child = true;
-//   sema_init(&cur_thread->wait_child_sema, 0);
-//   sema_down(&cur_thread->wait_child_sema);
-//   cur_thread->waiting_for_child = false;
-//   return -1;
-// }
-
+// From https://github.com/codyjack/OS-pintos/
 int
-/* Original implementation */
-/* process_wait (tid_t child_tid UNUSED) */
 process_wait (tid_t child_tid)
 {
   int status;
   struct thread *cur;
   struct child_status *child = NULL;
   struct list_elem *e;
+
+  // Checks if child_tid is valid
   if (child_tid != TID_ERROR)
    {
      cur = thread_current ();
      e = list_tail (&cur->children);
+
+     // Loops through current thread's children 
      while ((e = list_prev (e)) != list_head (&cur->children))
        {
+         // Breaks once child is found
          child = list_entry(e, struct child_status, elem_child_status);
          if (child->child_id == child_tid)
            break;
        }
 
      if (child == NULL)
+       // Child not found
        status = -1;
      else
        {
+
          lock_acquire(&cur->lock_child);
+
+         // Waits while child is still running
          while (thread_get_by_id (child_tid) != NULL)
            cond_wait (&cur->cond_child, &cur->lock_child);
+
+         // Checks child's finishing status
          if (!child->is_exit_called || child->has_been_waited)
            status = -1;
          else
-           { 
+           {
+             // Sets child status 
              status = child->child_exit_status;
              child->has_been_waited = true;
            }
@@ -184,6 +184,7 @@ process_wait (tid_t child_tid)
   return status;
 }
 
+// From https://github.com/codyjack/OS-pintos/
 /* Free the current process's resources. */
 void
 process_exit (void)
@@ -213,7 +214,7 @@ process_exit (void)
       pagedir_destroy (pd);
     }
 
-  /*free children list*/
+  // Loop through current thread's children and free them
   e = list_begin (&cur->children);
   while (e != list_tail(&cur->children))
     {
@@ -224,13 +225,14 @@ process_exit (void)
       e = next;
     }
   
-  /*re-enable the file's writable property*/
+  // Re-enable the file's writable property
   if (cur->exec_file != NULL)
     file_allow_write (cur->exec_file);
   
-  /*free files whose owner is the current thread*/
+  // Free files whose owner is the current thread
   close_file_by_owner (cur->tid);  
 
+  // Signal parent that child is done executing
   parent = thread_get_by_id (cur->parent_id);
   if (parent != NULL)
     {
@@ -357,6 +359,7 @@ load (const char *file_name, void (**eip) (void), void **esp)
       goto done; 
     }
 
+    // Deny write to executable 
     t->exec_file = file;
     file_deny_write(file);
 
@@ -433,6 +436,7 @@ load (const char *file_name, void (**eip) (void), void **esp)
     }
 
   /* Set up stack. */
+  // Added file_name to setup_stack function
   if (!setup_stack (esp, file_name))
     goto done;
 
@@ -554,6 +558,7 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
   return true;
 }
 
+// From https://github.com/codyjack/OS-pintos/
 /* Create a minimal stack by mapping a zeroed page at the top of
    user virtual memory. */
 static bool
@@ -567,41 +572,40 @@ setup_stack (void **esp, char* file_name)
     {
       success = install_page (((uint8_t *) PHYS_BASE) - PGSIZE, kpage, true);
       if (success) {
-  	*esp = PHYS_BASE;
+  	    *esp = PHYS_BASE;
 
+        // Initialize variables
         uint8_t *argstr_head;
         char *cmd_name = thread_current ()->name;
         int strlength, total_length;
         int argc;
 
-        /*push the arguments string into stack*/
+        // Push the arguments string into stack
         strlength = strlen(file_name) + 1;
         *esp -= strlength;
         memcpy(*esp, file_name, strlength);
         total_length += strlength;
 
-        /*push command name into stack*/
+        // Push command name into stack
         strlength = strlen(cmd_name) + 1;
         *esp -= strlength;
         argstr_head = *esp;
         memcpy(*esp, cmd_name, strlength);
         total_length += strlength;
 
-        /*set alignment, get the starting address, modify *esp */
+        // Set offset bit, get the starting address, modify *esp 
         *esp -= 4 - total_length % 4;
 
-        /* push argv[argc] null into the stack */
+        // Push argv[argc] null into the stack
         *esp -= 4;
         * (uint32_t *) *esp = (uint32_t) NULL;
 
-        /* scan throught the file name with arguments string downward,
-         * using the cur_addr and total_length above to define boundary.
-         * omitting the beginning space or '\0', but for every encounter
-         * after, push the last non-space-and-'\0' address, which is current
-         * address minus 1, as one of argv to the stack, and set the space to
-         * '\0', multiple adjancent spaces and '0' is treated as one.
+         /* Loops through the file_name with arguments. cur_addr and total_length set boundary.
+            Removes spaces with '\0'. Pushes the location of the arguments to the stack as argv.
+            Treats multiple spaces and '\0' as the same.  
          */
         int i = total_length - 1;
+
         /*omitting the starting space and '\0' */
         while (*(argstr_head + i) == ' ' ||  *(argstr_head + i) == '\0')
           {
@@ -630,15 +634,15 @@ setup_stack (void **esp, char* file_name)
               *mark = '\0';
           }
 
-        /*push argv*/
+        // Push argv
         * (uint32_t *) (*esp - 4) = *(uint32_t *) esp;
         *esp -= 4;
 
-        /*push argc*/
+        // Push argc
         *esp -= 4;
         * (int *) *esp = argc;
 
-        /*push return address*/
+        // Push return address
         *esp -= 4;
         * (uint32_t *) *esp = 0x0;
       } else
