@@ -20,6 +20,7 @@
 #define PGSIZE  (1 << PGBITS)              /* Bytes in a page. */
 #define PGMASK  BITMASK(PGSHIFT, PGBITS)   /* Page offset bits (0:12). */
 
+// Added to provide pointer checker for user addresses
 bool check_ptr(const void *);
 
 /* Offset within a page. */

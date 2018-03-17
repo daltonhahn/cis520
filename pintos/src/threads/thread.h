@@ -105,12 +105,13 @@ struct thread
     /* Shared between thread.c and synch.c. */
     struct list_elem elem;              /* List element. */
 
+    // Reference to thread's parent
+    tid_t parent_id;    /* parent thread id */
 
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
     uint32_t *pagedir;  /* Page directory. */
-    tid_t parent_id;    /* parent thread id */
- 
+
     /* signal to indicate the child's executable-loading status:
      *  - 0: has not been loaded
      *  - -1: load failed
@@ -157,6 +158,7 @@ const char *thread_name (void);
 void thread_exit (void) NO_RETURN;
 void thread_yield (void);
 
+// Added to reference function in thread.c
 struct thread* thread_get_by_id(tid_t);
 
 /* Performs some operation on thread t, given auxiliary data AUX. */

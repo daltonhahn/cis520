@@ -135,19 +135,19 @@ pass tests/userprog/exec-once
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/exec-arg -a exec-arg -p tests/userprog/child-args -a child-args -- -q  -f run exec-arg < /dev/null 2> tests/userprog/exec-arg.errors > tests/userprog/exec-arg.output
 perl -I../.. ../../tests/userprog/exec-arg.ck tests/userprog/exec-arg tests/userprog/exec-arg.result
 FAIL tests/userprog/exec-arg
-Kernel panic in run: PANIC at ../../userprog/exception.c:102 in kill(): Kernel bug - unexpected interrupt in kernel
-Call stack: 0xc0029b27 0xc002d46c 0xc002d539 0xc0021d9f 0xc0022087 0xc0028df8 0xc002bfcd 0xc002de66 0xc002e0e5 0xc0021d9f 0xc0022087 0x804a433 0x80480c0 0x804810f 0x80488c0
+Kernel panic in run: PANIC at ../../userprog/exception.c:103 in kill(): Kernel bug - unexpected interrupt in kernel
+Call stack: 0xc0029b27 0xc002d46c 0xc002d539 0xc0021d9f 0xc0022087 0xc0028df8 0xc002bfcd 0xc002ddd6 0xc002e055 0xc0021d9f 0xc0022087 0x804a433 0x80480c0 0x804810f 0x80488c0
 Translation of call stack:
 In kernel.o:
 0xc0029b27: debug_panic (.../../lib/kernel/debug.c:38)
-0xc002d46c: kill (.../userprog/exception.c:107)
-0xc002d539: exit (.../userprog/exception.c:171)
+0xc002d46c: kill (.../userprog/exception.c:108)
+0xc002d539: page_fault (.../userprog/exception.c:155)
 0xc0021d9f: intr_handler (..../threads/interrupt.c:378)
 0xc0022087: intr_entry (threads/intr-stubs.S:38)
 0xc0028df8: strtok_r (...ld/../../lib/string.c:269)
 0xc002bfcd: process_execute (.../../userprog/process.c:49)
-0xc002de66: exec (...../userprog/syscall.c:379)
-0xc002e0e5: syscall_handler (...../userprog/syscall.c:162)
+0xc002ddd6: exec (...../userprog/syscall.c:379)
+0xc002e055: syscall_handler (...../userprog/syscall.c:162)
 0xc0021d9f: intr_handler (..../threads/interrupt.c:378)
 0xc0022087: intr_entry (threads/intr-stubs.S:38)
 In tests/userprog/exec-arg:
@@ -200,19 +200,19 @@ pass tests/userprog/rox-simple
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/rox-child -a rox-child -p tests/userprog/child-rox -a child-rox -- -q  -f run rox-child < /dev/null 2> tests/userprog/rox-child.errors > tests/userprog/rox-child.output
 perl -I../.. ../../tests/userprog/rox-child.ck tests/userprog/rox-child tests/userprog/rox-child.result
 FAIL tests/userprog/rox-child
-Kernel panic in run: PANIC at ../../userprog/exception.c:102 in kill(): Kernel bug - unexpected interrupt in kernel
-Call stack: 0xc0029b27 0xc002d46c 0xc002d539 0xc0021d9f 0xc0022087 0xc0028df8 0xc002bfcd 0xc002de66 0xc002e0e5 0xc0021d9f 0xc0022087 0x804a5a3 0x8048167 0x8048284 0x8048a35
+Kernel panic in run: PANIC at ../../userprog/exception.c:103 in kill(): Kernel bug - unexpected interrupt in kernel
+Call stack: 0xc0029b27 0xc002d46c 0xc002d539 0xc0021d9f 0xc0022087 0xc0028df8 0xc002bfcd 0xc002ddd6 0xc002e055 0xc0021d9f 0xc0022087 0x804a5a3 0x8048167 0x8048284 0x8048a35
 Translation of call stack:
 In kernel.o:
 0xc0029b27: debug_panic (.../../lib/kernel/debug.c:38)
-0xc002d46c: kill (.../userprog/exception.c:107)
-0xc002d539: exit (.../userprog/exception.c:171)
+0xc002d46c: kill (.../userprog/exception.c:108)
+0xc002d539: page_fault (.../userprog/exception.c:155)
 0xc0021d9f: intr_handler (..../threads/interrupt.c:378)
 0xc0022087: intr_entry (threads/intr-stubs.S:38)
 0xc0028df8: strtok_r (...ld/../../lib/string.c:269)
 0xc002bfcd: process_execute (.../../userprog/process.c:49)
-0xc002de66: exec (...../userprog/syscall.c:379)
-0xc002e0e5: syscall_handler (...../userprog/syscall.c:162)
+0xc002ddd6: exec (...../userprog/syscall.c:379)
+0xc002e055: syscall_handler (...../userprog/syscall.c:162)
 0xc0021d9f: intr_handler (..../threads/interrupt.c:378)
 0xc0022087: intr_entry (threads/intr-stubs.S:38)
 In tests/userprog/rox-child:
@@ -226,19 +226,19 @@ translations will be misleading.
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/rox-multichild -a rox-multichild -p tests/userprog/child-rox -a child-rox -- -q  -f run rox-multichild < /dev/null 2> tests/userprog/rox-multichild.errors > tests/userprog/rox-multichild.output
 perl -I../.. ../../tests/userprog/rox-multichild.ck tests/userprog/rox-multichild tests/userprog/rox-multichild.result
 FAIL tests/userprog/rox-multichild
-Kernel panic in run: PANIC at ../../userprog/exception.c:102 in kill(): Kernel bug - unexpected interrupt in kernel
-Call stack: 0xc0029b27 0xc002d46c 0xc002d539 0xc0021d9f 0xc0022087 0xc0028df8 0xc002bfcd 0xc002de66 0xc002e0e5 0xc0021d9f 0xc0022087 0x804a5a3 0x8048167 0x8048284 0x8048a35
+Kernel panic in run: PANIC at ../../userprog/exception.c:103 in kill(): Kernel bug - unexpected interrupt in kernel
+Call stack: 0xc0029b27 0xc002d46c 0xc002d539 0xc0021d9f 0xc0022087 0xc0028df8 0xc002bfcd 0xc002ddd6 0xc002e055 0xc0021d9f 0xc0022087 0x804a5a3 0x8048167 0x8048284 0x8048a35
 Translation of call stack:
 In kernel.o:
 0xc0029b27: debug_panic (.../../lib/kernel/debug.c:38)
-0xc002d46c: kill (.../userprog/exception.c:107)
-0xc002d539: exit (.../userprog/exception.c:171)
+0xc002d46c: kill (.../userprog/exception.c:108)
+0xc002d539: page_fault (.../userprog/exception.c:155)
 0xc0021d9f: intr_handler (..../threads/interrupt.c:378)
 0xc0022087: intr_entry (threads/intr-stubs.S:38)
 0xc0028df8: strtok_r (...ld/../../lib/string.c:269)
 0xc002bfcd: process_execute (.../../userprog/process.c:49)
-0xc002de66: exec (...../userprog/syscall.c:379)
-0xc002e0e5: syscall_handler (...../userprog/syscall.c:162)
+0xc002ddd6: exec (...../userprog/syscall.c:379)
+0xc002e055: syscall_handler (...../userprog/syscall.c:162)
 0xc0021d9f: intr_handler (..../threads/interrupt.c:378)
 0xc0022087: intr_entry (threads/intr-stubs.S:38)
 In tests/userprog/rox-multichild:

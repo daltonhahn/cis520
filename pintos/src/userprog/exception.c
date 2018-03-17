@@ -5,13 +5,13 @@
 #include "threads/interrupt.h"
 #include "threads/thread.h"
 #include "threads/vaddr.h"
+#include "userprog/syscall.h"
 
 /* Number of page faults processed. */
 static long long page_fault_cnt;
 
 static void kill (struct intr_frame *);
 static void page_fault (struct intr_frame *);
-static void exit(int);
 
 /* Registers handlers for interrupts that can be caused by user
    programs.
@@ -150,8 +150,9 @@ page_fault (struct intr_frame *f)
   write = (f->error_code & PF_W) != 0;
   user = (f->error_code & PF_U) != 0;
 
+  // Checks the validity of the page fault address. Exits if invalid.
   if (!check_ptr(fault_addr))
-    exit (-1);
+    exit(-1);
 
   /* To implement virtual memory, delete the rest of the function
      body, and replace it with code that brings in the page to
@@ -162,29 +163,4 @@ page_fault (struct intr_frame *f)
           write ? "writing" : "reading",
           user ? "user" : "kernel");
   kill (f);
-}
-
-void
-exit(int status)
-{
-  struct child_status *child;
-  struct thread *cur = thread_current();
-  printf ("%s: exit(%d)\n", cur->name, status);
-  struct thread *parent = thread_get_by_id (cur->parent_id);
-  if(parent != NULL)
-  {
-    struct list_elem *e = list_tail(&parent->children);
-    while ((e = list_prev (e)) != list_head (&parent->children))
-    {
-      child = list_entry (e, struct child_status, elem_child_status);
-      if (child->child_id == cur->tid)
-      {
-        lock_acquire (&parent->lock_child);
-        child->is_exit_called = true;
-        child->child_exit_status = status;
-        lock_release (&parent->lock_child);
-      }
-    }
-  }
-  thread_exit ();
 }
