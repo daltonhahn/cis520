@@ -1,5 +1,5 @@
 cd build && make check
-make[1]: Entering directory '/net/files.cis.ksu.edu/exports/home/b/blehmg/cis520/pintos/src/userprog/build'
+make[1]: Entering directory '/net/files.cs.ksu.edu/exports/home/b/blehmg/cis520/pintos/src/userprog/build'
 pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/args-none -a args-none -- -q  -f run args-none < /dev/null 2> tests/userprog/args-none.errors > tests/userprog/args-none.output
 perl -I../.. ../../tests/userprog/args-none.ck tests/userprog/args-none tests/userprog/args-none.result
 pass tests/userprog/args-none
@@ -136,20 +136,20 @@ pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/exec-arg -a exec-a
 perl -I../.. ../../tests/userprog/exec-arg.ck tests/userprog/exec-arg tests/userprog/exec-arg.result
 FAIL tests/userprog/exec-arg
 Kernel panic in run: PANIC at ../../userprog/exception.c:102 in kill(): Kernel bug - unexpected interrupt in kernel
-Call stack: 0xc0029b37 0xc002d47c 0xc002d549 0xc0021daf 0xc0022097 0xc0028e08 0xc002bfdd 0xc002de76 0xc002e0f5 0xc0021daf 0xc0022097 0x804a433 0x80480c0 0x804810f 0x80488c0
+Call stack: 0xc0029b27 0xc002d46c 0xc002d539 0xc0021d9f 0xc0022087 0xc0028df8 0xc002bfcd 0xc002de66 0xc002e0e5 0xc0021d9f 0xc0022087 0x804a433 0x80480c0 0x804810f 0x80488c0
 Translation of call stack:
 In kernel.o:
-0xc0029b37: debug_panic (.../../lib/kernel/debug.c:38)
-0xc002d47c: kill (.../userprog/exception.c:107)
-0xc002d549: exit (.../userprog/exception.c:171)
-0xc0021daf: intr_handler (..../threads/interrupt.c:378)
-0xc0022097: intr_entry (threads/intr-stubs.S:38)
-0xc0028e08: strtok_r (...ld/../../lib/string.c:269)
-0xc002bfdd: process_execute (.../../userprog/process.c:49)
-0xc002de76: exec (...../userprog/syscall.c:379)
-0xc002e0f5: syscall_handler (...../userprog/syscall.c:162)
-0xc0021daf: intr_handler (..../threads/interrupt.c:378)
-0xc0022097: intr_entry (threads/intr-stubs.S:38)
+0xc0029b27: debug_panic (.../../lib/kernel/debug.c:38)
+0xc002d46c: kill (.../userprog/exception.c:107)
+0xc002d539: exit (.../userprog/exception.c:171)
+0xc0021d9f: intr_handler (..../threads/interrupt.c:378)
+0xc0022087: intr_entry (threads/intr-stubs.S:38)
+0xc0028df8: strtok_r (...ld/../../lib/string.c:269)
+0xc002bfcd: process_execute (.../../userprog/process.c:49)
+0xc002de66: exec (...../userprog/syscall.c:379)
+0xc002e0e5: syscall_handler (...../userprog/syscall.c:162)
+0xc0021d9f: intr_handler (..../threads/interrupt.c:378)
+0xc0022087: intr_entry (threads/intr-stubs.S:38)
 In tests/userprog/exec-arg:
 0x0804a433: exec (.../../lib/user/syscall.c:81)
 0x080480c0: test_main (...sts/userprog/exec-arg.c:9)
@@ -201,20 +201,20 @@ pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/rox-child -a rox-c
 perl -I../.. ../../tests/userprog/rox-child.ck tests/userprog/rox-child tests/userprog/rox-child.result
 FAIL tests/userprog/rox-child
 Kernel panic in run: PANIC at ../../userprog/exception.c:102 in kill(): Kernel bug - unexpected interrupt in kernel
-Call stack: 0xc0029b37 0xc002d47c 0xc002d549 0xc0021daf 0xc0022097 0xc0028e08 0xc002bfdd 0xc002de76 0xc002e0f5 0xc0021daf 0xc0022097 0x804a5a3 0x8048167 0x8048284 0x8048a35
+Call stack: 0xc0029b27 0xc002d46c 0xc002d539 0xc0021d9f 0xc0022087 0xc0028df8 0xc002bfcd 0xc002de66 0xc002e0e5 0xc0021d9f 0xc0022087 0x804a5a3 0x8048167 0x8048284 0x8048a35
 Translation of call stack:
 In kernel.o:
-0xc0029b37: debug_panic (.../../lib/kernel/debug.c:38)
-0xc002d47c: kill (.../userprog/exception.c:107)
-0xc002d549: exit (.../userprog/exception.c:171)
-0xc0021daf: intr_handler (..../threads/interrupt.c:378)
-0xc0022097: intr_entry (threads/intr-stubs.S:38)
-0xc0028e08: strtok_r (...ld/../../lib/string.c:269)
-0xc002bfdd: process_execute (.../../userprog/process.c:49)
-0xc002de76: exec (...../userprog/syscall.c:379)
-0xc002e0f5: syscall_handler (...../userprog/syscall.c:162)
-0xc0021daf: intr_handler (..../threads/interrupt.c:378)
-0xc0022097: intr_entry (threads/intr-stubs.S:38)
+0xc0029b27: debug_panic (.../../lib/kernel/debug.c:38)
+0xc002d46c: kill (.../userprog/exception.c:107)
+0xc002d539: exit (.../userprog/exception.c:171)
+0xc0021d9f: intr_handler (..../threads/interrupt.c:378)
+0xc0022087: intr_entry (threads/intr-stubs.S:38)
+0xc0028df8: strtok_r (...ld/../../lib/string.c:269)
+0xc002bfcd: process_execute (.../../userprog/process.c:49)
+0xc002de66: exec (...../userprog/syscall.c:379)
+0xc002e0e5: syscall_handler (...../userprog/syscall.c:162)
+0xc0021d9f: intr_handler (..../threads/interrupt.c:378)
+0xc0022087: intr_entry (threads/intr-stubs.S:38)
 In tests/userprog/rox-child:
 0x0804a5a3: exec (.../../lib/user/syscall.c:81)
 0x08048167: test_main (...userprog/rox-child.inc:24)
@@ -227,20 +227,20 @@ pintos -v -k -T 60 --qemu  --filesys-size=2 -p tests/userprog/rox-multichild -a 
 perl -I../.. ../../tests/userprog/rox-multichild.ck tests/userprog/rox-multichild tests/userprog/rox-multichild.result
 FAIL tests/userprog/rox-multichild
 Kernel panic in run: PANIC at ../../userprog/exception.c:102 in kill(): Kernel bug - unexpected interrupt in kernel
-Call stack: 0xc0029b37 0xc002d47c 0xc002d549 0xc0021daf 0xc0022097 0xc0028e08 0xc002bfdd 0xc002de76 0xc002e0f5 0xc0021daf 0xc0022097 0x804a5a3 0x8048167 0x8048284 0x8048a35
+Call stack: 0xc0029b27 0xc002d46c 0xc002d539 0xc0021d9f 0xc0022087 0xc0028df8 0xc002bfcd 0xc002de66 0xc002e0e5 0xc0021d9f 0xc0022087 0x804a5a3 0x8048167 0x8048284 0x8048a35
 Translation of call stack:
 In kernel.o:
-0xc0029b37: debug_panic (.../../lib/kernel/debug.c:38)
-0xc002d47c: kill (.../userprog/exception.c:107)
-0xc002d549: exit (.../userprog/exception.c:171)
-0xc0021daf: intr_handler (..../threads/interrupt.c:378)
-0xc0022097: intr_entry (threads/intr-stubs.S:38)
-0xc0028e08: strtok_r (...ld/../../lib/string.c:269)
-0xc002bfdd: process_execute (.../../userprog/process.c:49)
-0xc002de76: exec (...../userprog/syscall.c:379)
-0xc002e0f5: syscall_handler (...../userprog/syscall.c:162)
-0xc0021daf: intr_handler (..../threads/interrupt.c:378)
-0xc0022097: intr_entry (threads/intr-stubs.S:38)
+0xc0029b27: debug_panic (.../../lib/kernel/debug.c:38)
+0xc002d46c: kill (.../userprog/exception.c:107)
+0xc002d539: exit (.../userprog/exception.c:171)
+0xc0021d9f: intr_handler (..../threads/interrupt.c:378)
+0xc0022087: intr_entry (threads/intr-stubs.S:38)
+0xc0028df8: strtok_r (...ld/../../lib/string.c:269)
+0xc002bfcd: process_execute (.../../userprog/process.c:49)
+0xc002de66: exec (...../userprog/syscall.c:379)
+0xc002e0e5: syscall_handler (...../userprog/syscall.c:162)
+0xc0021d9f: intr_handler (..../threads/interrupt.c:378)
+0xc0022087: intr_entry (threads/intr-stubs.S:38)
 In tests/userprog/rox-multichild:
 0x0804a5a3: exec (.../../lib/user/syscall.c:81)
 0x08048167: test_main (...userprog/rox-child.inc:24)
@@ -393,5 +393,5 @@ pass tests/filesys/base/syn-remove
 FAIL tests/filesys/base/syn-write
 5 of 80 tests failed.
 ../../tests/Make.tests:26: recipe for target 'check' failed
-make[1]: Leaving directory '/net/files.cis.ksu.edu/exports/home/b/blehmg/cis520/pintos/src/userprog/build'
+make[1]: Leaving directory '/net/files.cs.ksu.edu/exports/home/b/blehmg/cis520/pintos/src/userprog/build'
 ../Makefile.kernel:10: recipe for target 'check' failed

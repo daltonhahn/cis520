@@ -5,10 +5,7 @@
 #include <list.h>
 #include <stdint.h>
 #include "filesys/file.h"
-
-/*********/
 #include "threads/synch.h"
-/*********/
 
 /* States in a thread's life cycle. */
 enum thread_status
@@ -29,14 +26,16 @@ typedef int tid_t;
 #define PRI_DEFAULT 31                  /* Default priority. */
 #define PRI_MAX 63                      /* Highest priority. */
 
+// From https://github.com/codyjack/OS-pintos/
+// struct to keep track of a thread's child
+struct child_status {
+  tid_t child_id;
+  bool is_exit_called;
+  bool has_been_waited;
+  int child_exit_status;
+  struct list_elem elem_child_status;  
+};
 
-  struct child_status {
-    tid_t child_id;
-    bool is_exit_called;
-    bool has_been_waited;
-    int child_exit_status;
-    struct list_elem elem_child_status;  
-  };
 /* A kernel thread or user process.
 
    Each thread structure is stored in its own 4 kB page.  The
@@ -107,20 +106,10 @@ struct thread
     struct list_elem elem;              /* List element. */
 
 
-    // /****************/
-    // struct thread *parent;		/* Parent process of a running thread */
-    // struct semaphore wait_child_sema;	/* Semaphore for parent to wake up child from waiting */
-    // bool waiting_for_child;		/* Parent process is waiting for its child to die */
-    // int child_exit_status;		/* Informs the parent of exit status of child */
-    // /****************/
-
-
-    tid_t parent_id;   
-                 /* parent thread id */
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
-    uint32_t *pagedir;                  /* Page directory. */
-    
+    uint32_t *pagedir;  /* Page directory. */
+    tid_t parent_id;    /* parent thread id */
  
     /* signal to indicate the child's executable-loading status:
      *  - 0: has not been loaded
