@@ -20,7 +20,14 @@
 #define PGSIZE  (1 << PGBITS)              /* Bytes in a page. */
 #define PGMASK  BITMASK(PGSHIFT, PGBITS)   /* Page offset bits (0:12). */
 
-bool check_ptr(const void *);
+
+// Added reference to ptr_check method
+// Inspired by https://www.github.com/codyjack/OS-pintos
+/********************************************/
+bool ptr_check(const void *);
+/********************************************/
+
+
 
 /* Offset within a page. */
 static inline unsigned pg_ofs (const void *va) {

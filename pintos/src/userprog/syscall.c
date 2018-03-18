@@ -21,7 +21,7 @@ static void syscall_handler (struct intr_frame *);
 void halt(void);
 void exit(int status);
 int write(int fd, const void *buffer, unsigned size);
-bool check_ptr (const void *usr_ptr);
+bool ptr_check(const void *usr_ptr);
 bool create (const char *file_name, unsigned size);
 int open (const char *file_name);
 struct file_descriptor *get_open_file (int);
@@ -59,7 +59,7 @@ allocate_fd ()
 }
 
 bool
-check_ptr (const void *usr_ptr)
+ptr_check (const void *usr_ptr)
 {
   if (usr_ptr != NULL && is_user_vaddr (usr_ptr))
     {
@@ -141,8 +141,8 @@ syscall_handler (struct intr_frame *f)
   uint32_t *esp;
   esp = f->esp;
 
-  if (!check_ptr (esp) || !check_ptr (esp + 1) ||
-      !check_ptr (esp + 2) || !check_ptr (esp + 3))
+  if (!ptr_check(esp) || !ptr_check(esp + 1) ||
+      !ptr_check(esp + 2) || !ptr_check(esp + 3))
     {
       exit (-1);
     }
@@ -214,7 +214,7 @@ write(int fd, const void *buffer, unsigned size)
   struct file_descriptor *fd_struct;
   int status = 0;
 
-  if (!check_ptr(buffer) || !check_ptr(buffer + size - 1))
+  if (!ptr_check(buffer) || !ptr_check(buffer + size - 1))
     exit (-1);
 
   switch(fd)
@@ -274,7 +274,7 @@ open (const char *file_name)
   struct file_descriptor *fd;
   int status = -1;
   
-  if (!check_ptr(file_name))
+  if (!ptr_check(file_name))
     exit (-1);
   lock_acquire (&fs_lock); 
  
@@ -297,7 +297,7 @@ create (const char *file_name, unsigned size)
 {
   bool status;
 
-  if (!check_ptr(file_name) || strcmp(file_name, "") == 0)
+  if (!ptr_check(file_name) || strcmp(file_name, "") == 0)
     exit (-1);
 
   lock_acquire (&fs_lock);
@@ -312,7 +312,7 @@ read (int fd, void *buffer, unsigned size)
   struct file_descriptor *fd_struct;
   int status = 0; 
 
-  if (!check_ptr (buffer) || !check_ptr (buffer + size - 1))
+  if (!ptr_check(buffer) || !ptr_check(buffer + size - 1))
     exit (-1);
 
   
@@ -368,7 +368,7 @@ exec (const char *cmd_line)
   tid_t tid;
   struct thread *cur;
   /* check if the user pinter is valid */
-  if (!check_ptr (cmd_line))
+  if (!ptr_check(cmd_line))
     {
       exit (-1);
     }
@@ -409,7 +409,7 @@ bool
 remove (const char *file_name)
 {
   bool status;
-  if (!check_ptr (file_name))
+  if (!ptr_check(file_name))
     exit (-1);
  
   lock_acquire (&fs_lock);  
