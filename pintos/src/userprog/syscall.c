@@ -248,12 +248,12 @@ exit(int status)
       struct list_elem *e = list_tail(&parent->children);
       while ((e = list_prev (e)) != list_head (&parent->children))
         {
-          child = list_entry (e, struct child_status, elem_child_status);
+          child = list_entry (e, struct child_status, elem_status);
           if (child->child_id == cur->tid)
           {
             lock_acquire (&parent->lock_child);
-            child->is_exit_called = true;
-            child->child_exit_status = status;
+            child->exit_call= true;
+            child->status = status;
             lock_release (&parent->lock_child);
           }
         }

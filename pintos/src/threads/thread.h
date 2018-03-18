@@ -4,11 +4,14 @@
 #include <debug.h>
 #include <list.h>
 #include <stdint.h>
-#include "filesys/file.h"
 
+
+//Added additional includes to provide access to needed functions
 /*********/
+#include "filesys/file.h"
 #include "threads/synch.h"
 /*********/
+
 
 /* States in a thread's life cycle. */
 enum thread_status
@@ -30,13 +33,6 @@ typedef int tid_t;
 #define PRI_MAX 63                      /* Highest priority. */
 
 
-  struct child_status {
-    tid_t child_id;
-    bool is_exit_called;
-    bool has_been_waited;
-    int child_exit_status;
-    struct list_elem elem_child_status;  
-  };
 /* A kernel thread or user process.
 
    Each thread structure is stored in its own 4 kB page.  The
@@ -106,30 +102,24 @@ struct thread
     /* Shared between thread.c and synch.c. */
     struct list_elem elem;              /* List element. */
 
-
-    // /****************/
-    // struct thread *parent;		/* Parent process of a running thread */
-    // struct semaphore wait_child_sema;	/* Semaphore for parent to wake up child from waiting */
-    // bool waiting_for_child;		/* Parent process is waiting for its child to die */
-    // int child_exit_status;		/* Informs the parent of exit status of child */
-    // /****************/
+    // Added parent_id to differentiate between parent and children
+    /****************************************************/
+    tid_t parent_id;                  /* parent thread id */
+    /****************************************************/
 
 
-    tid_t parent_id;   
-                 /* parent thread id */
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
     uint32_t *pagedir;                  /* Page directory. */
     
  
-    /* signal to indicate the child's executable-loading status:
-     *  - 0: has not been loaded
-     *  - -1: load failed
-     *  - 1: load success*/
+    // Additional items for keeping track of synchronization across children
+    // and keeping track of executable file belonging to a thread.
+    /***************************************************************/
+    // 0 for unloaded, -1 for failure, 1 for success
     int child_load_status;
     
-    /* monitor used to wait the child, owned by wait-syscall and waiting
-       for child to load executable */
+    // Synchronizations used for waiting children
     struct lock lock_child;
     struct condition cond_child;
  
@@ -138,11 +128,28 @@ struct thread
 
     /* file struct represents the execuatable of the current thread */ 
     struct file *exec_file;
+    /***************************************************************/
+
 #endif
 
     /* Owned by thread.c. */
     unsigned magic;                     /* Detects stack overflow. */
   };
+
+
+// Added child status information for keeping track of waiting synchronization
+// and proper exiting
+/************************************************/
+struct child_status {
+    tid_t child_id;
+    bool exit_call;
+    bool waited;
+    int status;
+    struct list_elem elem_status;  
+};
+/************************************************/
+
+
 
 /* If false (default), use round-robin scheduler.
    If true, use multi-level feedback queue scheduler.

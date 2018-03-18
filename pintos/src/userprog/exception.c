@@ -4,14 +4,21 @@
 #include "userprog/gdt.h"
 #include "threads/interrupt.h"
 #include "threads/thread.h"
+
+/**********************************/
 #include "threads/vaddr.h"
+/**********************************/
 
 /* Number of page faults processed. */
 static long long page_fault_cnt;
 
 static void kill (struct intr_frame *);
 static void page_fault (struct intr_frame *);
+
+
+/**********************************/
 static void exit(int);
+/**********************************/
 
 /* Registers handlers for interrupts that can be caused by user
    programs.
@@ -164,6 +171,10 @@ page_fault (struct intr_frame *f)
   kill (f);
 }
 
+
+
+// Adding the exit funciton in order to properly exit when an exception is thrown
+/***********************************************************/
 void
 exit(int status)
 {
@@ -176,15 +187,16 @@ exit(int status)
     struct list_elem *e = list_tail(&parent->children);
     while ((e = list_prev (e)) != list_head (&parent->children))
     {
-      child = list_entry (e, struct child_status, elem_child_status);
+      child = list_entry (e, struct child_status, elem_status);
       if (child->child_id == cur->tid)
       {
         lock_acquire (&parent->lock_child);
-        child->is_exit_called = true;
-        child->child_exit_status = status;
+        child->exit_call = true;
+        child->status = status;
         lock_release (&parent->lock_child);
       }
     }
   }
   thread_exit ();
 }
+/***********************************************************/

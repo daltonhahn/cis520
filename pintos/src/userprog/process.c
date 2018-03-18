@@ -17,8 +17,11 @@
 #include "threads/palloc.h"
 #include "threads/thread.h"
 #include "threads/vaddr.h"
+
+/***********************************/
 #include "threads/malloc.h"
 #include "userprog/syscall.h"
+/***********************************/
 
 static thread_func start_process NO_RETURN;
 static bool load (const char *cmdline, void (**eip) (void), void **esp);
@@ -27,6 +30,12 @@ static bool load (const char *cmdline, void (**eip) (void), void **esp);
    FILENAME.  The new thread may be scheduled (and may even exit)
    before process_execute() returns.  Returns the new process's
    thread id, or TID_ERROR if the thread cannot be created. */
+
+
+// Added additional functionality to track executable name of a thread
+// and some child management structures such as the list of children
+// and their status
+/******************************************************************/
 tid_t
 process_execute (const char *file_name) 
 {
@@ -56,22 +65,32 @@ process_execute (const char *file_name)
     if (child != NULL) 
     {
       child->child_id = tid;
-      child->is_exit_called = false;
-      child->has_been_waited = false;
-      list_push_back(&cur->children, &child->elem_child_status);
+      child->exit_call = false;
+      child->waited = false;
+      list_push_back(&cur->children, &child->elem_status);
     }
   }
   return tid;
 }
+/******************************************************************/
+
+
 
 /* A thread function that loads a user process and starts it
    running. */
+
+// Added additional functionality to monitor parent and children processes
+// as well as their load status. Also, added additional synchronization abilities
+// for parents and children
+/******************************************************************/
 static void
 start_process (void *file_name_)
 {
   char *file_name = file_name_;
   struct intr_frame if_;
   bool success;
+
+  //
   int load_status;
   struct thread *cur;
   struct thread *parent;
@@ -89,6 +108,7 @@ start_process (void *file_name_)
   else
     load_status = 1;
 
+  //
   cur = thread_current (); 
   parent = thread_get_by_id (cur->parent_id);
   if (parent != NULL)
@@ -98,6 +118,7 @@ start_process (void *file_name_)
       cond_signal(&parent->cond_child, &parent->lock_child);
       lock_release(&parent->lock_child);
     }
+
 
   if (!success)
     thread_exit ();
@@ -113,6 +134,7 @@ start_process (void *file_name_)
   asm volatile ("movl %0, %%esp; jmp intr_exit" : : "g" (&if_) : "memory");
   NOT_REACHED ();
 }
+/******************************************************************/
 
 /* Waits for thread TID to die and returns its exit status.  If
    it was terminated by the kernel (i.e. killed due to an
@@ -123,28 +145,12 @@ start_process (void *file_name_)
 
    This function will be implemented in problem 2-2.  For now, it
    does nothing. */
-// int
-// process_wait (tid_t child_tid) 
-// {
-//   int status;
-//   struct thread *cur;
-//   struct child_status *child = NULL;
-//   struct list_elem *e;
 
-//   // sema_init(&thread_current()->wait_child_sema, 0);
-//   // sema_down(&thread_current()->wait_child_sema);
-//   struct thread * cur_thread = thread_current();
-
-//   cur_thread->waiting_for_child = true;
-//   sema_init(&cur_thread->wait_child_sema, 0);
-//   sema_down(&cur_thread->wait_child_sema);
-//   cur_thread->waiting_for_child = false;
-//   return -1;
-// }
-
+// Completely re-worked process_wait in order to properly wait on
+// child processes to complete so that parent processes can continue.
+// Synchronization constructs used to manage child threads
+/*****************************************************************/
 int
-/* Original implementation */
-/* process_wait (tid_t child_tid UNUSED) */
 process_wait (tid_t child_tid)
 {
   int status;
@@ -157,7 +163,7 @@ process_wait (tid_t child_tid)
      e = list_tail (&cur->children);
      while ((e = list_prev (e)) != list_head (&cur->children))
        {
-         child = list_entry(e, struct child_status, elem_child_status);
+         child = list_entry(e, struct child_status, elem_status);
          if (child->child_id == child_tid)
            break;
        }
@@ -169,12 +175,12 @@ process_wait (tid_t child_tid)
          lock_acquire(&cur->lock_child);
          while (thread_get_by_id (child_tid) != NULL)
            cond_wait (&cur->cond_child, &cur->lock_child);
-         if (!child->is_exit_called || child->has_been_waited)
+         if (!child->exit_call || child->waited)
            status = -1;
          else
            { 
-             status = child->child_exit_status;
-             child->has_been_waited = true;
+             status = child->status;
+             child->waited = true;
            }
          lock_release(&cur->lock_child);
        }
@@ -183,8 +189,14 @@ process_wait (tid_t child_tid)
     status = TID_ERROR;
   return status;
 }
+/*****************************************************************/
+
+
 
 /* Free the current process's resources. */
+// Added ability to loop through children of a process and remove them
+// from the list of tracked threads and free their allocated memory
+/****************************************************************/
 void
 process_exit (void)
 {
@@ -218,7 +230,7 @@ process_exit (void)
   while (e != list_tail(&cur->children))
     {
       next = list_next (e);
-      child = list_entry (e, struct child_status, elem_child_status);
+      child = list_entry (e, struct child_status, elem_status);
       list_remove (e);
       free (child);
       e = next;
@@ -242,6 +254,7 @@ process_exit (void)
     }
 
 }
+/****************************************************************/
 
 /* Sets up the CPU for running user code in the current
    thread.
@@ -348,17 +361,29 @@ load (const char *file_name, void (**eip) (void), void **esp)
     goto done;
   process_activate ();
 
+
+
+
+  // Added additional file_closing for non-existant files just in case
+  // Added ability for threads to track what their executable file is
+  // and the ability to deny writes to executable files.
+  /********************************************************/
+
   /* Open executable file. */
   file = filesys_open (t->name);
   if (file == NULL) 
-    {
-      printf ("load: %s: open failed\n", t->name);
-      file_close(file);
-      goto done; 
-    }
+  {
+    printf ("load: %s: open failed\n", t->name);
+    file_close(file);
+    goto done; 
+  }
 
-    t->exec_file = file;
-    file_deny_write(file);
+  t->exec_file = file;
+  file_deny_write(file);
+  /*******************************************************/
+
+
+
 
   /* Read and verify executable header. */
   if (file_read (file, &ehdr, sizeof ehdr) != sizeof ehdr
@@ -554,8 +579,16 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
   return true;
 }
 
+
+
 /* Create a minimal stack by mapping a zeroed page at the top of
    user virtual memory. */
+
+// Added second parameter file_name to be used in initializing the stack correctly.
+// Made major changes to pushing arguments and executable information onto the stack.
+// This section implements the ability to pass arguments onto the stack correctly and
+// to be able to use pointers correctly when executing syscalls.
+/*****************************************************************/
 static bool
 setup_stack (void **esp, char* file_name) 
 {
@@ -641,11 +674,18 @@ setup_stack (void **esp, char* file_name)
         /*push return address*/
         *esp -= 4;
         * (uint32_t *) *esp = 0x0;
-      } else
+      } 
+      
+      else
+      {
         palloc_free_page (kpage);
+      }
     }
   return success;
 }
+/*****************************************************************/
+
+
 
 /* Adds a mapping from user virtual address UPAGE to kernel
    virtual address KPAGE to the page table.
