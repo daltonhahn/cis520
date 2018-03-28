@@ -1,9 +1,0 @@
-cd build && make check
-make[1]: Entering directory '/net/files.cis.ksu.edu/exports/home/b/blehmg/cis520/pintos3/src/vm/build'
-perl -I../.. ../../tests/userprog/args-single.ck tests/userprog/args-single tests/userprog/args-single.result
-FAIL tests/userprog/args-single
-Run produced no output at all
-pintos -v -k -T 60 --bochs  --filesys-size=2 -p tests/userprog/args-multiple -a args-multiple --swap-size=4 -- -q  -f run 'args-multiple some arguments for you!' < /dev/null 2> tests/userprog/args-multiple.errors > tests/userprog/args-multiple.output
-../../tests/Make.tests:73: recipe for target 'tests/userprog/args-multiple.output' failed
-make[1]: Leaving directory '/net/files.cis.ksu.edu/exports/home/b/blehmg/cis520/pintos3/src/vm/build'
-../Makefile.kernel:10: recipe for target 'check' failed
