@@ -155,10 +155,16 @@ page_out (struct page *p)
      page. */
 
 /* add code here */
+
+  // Clear the pages in the page directory
+  // Check to see if the page is dirty
+  // If the page is not dirty, mark it ok
+  // If the page's file is null, swap it out
+  // Otherwise, if the page is dirty and private swap it out
+  // Lastly, if the page is dirty but not private write the file out
+  // Finally, if the page is set to ok, set the frame to NULL
   /*****************************************************/
   pagedir_clear_page(p->thread->pagedir, (void *) p->addr);
-
-
 
   /* Has the frame been modified? */
   dirty = pagedir_is_dirty (p->thread->pagedir, (const void *) p->addr);
