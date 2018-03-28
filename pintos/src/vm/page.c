@@ -53,6 +53,9 @@ page_for_addr (const void *address)
       /* No page.  Expand stack? */
 
 /* add code */
+      // Allocate a new page if the current user space runs
+      // out of memory.
+      // Stack Growth
       /****************************/
       if ((p.addr > PHYS_BASE - STACK_MAX) && ((void *)thread_current()->user_esp - 32 < address))
       {
