@@ -53,6 +53,12 @@ page_for_addr (const void *address)
       /* No page.  Expand stack? */
 
 /* add code */
+      /****************************/
+      if ((p.addr > PHYS_BASE - STACK_MAX) && ((void *)thread_current()->user_esp - 32 < address))
+      {
+        return page_allocate (p.addr, false);
+      }
+      /********************************/
 
     }
   return NULL;
