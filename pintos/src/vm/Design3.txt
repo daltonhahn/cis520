@@ -1,0 +1,202 @@
+﻿+---------------------------+
+                                      |         CIS 520           |
+                           | PROJECT 3: Virtual Memory |
+                           |     DESIGN DOCUMENT       |
+                           +---------------------------+
+
+
+---- GROUP ----
+
+
+>> Fill in the names of your group members.
+
+
+Dalton Hahn
+Olivia Baalman
+Lane Evans
+
+
+---- PRELIMINARIES ----
+
+
+>> If you have any preliminary comments on your submission, notes for the
+>> TAs, or extra credit, please give them here.
+
+
+All tests passing
+
+
+>> Please cite any offline or online sources you consulted while
+>> preparing your submission, other than the Pintos documentation, course
+>> text, lecture notes, and course staff.
+
+
+None
+
+
+                        PAGE TABLE MANAGEMENT
+                        =====================
+
+
+---- ALGORITHMS ----
+
+
+>> A1: In a few paragraphs, describe the existing code for locating the
+>> frame, if any, that contains the data of a given page.
+
+
+A1: The page struct in page.h contains a frame struct property and this frame struct has a base pointer to where the data is stored in the kernel memory. The frame also contains a reference to the page that is holding it. 
+
+
+The implementation for finding free frames in memory takes place in frame_alloc_and_lock inside frame.c. It tries really hard to find an empty spot to allocate a new frame in memory and if none exist the operating system will evict a frame that currently exists to make room. The new frame is returned if it succeeded to create the frame in the last step. If it failed three times, it returns NULL and no frame is allocated.
+
+
+
+
+---- SYNCHRONIZATION ----
+
+
+>> A2: When two user processes both need a new frame at the same time,
+>> how are races avoided?
+
+
+A2: In the case that two user processes both request new frames at the same time, race conditions are avoided by using the scan_lock object.  This ensures that only one process can access the frame tables at any given time.  This also ensures that frames are assigned to the processes one at a time to avoid collisions and multiple allocations.
+
+
+
+
+                       PAGING TO AND FROM DISK
+                       =======================
+
+
+---- ALGORITHMS ----
+
+
+>> B1: When a frame is required but none is free, some frame must be
+>> evicted.  Describe the algorithm used to choose a frame to evict.
+
+
+B1: When a frame is requested, but none are immediately available, the swap_out function within swap.c is called to perform this eviction.  Swap_out is called from the page.c file when trying to determine which pages have been most recently used, which pages need to be written to memory, etc.  This algorithm is as follows:
+* Clear the pages in the page directory
+* Check to see if the current page is dirty
+* If the page is not dirty, mark it okay to swap out
+* Then, if the page’s file is null, swap it out
+   * If the page is dirty and private, swap it out
+   * Else, if the page is dirty, but not private, write the file out to disk and swap the page out
+* Finally, if the page is set to ok, set the frame to NULL
+        
+
+
+>> B2: Explain your heuristic for deciding whether a page fault for an
+>> invalid virtual address should cause the stack to be extended into
+>> the page that faulted.
+
+
+B2: When deciding if a page fault should trigger stack growth, we first look at the address that the page is trying to access and compare it to the PHYS_BASE (Physical address space base value) - STACK_MAX (the top of the userspace stack addresses).
+p.addr > PHYS_BASE - STACK_MAX
+
+
+If that value evaluates to true, we also compare the value of the current thread’s user process stack pointer (thread_current() -> user_esp) look 4 words down and then compare that to the value of address.  
+thread_current()->user_esp - 32 < address
+
+
+If this evaluates to true, then a new page is allocated to the user process.  The entire condition is included below:
+
+
+        if((p.addr > PHYS_BASE - STACK_MAX) && ((void *)thread_current()->user_esp - 32 < address))
+
+
+
+
+
+
+                         MEMORY MAPPED FILES
+                         ===================
+
+
+---- DATA STRUCTURES ----
+
+
+>> C1: Copy here the declaration of each new or changed `struct' or
+>> `struct' member, global or static variable, `typedef', or
+>> enumeration.  Identify the purpose of each in 25 words or less.
+
+
+C1: NONE
+
+
+---- ALGORITHMS ----
+
+
+>> C2: Describe how memory mapped files integrate into your virtual
+>> memory subsystem.  Explain how the page fault and eviction
+>> processes differ between swap pages and other pages.
+
+
+C2: Within syscall.c, the “mapping” object holds a link to the address in memory and the file that it maps to.  Each thread is responsible for tracking a list of all the files that are mapped to that thread.  From this, the thread can keep track of which files currently reside in memory.  Pages containing memory mapped file information can be treated like any other pages in memory and can be swapped in and out of the userspace.
+
+
+Page faulting and swapping pages for memory mapped files requires an additional step of checking the page for modifications (dirty check).  If the page is modified, it must be written back to disk, otherwise, writing the page out to disk is not necessary and the page may be swapped.
+
+
+
+
+>> C3: Explain how you determine whether a new file mapping overlaps
+>> any existing segment.
+
+
+C3: If a new file mapping request overlaps an existing segment, the page_allocated() function will see that the request is overlapping previously mapped space and will immediately unmap that file.  New file mappings are only allocated to pages if free pages are present and unmapped in the system.
+
+
+
+
+---- RATIONALE ----
+
+
+>> C4: Mappings created with "mmap" have similar semantics to those of
+>> data demand-paged from executables, except that "mmap" mappings are
+>> written back to their original files, not to swap.  This implies
+>> that much of their implementation can be shared.  Explain why your
+>> implementation either does or does not share much of the code for
+>> the two situations.
+
+
+C4: All pages are paged out using the page_out() function in page.c.  The only difference between normal pages and memory mapped pages is a check to see if there are modifications to the information stored in memory mapped pages.  This check will determine whether or not the information needs to be written back to disk.  If the page is marked private, it is swapped to the swap partition, otherwise, it’s information goes back to the file on the disk.  Using this page_out() abstraction, we can use the same function to provide functionality for both scenarios.
+
+
+
+
+
+
+                           SURVEY QUESTIONS
+                           ================
+
+
+Answering these questions is optional, but it will help us improve the
+course in future quarters.  Feel free to tell us anything you
+want--these questions are just to spur your thoughts.  You may also
+choose to respond anonymously in the course evaluations at the end of
+the quarter.
+
+
+>> In your opinion, was this assignment, or any one of the three problems
+>> in it, too easy or too hard?  Did it take too long or too little time?
+
+
+We thought that this assignment was much more like what we would expect the workload for this class to be.  Instead of implementing an entire chunk of an operating system, we are focusing on certain applications and how they are used within an already existing system.  We feel like we understand this much better than attempting to implement the entire syscall system at one time.
+
+
+>> Did you find that working on a particular part of the assignment gave
+>> you greater insight into some aspect of OS design?
+
+
+>> Is there some particular fact or hint we should give students in
+>> future quarters to help them solve the problems?  Conversely, did you
+>> find any of our guidance to be misleading?
+
+
+>> Do you have any suggestions for the TAs to more effectively assist
+>> students, either for future quarters or the remaining projects?
+
+
+>> Any other comments?
